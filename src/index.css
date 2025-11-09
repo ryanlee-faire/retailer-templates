@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: 'Graphik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Retailer Grid System */
+.product-content-wrapper {
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Mobile: Single column layout (default) */
+.retailer-product-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas: 
+    "media-0"
+    "media-1"
+    "media-2"
+    "media-3"
+    "media-4"
+    "media-5"
+    "product-details";
+  gap: 0;
+}
+
+/* Desktop: Two column layout with proper proportions (60% / 40% split) */
+@media (min-width: 768px) {
+  .retailer-product-grid {
+    grid-template-columns: 1.5fr 1fr;
+    grid-template-areas: 
+      "media-0 product-details"
+      "media-1 product-details"
+      "media-2 product-details"
+      "media-3 product-details"
+      "media-4 product-details"
+      "media-5 product-details";
+  }
+}
+
+/* Grid area assignments */
+[style*="grid-area: media-0"] {
+  grid-area: media-0;
+}
+
+[style*="grid-area: media-1"] {
+  grid-area: media-1;
+}
+
+[style*="grid-area: media-2"] {
+  grid-area: media-2;
+}
+
+[style*="grid-area: media-3"] {
+  grid-area: media-3;
+}
+
+[style*="grid-area: media-4"] {
+  grid-area: media-4;
+}
+
+[style*="grid-area: media-5"] {
+  grid-area: media-5;
+}
+
+.area-product-details {
+  grid-area: product-details;
+}
+
+/* Utility class to toggle grid system */
+.retailer-grid-enabled {
+  /* Grid is enabled by default when using the classes */
+}
+
+.retailer-grid-disabled {
+  display: block;
+}
+
+.retailer-grid-disabled .retailer-product-grid {
+  display: block;
+}
+

@@ -1,0 +1,36 @@
+# Retailer Template Project
+
+This is a React + TypeScript e-commerce retailer template project.
+
+## Tech Stack
+- React 18 with TypeScript
+- Tailwind CSS for styling
+- React Router for navigation
+- Uses a 12-column grid system (retailer-12col-grid)
+
+## Project Structure
+- `src/pages/` - Page components (ProductDetailPage, IndexPage, TemplatePage)
+- `src/components/` - Reusable components (RetailerLayout, Footer, etc.)
+- `src/utils/` - Utility functions (gridUtils)
+
+## Key Features
+- Product Detail Page (PDP) with:
+  - Product images with zoom
+  - Color selection
+  - Quantity input
+  - Add to cart functionality
+  - Shipping & policies information
+  - Product description and details
+
+## Design System
+- Uses a 12-column grid layout system
+- Max width: 1920px
+- Padding: 48px on sides
+- Colors: #333333 (primary text), #757575 (secondary text), #dfe0e1 (borders)
+
+## Code Style
+- TypeScript strict mode
+- Functional components with hooks
+- Tailwind utility classes for styling
+- Semantic HTML with accessibility in mind
+
