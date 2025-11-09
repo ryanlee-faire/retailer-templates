@@ -91,12 +91,21 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="mx-auto flex w-full flex-col justify-between self-stretch overflow-auto px-4 py-8 md:px-6 lg:p-12 2xl:p-20">
+    <footer className="w-full">
       <hr style={{ borderBlockEnd: "0px", borderInline: "0px", inlineSize: "100vw", margin: "0px calc(-50vw + 50%)", blockSize: "1px", borderBlockStart: "1px solid rgb(223, 224, 225)" }} />
-      {/* Main Footer Content */}
-      <div className="flex flex-col md:flex-row md:justify-between md:items-start" style={{ marginTop: "60px" }}>
-        {/* App Download Section */}
-        <div className="w-full pb-8 md:w-[430px] md:pb-0 lg:w-[470px] xl:w-[670px] flex flex-col">
+      <div
+        className="retailer-12col-grid mx-auto"
+        style={{
+          maxWidth: "1920px",
+          paddingLeft: "48px",
+          paddingRight: "48px",
+          paddingTop: "60px",
+          paddingBottom: "16px",
+        }}
+      >
+        {/* Main Footer Content */}
+        {/* App Download Section - spans columns 1-4 */}
+        <div className="w-full pb-8 md:pb-0 flex flex-col" style={{ gridColumn: "1 / 5" }}>
           <p 
             className="text-[#333333]" 
             style={{ 
@@ -104,7 +113,8 @@ export default function Footer() {
               fontWeight: 400,
               fontSize: "38px",
               lineHeight: "50px",
-              letterSpacing: "0px"
+              letterSpacing: "0px",
+              marginTop: "-8px"
             }}
           >
             Discover products on the go with the Faire app
@@ -131,94 +141,14 @@ export default function Footer() {
         </div>
 
         {/* Divider for mobile */}
-        <hr className="md:hidden" style={{ borderBlockEnd: "0px", borderInline: "0px", inlineSize: "100vw", margin: "0px -16px", blockSize: "1px", borderBlockStart: "1px solid rgb(223, 224, 225)" }} />
+        <hr className="md:hidden" style={{ borderBlockEnd: "0px", borderInline: "0px", inlineSize: "100vw", margin: "0px -16px", blockSize: "1px", borderBlockStart: "1px solid rgb(223, 224, 225)", gridColumn: "1 / -1" }} />
 
-        {/* Links Section */}
-        <div className="w-full py-8 md:mt-2 md:w-max md:pt-0 md:pb-8 md:pl-[50px] lg:mt-3 lg:pl-0 xl:mt-4 flex flex-col md:flex-row md:items-start">
-          <div className="w-full md:w-fit flex flex-row md:flex-row md:justify-start md:gap-6 lg:gap-8">
-            {/* Company Links */}
-            <div className="min-w-[140px] gap-3 xl:w-[220px] 2xl:w-[280px] flex flex-col">
-              <p className="text-[#333333] text-sm font-medium mb-3">Company</p>
-              <ul className="list-none p-0 m-0 flex flex-col gap-3">
-                {companyLinks.map((link) => (
-                  <li key={link.href} className="flex items-center">
-                    <a
-                      href={link.href}
-                      target={link.external ? "_blank" : undefined}
-                      rel={link.external ? "noopener noreferrer" : undefined}
-                      className="text-[#333333] text-sm no-underline hover:underline"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Explore Links */}
-            <div className="min-w-[140px] gap-3 xl:w-[220px] 2xl:w-[280px] flex flex-col">
-              <p className="text-[#333333] text-sm font-medium mb-3">Explore</p>
-              <ul className="list-none p-0 m-0 flex flex-col gap-3">
-                {exploreLinks.map((link) => (
-                  <li key={link.href} className="flex items-center">
-                    <a
-                      href={link.href}
-                      target={link.external ? "_blank" : undefined}
-                      rel={link.external ? "noopener noreferrer" : undefined}
-                      className="text-[#333333] text-sm no-underline hover:underline"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* Social Media Icons */}
-          <div className="w-fit pt-8 lg:pt-0 flex items-center md:items-start lg:items-start gap-8 flex-row ml-auto">
-            <a
-              href="https://www.instagram.com/faire_wholesale/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#333333] no-underline"
-              aria-label="Instagram"
-            >
-              <InstagramIcon className="w-6 h-6" />
-            </a>
-            <a
-              href="https://www.facebook.com/fairewholesale/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#333333] no-underline"
-              aria-label="Facebook"
-            >
-              <FacebookIcon className="w-6 h-6" />
-            </a>
-            <a
-              href="https://x.com/faire_wholesale"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#333333] no-underline"
-              aria-label="X (Twitter)"
-            >
-              <XIcon className="w-4 h-4 mt-1" />
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* Spacer */}
-      <div style={{ height: "32px" }} className="hidden md:block" />
-
-      {/* Bottom Section - Copyright and Legal Links */}
-      <div className="flex flex-col md:flex-row md:justify-start">
-        <div className="w-full flex flex-wrap flex-col md:flex-row md:items-start">
-          <p className="text-[#333333] text-sm font-medium">©2025 Faire Wholesale, Inc.</p>
-          <div style={{ width: "8px", height: "8px" }} className="hidden md:block" />
-          <div className="flex flex-col md:flex-row gap-3 md:gap-0">
-            {legalLinks.map((link, index) => (
-              <div key={link.href} className="flex flex-row items-center">
+        {/* Company Links - spans columns 7-8 */}
+        <div className="w-full py-8 md:py-0 flex flex-col" style={{ gridColumn: "7 / 9" }}>
+          <p className="text-[#333333] text-sm font-semibold mb-3">Company</p>
+          <ul className="list-none p-0 m-0 flex flex-col gap-3">
+            {companyLinks.map((link) => (
+              <li key={link.href} className="flex items-center">
                 <a
                   href={link.href}
                   target={link.external ? "_blank" : undefined}
@@ -227,22 +157,99 @@ export default function Footer() {
                 >
                   {link.label}
                 </a>
-                {index < legalLinks.length - 1 && (
-                  <div className="hidden md:flex flex-row items-center">
-                    <div style={{ width: "4px" }} />
-                    <p className="text-[#757575] text-sm"> • </p>
-                    <div style={{ width: "4px" }} />
-                  </div>
-                )}
-              </div>
+              </li>
             ))}
+          </ul>
+        </div>
+
+        {/* Explore Links - spans columns 9-10 */}
+        <div className="w-full py-8 md:py-0 flex flex-col" style={{ gridColumn: "9 / 11" }}>
+          <p className="text-[#333333] text-sm font-semibold mb-3">Explore</p>
+          <ul className="list-none p-0 m-0 flex flex-col gap-3">
+            {exploreLinks.map((link) => (
+              <li key={link.href} className="flex items-center">
+                <a
+                  href={link.href}
+                  target={link.external ? "_blank" : undefined}
+                  rel={link.external ? "noopener noreferrer" : undefined}
+                  className="text-[#333333] text-sm no-underline hover:underline"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Social Media Icons */}
+        <div className="w-fit pt-8 lg:pt-0 flex items-center md:items-start lg:items-start gap-8 flex-row" style={{ gridColumn: "11 / 13" }}>
+          <a
+            href="https://www.instagram.com/faire_wholesale/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#333333] no-underline"
+            aria-label="Instagram"
+          >
+            <InstagramIcon className="w-6 h-6" />
+          </a>
+          <a
+            href="https://www.facebook.com/fairewholesale/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#333333] no-underline"
+            aria-label="Facebook"
+          >
+            <FacebookIcon className="w-6 h-6" />
+          </a>
+          <a
+            href="https://x.com/faire_wholesale"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#333333] no-underline"
+            aria-label="X (Twitter)"
+          >
+            <XIcon className="w-4 h-4 mt-1" />
+          </a>
+        </div>
+
+        {/* Spacer */}
+        <div style={{ height: "32px", gridColumn: "1 / -1" }} className="hidden md:block" />
+
+        {/* Bottom Section - Copyright and Legal Links */}
+        <div className="flex flex-col md:flex-row md:justify-start" style={{ gridColumn: "1 / -1" }}>
+          <div className="w-full flex flex-wrap flex-col md:flex-row md:items-start">
+            <p className="text-[#333333] text-sm font-medium">©2025 Faire Wholesale, Inc.</p>
+            <div style={{ width: "8px", height: "8px" }} className="hidden md:block" />
+            <div className="flex flex-col md:flex-row gap-3 md:gap-0">
+              {legalLinks.map((link, index) => (
+                <div key={link.href} className="flex flex-row items-center">
+                  <a
+                    href={link.href}
+                    target={link.external ? "_blank" : undefined}
+                    rel={link.external ? "noopener noreferrer" : undefined}
+                    className="text-[#333333] text-sm no-underline hover:underline"
+                  >
+                    {link.label}
+                  </a>
+                  {index < legalLinks.length - 1 && (
+                    <div className="hidden md:flex flex-row items-center">
+                      <div style={{ width: "4px" }} />
+                      <p className="text-[#757575] text-sm"> • </p>
+                      <div style={{ width: "4px" }} />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Bottom Spacer */}
-      <div style={{ height: "56px" }} className="md:hidden" />
-      <div style={{ height: "16px" }} className="hidden md:block" />
+        {/* Spacer below copyright */}
+        <div style={{ height: "16px", gridColumn: "1 / -1" }} />
+
+        {/* Bottom Spacer */}
+        <div style={{ height: "56px", gridColumn: "1 / -1" }} className="md:hidden" />
+      </div>
     </footer>
   );
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import RetailerLayout from "../components/RetailerLayout";
 import { BrandInfo } from "../components/shared";
 
-export default function ProductDetailPage() {
+export default function ProductDetailPageV2() {
   const [selectedColor, setSelectedColor] = useState("White");
   const [quantity, setQuantity] = useState(1);
   const [buttonLayoutVariant, setButtonLayoutVariant] = useState(false);
@@ -19,6 +19,7 @@ export default function ProductDetailPage() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
+
 
   // Mock product data
   const product = {
@@ -48,11 +49,11 @@ export default function ProductDetailPage() {
       <div id="main" className="relative w-full pb-4 md:pb-0">
         {/* Main Product Content - 2 Column Layout */}
         <div className="retailer-12col-grid mx-auto" style={{ maxWidth: "1920px", paddingLeft: "48px", paddingRight: "48px", paddingTop: "48px", alignItems: "start" }}>
-            {/* Product Images - Columns 2-7 (First Column) */}
+            {/* Product Images - Columns 1-8 (First Column) */}
             <div 
               data-test-id="image-section"
-              className="flex flex-col"
-              style={{ gridColumn: "2 / 8", gridRow: "1", gap: "2px" }}
+              className="grid grid-cols-2"
+              style={{ gridColumn: "1 / 9", gridRow: "1", gap: "2px" }}
             >
               {product.images.map((image, index) => (
                 <div 
@@ -71,18 +72,20 @@ export default function ProductDetailPage() {
               ))}
             </div>
 
-            {/* Brand Info and Product Details - Columns 9-11 (Second Column) */}
+            {/* Brand Info and Product Details - Columns 9-12 (Second Column) */}
             <div 
               className="w-full md:sticky md:top-[48px] md:z-10 area-product-details"
-              style={{ gridColumn: "9 / 12", gridRow: "1" }}
+              style={{ gridColumn: "9 / 13", gridRow: "1", paddingLeft: "48px" }}
             >
               <div className="flex flex-col">
                 {/* Brand Information */}
                 <BrandInfo
                   brandName={product.brand}
+                  brandAvatarUrl="/images/products/product-image-01.webp"
                   rating={product.rating}
                   badge="Top Shop"
                   minReached="$100 min reached"
+                  showCartCard={true}
                   variant="pdp"
                 />
 

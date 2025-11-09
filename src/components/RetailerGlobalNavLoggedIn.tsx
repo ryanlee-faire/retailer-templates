@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import SurfacesMenu from "./SurfacesMenu";
 
 // Hook to detect viewport size
 function useViewport() {
@@ -40,12 +41,12 @@ function SearchIcon({ className }: { className?: string }) {
       viewBox="0 0 24 24"
       aria-labelledby="titleAccess-search"
       role="img"
-      strokeWidth="2"
       style={{ color: "#333333", fill: "none" }}
     >
       <path
         d="M.857 10.144a9.287 9.287 0 1 0 18.573 0 9.287 9.287 0 0 0-18.573 0ZM23.143 23.143l-6.434-6.434"
         stroke="currentColor"
+        strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -62,12 +63,12 @@ function NotificationIcon({ className }: { className?: string }) {
       viewBox="0 0 24 24"
       aria-labelledby="titleAccess-notification"
       role="img"
-      strokeWidth="1"
       style={{ color: "#333333", fill: "none", fontSize: "20px" }}
     >
       <path
         d="M9.171 20.133a2.71 2.71 0 0 0 2.622 2.028 2.71 2.71 0 0 0 2.622-2.028M12.15 2.015c1.864 0 3.652.768 4.97 2.136a7.43 7.43 0 0 1 2.059 5.157c0 8.11 2.85 8.327 3.621 8.327H1.5c.786 0 3.621-.235 3.621-8.327 0-1.934.74-3.79 2.059-5.157a6.9 6.9 0 0 1 4.97-2.136Z"
         stroke="currentColor"
+        strokeWidth="1.25"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -84,12 +85,12 @@ function AccountIcon({ className }: { className?: string }) {
       viewBox="0 0 24 24"
       aria-labelledby="titleAccess-account"
       role="img"
-      strokeWidth="0.8"
       style={{ color: "#333333", fill: "none", fontSize: "24px" }}
     >
       <path
         d="M8 6.857a4 4 0 1 0 8 0 4 4 0 0 0-8 0ZM21 20.437c-.617-1.743-1.82-3.263-3.437-4.341S14 14.437 12 14.437s-3.947.581-5.563 1.659C4.82 17.174 3.617 18.694 3 20.437z"
         stroke="currentColor"
+        strokeWidth="1"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -111,6 +112,7 @@ function CartIcon({ className }: { className?: string }) {
       <path
         d="M20.74 14.714H7.744L6.029 5.286h16.114a.857.857 0 0 1 .843 1.01l-1.402 7.714a.86.86 0 0 1-.843.704ZM6.029 5.286l-.72-3.6A.86.86 0 0 0 4.469 1H1.743M7.743 14.714l.72 3.6a.86.86 0 0 0 .84.686h9.583"
         stroke="currentColor"
+        strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -118,6 +120,7 @@ function CartIcon({ className }: { className?: string }) {
         d="M18.884 22.429a.857.857 0 1 1-1.714 0 .857.857 0 0 1 1.714 0ZM11.17 22.429a.857.857 0 1 1-1.715 0 .857.857 0 0 1 1.715 0Z"
         fill="currentColor"
         stroke="currentColor"
+        strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -146,12 +149,16 @@ type RetailerGlobalNavLoggedInProps = {
   languageSelector?: boolean;
   device?: "Desktop" | "Tablet" | "Mobile web";
   cartCount?: number;
+  focused?: boolean;
+  focused2?: boolean;
 };
 
 export default function RetailerGlobalNavLoggedIn({
   languageSelector = false,
   device,
   cartCount = 0,
+  focused = false,
+  focused2 = false,
 }: RetailerGlobalNavLoggedInProps) {
   const detectedDevice = useViewport();
   const currentDevice = device || detectedDevice;
@@ -206,6 +213,7 @@ export default function RetailerGlobalNavLoggedIn({
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <SurfacesMenu />
             <button
               data-test-id="notificationDropdown"
               className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
@@ -302,6 +310,53 @@ export default function RetailerGlobalNavLoggedIn({
               <NotificationIcon className="w-5 h-5" />
             </div>
           </button>
+        </div>
+      </header>
+    );
+  }
+
+  // Focused variant - only logo (centered, same position as full variant)
+  if (focused) {
+    return (
+      <header className="sticky top-0 z-[301] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
+        <div className="m-auto w-full lg:px-12 lg:pt-4 flex items-center justify-center px-4 py-4" style={{ maxWidth: "1920px", width: "100%" }}>
+          <button
+            aria-label="Menu"
+            className="lg:hidden bg-white flex items-center justify-center p-2.5 rounded-full w-10 h-10"
+            type="button"
+          >
+            <div className="w-5 h-0.5 bg-[#333333]"></div>
+          </button>
+          <a id="faire-logo-link" aria-label="Go to Faire homepage" href="/" className="h-6 w-[98px] relative shrink-0">
+            <img alt="Faire Logo" src="https://cdn.faire.com/static/logo.svg" className="h-full w-full object-contain" onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = "http://localhost:3845/assets/1e3ffc68be20eda669774f7388f9632f2f0bab67.svg";
+            }} />
+          </a>
+        </div>
+      </header>
+    );
+  }
+
+  // Focused variant 2 - only logo (left-aligned, same position as standard variant)
+  // Adjusted padding to account for search bar height in standard variant
+  if (focused2) {
+    return (
+      <header className="sticky top-0 z-[301] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
+        <div className="m-auto w-full lg:px-12 flex items-center px-4 pt-5 pb-5 lg:pt-5" style={{ maxWidth: "1920px", width: "100%" }}>
+          <button
+            aria-label="Menu"
+            className="lg:hidden bg-white flex items-center justify-center p-2.5 rounded-full w-10 h-10"
+            type="button"
+          >
+            <div className="w-5 h-0.5 bg-[#333333]"></div>
+          </button>
+          <a id="faire-logo-link" aria-label="Go to Faire homepage" href="/" className="h-6 w-[98px] relative shrink-0">
+            <img alt="Faire Logo" src="https://cdn.faire.com/static/logo.svg" className="h-full w-full object-contain" onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = "http://localhost:3845/assets/1e3ffc68be20eda669774f7388f9632f2f0bab67.svg";
+            }} />
+          </a>
         </div>
       </header>
     );

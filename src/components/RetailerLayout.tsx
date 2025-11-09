@@ -6,6 +6,8 @@ interface RetailerLayoutProps {
   children: React.ReactNode;
   languageSelector?: boolean;
   cartCount?: number;
+  focusedNav?: boolean;
+  hideFooter?: boolean;
 }
 
 /**
@@ -17,17 +19,20 @@ export default function RetailerLayout({
   children,
   languageSelector = false,
   cartCount = 0,
+  focusedNav = false,
+  hideFooter = false,
 }: RetailerLayoutProps) {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <RetailerGlobalNavLoggedIn 
         languageSelector={languageSelector} 
-        cartCount={cartCount} 
+        cartCount={cartCount}
+        focused={focusedNav}
       />
-      <main className="container mx-auto px-4 py-8 flex-1">
+      <main className="flex-1" style={{ paddingBottom: hideFooter ? 0 : "200px" }}>
         {children}
       </main>
-      <Footer />
+      {!hideFooter && <Footer />}
     </div>
   );
 }
