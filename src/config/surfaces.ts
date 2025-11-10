@@ -8,6 +8,7 @@ export const surfaces: Surface[] = [
   { name: "PDP", path: "/pdp" },
   { name: "PDP v2", path: "/pdp-v2" },
   { name: "Checkout", path: "/checkout" },
+  { name: "Order confirmation", path: "/order-confirmation" },
 ];
 
 export const getTitleForPath = (pathname: string): string => {

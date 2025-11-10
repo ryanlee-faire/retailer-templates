@@ -9,6 +9,8 @@ interface BrandInfoProps {
   badge?: string; // e.g., "Top Shop"
   minReached?: string; // e.g., "$100 min reached"
   showCartCard?: boolean;
+  cartCardVariant?: "default" | "number";
+  cartCardNumber?: number;
   showInsider?: boolean;
   itemTotal?: string;
   variant?: "pdp" | "checkout";
@@ -23,6 +25,8 @@ export default function BrandInfo({
   badge,
   minReached,
   showCartCard = false,
+  cartCardVariant = "default",
+  cartCardNumber,
   showInsider = false,
   itemTotal,
   variant = "pdp",
@@ -69,7 +73,7 @@ export default function BrandInfo({
             </div>
           )}
           <div className="flex flex-col">
-            <a href={`/brand/${brandName.toLowerCase()}`} className="text-sm font-medium text-[#333333] hover:underline">
+            <a href={`/brand/${brandName.toLowerCase()}`} className="text-sm font-medium text-[#333333] hover:underline transition-colors duration-500 ease-in-out">
               {brandName}
             </a>
             {showInsider && (
@@ -101,7 +105,7 @@ export default function BrandInfo({
           </div>
         )}
         <div className="flex flex-col">
-          <a href={`/brand/${brandName.toLowerCase()}`} className="text-xs font-medium text-[#333333] hover:underline">
+          <a href={`/brand/${brandName.toLowerCase()}`} className="text-xs font-medium text-[#333333] hover:underline transition-colors duration-500 ease-in-out">
             {brandName}
           </a>
           <div className="flex items-center gap-1 text-xs text-[#333333]">
@@ -131,6 +135,8 @@ export default function BrandInfo({
           <BrandCartCard
             brandAvatarUrl={brandAvatarUrl}
             brandName={brandName}
+            variant={cartCardVariant}
+            number={cartCardNumber}
           />
         </div>
       )}

@@ -27,7 +27,7 @@ export default function IndexPage() {
                 <li key={surface.path}>
                   <a
                     href={surface.path}
-                    className="text-lg text-[#333333] hover:text-[#757575] hover:underline"
+                    className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
                   >
                     {surface.name}
                   </a>
@@ -44,7 +44,7 @@ export default function IndexPage() {
                 <li key={component.path}>
                   <a
                     href={component.path}
-                    className="text-lg text-[#333333] hover:text-[#757575] hover:underline"
+                    className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
                   >
                     {component.name}
                   </a>

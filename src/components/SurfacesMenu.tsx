@@ -56,7 +56,7 @@ export default function SurfacesMenu() {
       <button
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 hover:bg-gray-100 rounded-[8px] transition-colors"
+        className="p-2 hover:bg-gray-100 rounded-[8px] transition-colors duration-500 ease-in-out"
         aria-label="Toggle surfaces menu"
         aria-expanded={isOpen}
       >

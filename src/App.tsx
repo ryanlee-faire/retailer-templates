@@ -1,16 +1,21 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { Security } from "@okta/okta-react";
 import IndexPage from "./pages/IndexPage";
 import TemplatePage from "./pages/TemplatePage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import ProductDetailPageV2 from "./pages/ProductDetailPageV2";
 import CheckoutPage from "./pages/CheckoutPage";
+import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import ComponentShowcasePage from "./pages/ComponentShowcasePage";
 import GridOverlay from "./components/GridOverlay";
 import SurfacesMenuOverlay from "./components/SurfacesMenuOverlay";
+import ProtectedRoute from "./components/ProtectedRoute";
+import LoginCallback from "./components/LoginCallback";
 import { getTitleForPath } from "./config/surfaces";
 import { getTitleForComponentPath } from "./config/components";
 import { SurfacesMenuProvider } from "./contexts/SurfacesMenuContext";
+import oktaAuth from "./config/okta";
 import "./App.css";
 
 function AppContent() {
@@ -26,34 +31,70 @@ function AppContent() {
     document.title = title;
   }, [location.pathname]);
 
+  // Check if Okta is enabled (requires both issuer and clientId)
+  const isOktaEnabled = !!(process.env.REACT_APP_OKTA_ISSUER && process.env.REACT_APP_OKTA_CLIENT_ID);
+
+  // Wrapper component to conditionally apply protection
+  const RouteWrapper = ({ children }: { children: React.ReactNode }) => {
+    if (isOktaEnabled) {
+      return <ProtectedRoute>{children}</ProtectedRoute>;
+    }
+    return <>{children}</>;
+  };
+
   return (
     <div className="App">
       <GridOverlay />
       <SurfacesMenuOverlay />
       <Routes>
-        <Route path="/" element={<IndexPage />} />
-        <Route path="/template" element={<TemplatePage />} />
-        <Route path="/pdp" element={<ProductDetailPage />} />
-        <Route path="/pdp-v2" element={<ProductDetailPageV2 />} />
-        <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/components/global-nav" element={<ComponentShowcasePage />} />
-        <Route path="/components/footer" element={<ComponentShowcasePage />} />
-        <Route path="/components/brand-info" element={<ComponentShowcasePage />} />
-        <Route path="/components/brand-cart-card" element={<ComponentShowcasePage />} />
-        <Route path="/components/basic-container" element={<ComponentShowcasePage />} />
+        <Route path="/login/callback" element={<LoginCallback />} />
+        <Route path="/" element={<RouteWrapper><IndexPage /></RouteWrapper>} />
+        <Route path="/template" element={<RouteWrapper><TemplatePage /></RouteWrapper>} />
+        <Route path="/pdp" element={<RouteWrapper><ProductDetailPage /></RouteWrapper>} />
+        <Route path="/pdp-v2" element={<RouteWrapper><ProductDetailPageV2 /></RouteWrapper>} />
+        <Route path="/checkout" element={<RouteWrapper><CheckoutPage /></RouteWrapper>} />
+        <Route path="/order-confirmation" element={<RouteWrapper><OrderConfirmationPage /></RouteWrapper>} />
+        <Route path="/components/global-nav" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
+        <Route path="/components/footer" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
+        <Route path="/components/brand-info" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
+        <Route path="/components/brand-cart-toggle" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
+        <Route path="/components/brand-tile" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
+        <Route path="/components/carousel" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
+        <Route path="/components/carousel-header" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
+        <Route path="/components/basic-container" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
+        <Route path="/components/cart-tile" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
+        <Route path="/components/post-order-summary-01" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
       </Routes>
     </div>
   );
 }
 
 function App() {
-  return (
+  // Check if Okta is enabled
+  const isOktaEnabled = !!(process.env.REACT_APP_OKTA_ISSUER && process.env.REACT_APP_OKTA_CLIENT_ID);
+
+  const appContent = (
     <BrowserRouter>
       <SurfacesMenuProvider>
         <AppContent />
       </SurfacesMenuProvider>
     </BrowserRouter>
   );
+
+  // Wrap with Okta Security if enabled
+  if (isOktaEnabled) {
+    const restoreOriginalUri = async (_oktaAuth: any, originalUri: string) => {
+      window.location.replace(originalUri);
+    };
+
+    return (
+      <Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri}>
+        {appContent}
+      </Security>
+    );
+  }
+
+  return appContent;
 }
 
 export default App;

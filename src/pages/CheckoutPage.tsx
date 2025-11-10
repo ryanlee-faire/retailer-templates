@@ -446,7 +446,7 @@ export default function CheckoutPage() {
               {/* Place order button */}
               <button
                 onClick={() => setIsProcessing(!isProcessing)}
-                className="w-full bg-[#333333] text-white py-3 px-6 rounded font-medium mb-4 hover:bg-[#222222] transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-[#333333] text-white py-3 px-6 rounded font-medium mb-4 hover:bg-[#222222] transition-colors duration-500 ease-in-out flex items-center justify-center gap-2"
               >
                 {isProcessing ? (
                   <>
@@ -519,7 +519,7 @@ export default function CheckoutPage() {
                   <div className="flex items-end">
                     <button
                       disabled={!promoCode}
-                      className="px-4 py-2 bg-[#333333] text-white rounded text-sm font-medium disabled:cursor-not-allowed hover:bg-[#222222] transition-colors"
+                      className="px-4 py-2 bg-[#333333] text-white rounded text-sm font-medium disabled:cursor-not-allowed hover:bg-[#222222] transition-colors duration-500 ease-in-out"
                       style={{
                         height: "42px",
                         ...(!promoCode && {

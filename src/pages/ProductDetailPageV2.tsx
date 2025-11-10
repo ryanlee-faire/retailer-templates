@@ -86,6 +86,8 @@ export default function ProductDetailPageV2() {
                   badge="Top Shop"
                   minReached="$100 min reached"
                   showCartCard={true}
+                  cartCardVariant="number"
+                  cartCardNumber={13}
                   variant="pdp"
                 />
 
@@ -94,7 +96,7 @@ export default function ProductDetailPageV2() {
                   <h1 className="text-lg md:text-2xl font-medium text-[#333333] pr-7">{product.name}</h1>
                   {!buttonLayoutVariant && (
                     <div className="flex items-center gap-2">
-                      <button aria-label="Save product" className="p-2 hover:bg-gray-100 rounded-[8px] transition-colors">
+                      <button aria-label="Save product" className="p-2 hover:bg-gray-100 rounded-[8px] transition-colors duration-500 ease-in-out">
                         <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                           <path d="m12 21.429-9.461-8.652c-5.11-5.11 2.41-15.02 9.461-7.029 7.05-7.99 14.572 1.918 9.461 7.029z" />
                         </svg>
@@ -127,7 +129,7 @@ export default function ProductDetailPageV2() {
                         className={`w-8 h-8 rounded-full border ${
                           selectedColor === color
                             ? "border-[#333333]"
-                            : "border-[#dfe0e1] hover:border-gray-300"
+                            : "border-[#dfe0e1] hover:border-gray-300 transition-colors duration-500 ease-in-out"
                         }`}
                         style={{
                           backgroundColor:
@@ -174,13 +176,13 @@ export default function ProductDetailPageV2() {
 
                 {/* Add to Cart Button */}
                 <div className="flex gap-4 mb-6">
-                  <button className="flex-1 bg-[#333333] text-white py-3 px-6 rounded font-medium hover:bg-[#222222] transition-colors">
+                  <button className="flex-1 bg-[#333333] text-white py-3 px-6 rounded font-medium hover:bg-[#222222] transition-colors duration-500 ease-in-out">
                     Add to cart · {product.price}
                   </button>
                   {buttonLayoutVariant && (
                     <button 
                       aria-label="Save product" 
-                      className="bg-white border border-[#dfe0e1] rounded flex items-center justify-center hover:bg-gray-100 transition-colors"
+                      className="bg-white border border-[#dfe0e1] rounded flex items-center justify-center hover:bg-gray-100 transition-colors duration-500 ease-in-out"
                       style={{ width: "48px", height: "48px", minWidth: "48px" }}
                     >
                       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "#333333" }}>

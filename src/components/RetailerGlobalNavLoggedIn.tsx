@@ -485,7 +485,7 @@ export default function RetailerGlobalNavLoggedIn({
             {bottomNavLinks.map((link) => (
               <div key={link.href} aria-haspopup="menu" className="relative px-2 py-1 flex cursor-pointer">
                 <a
-                  className={`text-sm leading-5 active:text-[#757575] focus:text-[#757575] border-b border-solid border-transparent whitespace-nowrap hover:border-[#333333] ${
+                  className={`text-sm leading-5 active:text-[#757575] focus:text-[#757575] border-b border-solid border-transparent whitespace-nowrap hover:border-[#333333] transition-colors duration-500 ease-in-out ${
                     link.isSale ? "text-[#7d3e1e]" : "text-[#333333]"
                   }`}
                   aria-label={link.label}

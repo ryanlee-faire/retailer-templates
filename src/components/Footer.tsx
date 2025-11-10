@@ -153,7 +153,7 @@ export default function Footer() {
                   href={link.href}
                   target={link.external ? "_blank" : undefined}
                   rel={link.external ? "noopener noreferrer" : undefined}
-                  className="text-[#333333] text-sm no-underline hover:underline"
+                  className="text-[#333333] text-sm no-underline hover:underline transition-colors duration-500 ease-in-out"
                 >
                   {link.label}
                 </a>
@@ -172,7 +172,7 @@ export default function Footer() {
                   href={link.href}
                   target={link.external ? "_blank" : undefined}
                   rel={link.external ? "noopener noreferrer" : undefined}
-                  className="text-[#333333] text-sm no-underline hover:underline"
+                  className="text-[#333333] text-sm no-underline hover:underline transition-colors duration-500 ease-in-out"
                 >
                   {link.label}
                 </a>
@@ -227,7 +227,7 @@ export default function Footer() {
                     href={link.href}
                     target={link.external ? "_blank" : undefined}
                     rel={link.external ? "noopener noreferrer" : undefined}
-                    className="text-[#333333] text-sm no-underline hover:underline"
+                    className="text-[#333333] text-sm no-underline hover:underline transition-colors duration-500 ease-in-out"
                   >
                     {link.label}
                   </a>

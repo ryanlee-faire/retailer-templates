@@ -1,0 +1,32 @@
+import React from 'react';
+import { useOktaAuth } from '@okta/okta-react';
+
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+  const { oktaAuth, authState } = useOktaAuth();
+
+  if (!authState) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-[#333333]">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!authState.isAuthenticated) {
+    oktaAuth.signInWithRedirect();
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-[#333333]">Redirecting to login...</div>
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+};
+
+export default ProtectedRoute;
+

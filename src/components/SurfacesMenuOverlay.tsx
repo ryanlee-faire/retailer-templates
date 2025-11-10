@@ -76,7 +76,7 @@ export default function SurfacesMenuOverlay() {
               <li>
                 <Link
                   to="/"
-                  className="block text-sm text-[#333333] hover:text-[#757575] hover:underline py-1 transition-colors"
+                  className="block text-sm text-[#333333] hover:text-[#757575] hover:underline py-1 transition-colors duration-500 ease-in-out"
                   onClick={() => setIsOpen(false)}
                 >
                   Index
@@ -86,7 +86,7 @@ export default function SurfacesMenuOverlay() {
                 <li key={surface.path}>
                   <Link
                     to={surface.path}
-                    className="block text-sm text-[#333333] hover:text-[#757575] hover:underline py-1 transition-colors"
+                    className="block text-sm text-[#333333] hover:text-[#757575] hover:underline py-1 transition-colors duration-500 ease-in-out"
                     onClick={() => setIsOpen(false)}
                   >
                     {surface.name}

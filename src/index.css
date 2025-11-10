@@ -146,3 +146,17 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
+/* Carousel navigation button border fix */
+button[aria-label*="carousel"] {
+  border: 1px solid #dfe0e1 !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-color: #dfe0e1 !important;
+}
+
+/* Carousel navigation button icon stroke fix */
+button[aria-label*="carousel"] svg path {
+  stroke-width: 1.5 !important;
+  stroke: #333333 !important;
+}
+

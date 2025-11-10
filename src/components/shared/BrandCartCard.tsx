@@ -4,6 +4,8 @@ interface BrandCartCardProps {
   brandAvatarUrl?: string;
   brandName?: string;
   onClick?: () => void;
+  variant?: "default" | "number";
+  number?: number;
 }
 
 // Cart Icon Component
@@ -53,10 +55,49 @@ export default function BrandCartCard({
   brandAvatarUrl,
   brandName,
   onClick,
+  variant = "default",
+  number,
 }: BrandCartCardProps) {
+  // Number variant - uses BasicContainer styling with tight padding
+  if (variant === "number") {
+    return (
+      <div
+        className="flex items-center bg-white hover:bg-gray-100 transition-colors duration-500 ease-in-out"
+        style={{
+          border: "1px solid #dfe0e1",
+          borderRadius: "4px",
+          padding: "4px 12px",
+          cursor: onClick ? "pointer" : "default",
+          width: "fit-content",
+        }}
+        onClick={onClick}
+      >
+        {/* Number */}
+        <div
+          className="flex-shrink-0 flex items-center justify-center"
+          style={{
+            width: "32px",
+            height: "32px",
+          }}
+        >
+          <span className="text-sm font-medium text-[#333333]">{number ?? 0}</span>
+        </div>
+
+        {/* Spacing between number and cart */}
+        <div style={{ width: "4px" }} />
+
+        {/* Shopping Cart Icon - smaller (16px) */}
+        <div className="flex-shrink-0">
+          <CartIcon className="w-4 h-4" />
+        </div>
+      </div>
+    );
+  }
+
+  // Default variant - original styling
   return (
     <div
-      className="flex items-center bg-white rounded hover:bg-gray-100 transition-colors"
+      className="flex items-center bg-white rounded hover:bg-gray-100 transition-colors duration-500 ease-in-out"
       style={{
         width: "84px",
         height: "48px",
