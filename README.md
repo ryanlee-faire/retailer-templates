@@ -1,6 +1,6 @@
 # Retailer Template
 
-A blank template page with the Retailer Global Nav Logged In component from the Slate Figma design system.
+A set of components, core screens and flows that can be used to spin up quick local prototypes. The UI mimics production and pulls from the Slate system through the Figma MCP, but is not pixel perfect.
 
 ## 🚀 Quick Start
 
