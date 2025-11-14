@@ -160,3 +160,111 @@ button[aria-label*="carousel"] svg path {
   stroke: #333333 !important;
 }
 
+/* ========================================
+   FAIRE DESIGN SYSTEM
+   Added for Faire product management components
+   ======================================== */
+
+/* Faire Fonts from CDN */
+@font-face {
+  font-family: "Graphik_fix";
+  font-style: normal;
+  font-weight: 400;
+  src:
+    url("https://cdn.faire.com/static/fonts/Graphik-Regular-Web.woff2") format("woff2"),
+    url("https://cdn.faire.com/static/fonts/Graphik-Regular-Web.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Graphik_fix";
+  font-style: normal;
+  font-weight: 500;
+  src:
+    url("https://cdn.faire.com/static/fonts/Graphik-Medium-Web.woff2") format("woff2"),
+    url("https://cdn.faire.com/static/fonts/Graphik-Medium-Web.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Graphik_fix";
+  font-style: normal;
+  font-weight: 600;
+  src:
+    url("https://cdn.faire.com/static/fonts/Graphik-Semibold-Web.woff2") format("woff2"),
+    url("https://cdn.faire.com/static/fonts/Graphik-Semibold-Web.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Nantes_fix";
+  font-style: normal;
+  font-weight: 400;
+  src:
+    url("https://cdn.faire.com/static/fonts/NantesWeb-Regular.woff2") format("woff2"),
+    url("https://cdn.faire.com/static/fonts/NantesWeb-Regular.woff") format("woff");
+}
+
+/* Faire Color System - CSS Variables */
+:root {
+  /* Grey Scale */
+  --color-grey-100: #ffffff;
+  --color-grey-200: #fbfbfb;
+  --color-grey-300: #f7f7f7;
+  --color-grey-400: #dfe0e1;
+  --color-grey-700: #757575;
+  --color-grey-900: #333333;
+  --color-grey-1000: #000000;
+
+  /* Red */
+  --color-red-100: #f2e5e1;
+  --color-red-500: #d17e70;
+  --color-red-700: #921100;
+  --color-red-800: #5a1e09;
+
+  /* Semantic Colors */
+  --color-surface-primary: var(--color-grey-100);
+  --color-surface-secondary: var(--color-grey-200);
+  --color-surface-tertiary: var(--color-grey-300);
+
+  --color-text-primary: var(--color-grey-900);
+  --color-text-subdued: var(--color-grey-700);
+  --color-text-inverse: var(--color-grey-100);
+
+  --color-border-subdued: var(--color-grey-400);
+  --color-border-muted: var(--color-grey-300);
+
+  --color-action-surface-default: var(--color-grey-900);
+  --color-action-surface-hover: var(--color-grey-1000);
+
+  --color-warning: #D4A574;
+
+  /* Typography */
+  --font-sans: "Graphik_fix", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-serif: "Nantes_fix", Georgia, serif;
+
+  /* Font Sizes */
+  --font-size-100: 0.75rem;   /* 12px */
+  --font-size-200: 0.875rem;  /* 14px */
+
+  /* Line Heights */
+  --line-height-100: 1rem;     /* 16px */
+  --line-height-200: 1.25rem;  /* 20px */
+}
+
+/* Faire Typography Utilities */
+.type-paragraph {
+  font-size: var(--font-size-200);
+  line-height: var(--line-height-200);
+  font-weight: 400;
+}
+
+.type-paragraph-medium {
+  font-size: var(--font-size-200);
+  line-height: var(--line-height-200);
+  font-weight: 500;
+}
+
+.type-label {
+  font-size: var(--font-size-100);
+  line-height: var(--line-height-100);
+  font-weight: 400;
+}
+
