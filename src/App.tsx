@@ -8,6 +8,8 @@ import ProductDetailPageV2 from "./pages/ProductDetailPageV2";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import ComponentShowcasePage from "./pages/ComponentShowcasePage";
+import ProductsPage from "./pages/faire/ProductsPage";
+import BulkEditorPage from "./pages/faire/BulkEditorPage";
 import GridOverlay from "./components/GridOverlay";
 import SurfacesMenuOverlay from "./components/SurfacesMenuOverlay";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -64,6 +66,9 @@ function AppContent() {
         <Route path="/components/basic-container" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
         <Route path="/components/cart-tile" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
         <Route path="/components/post-order-summary-01" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
+        {/* Faire Product Management Routes */}
+        <Route path="/faire/products" element={<RouteWrapper><ProductsPage /></RouteWrapper>} />
+        <Route path="/faire/bulk-editor" element={<RouteWrapper><BulkEditorPage /></RouteWrapper>} />
       </Routes>
     </div>
   );

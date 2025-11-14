@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import RetailerLayout from "../components/RetailerLayout";
 import { surfaces } from "../config/surfaces";
 import { components } from "../config/components";
@@ -17,6 +18,32 @@ export default function IndexPage() {
         }}
       >
         <div style={{ gridColumn: "1 / -1" }}>
+          {/* Brand Experience Section */}
+          <h1 className="text-3xl font-semibold text-gray-800 mb-8">Brand experience prototyping</h1>
+          
+          <div className="mb-12">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Starter templates</h2>
+            <ul className="space-y-4">
+              <li>
+                <Link
+                  to="/faire/products"
+                  className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
+                >
+                  Products page
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/faire/bulk-editor"
+                  className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
+                >
+                  Bulk editor page
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Retailer Experience Section */}
           <h1 className="text-3xl font-semibold text-gray-800 mb-8">Retailer experience prototyping</h1>
           
           {/* Templates Section */}
