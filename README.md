@@ -91,3 +91,23 @@ The main navigation component with support for:
 - Delete `node_modules` and `package-lock.json`
 - Run `npm install` again
 
+## Branching
+To keep this repo stable, it would be a good idea to build new pages and features in a branch. Branches keep working areas clean and keeps the main branch functioning as expected for everyone. Prompting along these lines in Cursor should net the same results. Below are some basics. 
+
+```bash
+// check which branch you're on 
+git branch
+
+// create a new branch
+git checkout -b branch-name
+
+// checkout existing branch
+git checkout branch-name
+
+// if you haven't yet pushed your branch to the github repo, 
+// run this the first time pushing your branch
+git push -u origin branch-name
+
+// if your branch already exists in the github repo
+git push
+```
