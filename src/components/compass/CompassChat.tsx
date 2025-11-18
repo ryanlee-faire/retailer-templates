@@ -74,7 +74,7 @@ export default function CompassChat() {
     setTimeout(() => {
       addMessage({
         role: 'assistant',
-        content: "What do you think? Is there anything you'd like me to adjust?",
+        content: "What do you think? Add items to your cart or let me know what you want me to adjust in my search criteria.",
         chips: ['Adjust selection', 'Check brand minimums', 'Filter by tray size'],
       });
     }, 2000); // Wait for all categories to appear (3 categories * 400ms + buffer)
@@ -114,67 +114,69 @@ export default function CompassChat() {
               Welcome to Compass
             </h3>
             
-            <p className="text-sm text-[#757575] mb-8 text-left">
+            <p className="text-sm text-[#757575] mb-6 text-left">
               I can help you find multiple products that work together—all in one search.
+            </p>
+
+            <p className="text-sm text-[#333333] mb-4 text-left">
+              For example, you can say:
             </p>
 
             {/* Example buttons */}
             <div className="space-y-3 mb-6">
-              <p className="text-sm font-medium text-[#333333] mb-3">
-                What would you like to look for first?
-              </p>
-              
               <button
-                onClick={() => handleSendMessage("Find me snacks, beverages, and napkins")}
+                onClick={() => handleSendMessage("I'm looking for wellness & spa items")}
                 className="w-full text-left px-4 py-3 bg-white border border-[#dfe0e1] rounded-lg hover:border-[#333333] hover:bg-[#f5f5f5] transition-colors"
               >
-                <p className="text-xs text-[#757575] mb-2">Food & entertaining:</p>
+                <p className="text-sm text-[#757575] mb-2">
+                  "I'm looking for wellness & spa items" — then Compass will search across:
+                </p>
                 <div className="flex items-center gap-2 flex-wrap text-sm">
-                  <span className="px-2 py-1 bg-[#f5f5f5] text-[#333333] rounded">snacks</span>
+                  <span className="px-2 py-1 border border-[#dfe0e1] text-[#333333] rounded">bath products</span>
                   <span className="text-[#757575]">+</span>
-                  <span className="px-2 py-1 bg-[#f5f5f5] text-[#333333] rounded">beverages</span>
+                  <span className="px-2 py-1 border border-[#dfe0e1] text-[#333333] rounded">candles</span>
                   <span className="text-[#757575]">+</span>
-                  <span className="px-2 py-1 bg-[#f5f5f5] text-[#333333] rounded">napkins</span>
+                  <span className="px-2 py-1 border border-[#dfe0e1] text-[#333333] rounded">hand towels</span>
                 </div>
               </button>
               
               <button
-                onClick={() => handleSendMessage("Show me bath products, candles, and hand towels")}
+                onClick={() => handleSendMessage("I'm looking for food & entertaining")}
                 className="w-full text-left px-4 py-3 bg-white border border-[#dfe0e1] rounded-lg hover:border-[#333333] hover:bg-[#f5f5f5] transition-colors"
               >
-                <p className="text-xs text-[#757575] mb-2">Wellness & spa:</p>
+                <p className="text-sm text-[#757575] mb-2">
+                  "I'm looking for food & entertaining" — then Compass will search across:
+                </p>
                 <div className="flex items-center gap-2 flex-wrap text-sm">
-                  <span className="px-2 py-1 bg-[#f5f5f5] text-[#333333] rounded">bath products</span>
+                  <span className="px-2 py-1 border border-[#dfe0e1] text-[#333333] rounded">snacks</span>
                   <span className="text-[#757575]">+</span>
-                  <span className="px-2 py-1 bg-[#f5f5f5] text-[#333333] rounded">candles</span>
+                  <span className="px-2 py-1 border border-[#dfe0e1] text-[#333333] rounded">beverages</span>
                   <span className="text-[#757575]">+</span>
-                  <span className="px-2 py-1 bg-[#f5f5f5] text-[#333333] rounded">hand towels</span>
+                  <span className="px-2 py-1 border border-[#dfe0e1] text-[#333333] rounded">napkins</span>
                 </div>
               </button>
               
               <button
-                onClick={() => handleSendMessage("I need home decor, throw pillows, and small accessories")}
+                onClick={() => handleSendMessage("I'm looking for home & living items")}
                 className="w-full text-left px-4 py-3 bg-white border border-[#dfe0e1] rounded-lg hover:border-[#333333] hover:bg-[#f5f5f5] transition-colors"
               >
-                <p className="text-xs text-[#757575] mb-2">Home & living:</p>
+                <p className="text-sm text-[#757575] mb-2">
+                  "I'm looking for home & living items" — then Compass will search across:
+                </p>
                 <div className="flex items-center gap-2 flex-wrap text-sm">
-                  <span className="px-2 py-1 bg-[#f5f5f5] text-[#333333] rounded">home decor</span>
+                  <span className="px-2 py-1 border border-[#dfe0e1] text-[#333333] rounded">home decor</span>
                   <span className="text-[#757575]">+</span>
-                  <span className="px-2 py-1 bg-[#f5f5f5] text-[#333333] rounded">throw pillows</span>
+                  <span className="px-2 py-1 border border-[#dfe0e1] text-[#333333] rounded">throw pillows</span>
                   <span className="text-[#757575]">+</span>
-                  <span className="px-2 py-1 bg-[#f5f5f5] text-[#333333] rounded">accessories</span>
+                  <span className="px-2 py-1 border border-[#dfe0e1] text-[#333333] rounded">accessories</span>
                 </div>
               </button>
             </div>
-
-            <p className="text-xs text-[#757575] mb-3 text-left">
-              Or describe what you need:
-            </p>
           </div>
         </div>
 
         {/* Input at bottom */}
-        <CompassInput onSend={handleSendMessage} />
+        <CompassInput onSend={handleSendMessage} placeholder="What are you looking for?" />
       </div>
     );
   }

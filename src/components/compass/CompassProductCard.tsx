@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CompassProduct } from '../../contexts/CompassContext';
+import { CompassProduct, useCompass } from '../../contexts/CompassContext';
 
 interface CompassProductCardProps {
   product: CompassProduct;
@@ -18,6 +18,7 @@ export default function CompassProductCard({
   isInCart = false,
 }: CompassProductCardProps) {
   const navigate = useNavigate();
+  const { setCurrentProduct } = useCompass();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
@@ -41,7 +42,8 @@ export default function CompassProductCard({
   );
 
   const handleClick = () => {
-    // Navigate to PDP page
+    // Store product data and navigate to PDP
+    setCurrentProduct(product);
     navigate('/pdp');
   };
 

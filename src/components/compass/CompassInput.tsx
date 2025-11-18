@@ -29,7 +29,7 @@ export default function CompassInput({
 
   return (
     <div className="border-t border-[#dfe0e1] bg-white p-4">
-      <div className="flex items-end gap-2">
+      <div className="flex items-start gap-2">
         <div className="flex-1 relative">
           <textarea
             value={value}
@@ -48,7 +48,7 @@ export default function CompassInput({
         <button
           onClick={handleSend}
           disabled={!value.trim() || disabled}
-          className="flex items-center justify-center w-11 h-11 rounded-lg bg-[#333333] text-white hover:bg-[#555555] disabled:bg-[#dfe0e1] disabled:cursor-not-allowed transition-colors"
+          className="flex items-center justify-center w-11 h-11 rounded-lg bg-[#333333] text-white hover:bg-[#555555] disabled:bg-[#dfe0e1] disabled:cursor-not-allowed transition-colors flex-shrink-0"
           aria-label="Send message"
         >
           <svg

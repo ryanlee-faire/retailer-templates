@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import RetailerLayout from "../components/RetailerLayout";
 import { BrandInfo } from "../components/shared";
+import { useCompass } from "../contexts/CompassContext";
 
 export default function ProductDetailPage() {
+  const { state } = useCompass();
   const [selectedColor, setSelectedColor] = useState("White");
   const [quantity, setQuantity] = useState(1);
   const [buttonLayoutVariant, setButtonLayoutVariant] = useState(false);
@@ -20,8 +22,21 @@ export default function ProductDetailPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Mock product data
-  const product = {
+  // Use product from Compass if available, otherwise fallback to default
+  const compassProduct = state.currentProduct;
+  
+  const product = compassProduct ? {
+    name: compassProduct.name,
+    brand: compassProduct.brandName,
+    price: `$${compassProduct.price.toFixed(2)}`,
+    msrp: `$${(compassProduct.price * 2).toFixed(2)}`, // Mock MSRP as 2x price
+    rating: compassProduct.rating || 5.0,
+    reviewCount: 18,
+    colors: ["White"], // Simplified for prototype
+    images: [compassProduct.imageUrl], // Use product image
+    description: compassProduct.description + `\n\n${compassProduct.dimensions.width}W x ${compassProduct.dimensions.depth}D x ${compassProduct.dimensions.height}H"\n\nWeight: ${compassProduct.weight} lb`,
+    details: `Category: ${compassProduct.category}\n\nBrand minimum: $${compassProduct.brandMinimum}\n\n${compassProduct.tags.join(', ')}`,
+  } : {
     name: "Cubic Table Lamp",
     brand: "Misewell",
     price: "$159.50",

@@ -53,6 +53,7 @@ export interface CompassState {
   selectedProducts: CompassProduct[];
   cartItems: CartItem[]; // Cart with quantities
   entryPoint?: 'icon' | 'search'; // Track how user opened Compass
+  currentProduct?: CompassProduct; // Product being viewed on PDP
 }
 
 interface CompassContextType {
@@ -71,6 +72,8 @@ interface CompassContextType {
   updateCartQuantity: (productId: string, quantity: number) => void;
   getCartTotal: () => number;
   getCartItemsByBrand: () => Record<string, CartItem[]>;
+  // Product viewing
+  setCurrentProduct: (product: CompassProduct) => void;
 }
 
 const CompassContext = createContext<CompassContextType | undefined>(undefined);
@@ -83,6 +86,7 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     selectedProducts: [],
     cartItems: [],
     entryPoint: undefined,
+    currentProduct: undefined,
   });
 
   const openPanel = (entryPoint: 'icon' | 'search' = 'icon') => {
@@ -204,6 +208,13 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     }, {} as Record<string, CartItem[]>);
   };
 
+  const setCurrentProduct = (product: CompassProduct) => {
+    setState(prev => ({
+      ...prev,
+      currentProduct: product,
+    }));
+  };
+
   const value: CompassContextType = {
     state,
     openPanel,
@@ -219,6 +230,7 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     updateCartQuantity,
     getCartTotal,
     getCartItemsByBrand,
+    setCurrentProduct,
   };
 
   return (
