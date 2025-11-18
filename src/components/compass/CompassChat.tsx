@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useCompass } from '../../contexts/CompassContext';
 import { compassProducts, filterProducts } from '../../data/compassProducts';
 import CompassMessage from './CompassMessage';
@@ -7,11 +7,19 @@ import CompassInput from './CompassInput';
 export default function CompassChat() {
   const { state, addMessage, addProductToSelection, removeProductFromSelection } = useCompass();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isThinking, setIsThinking] = useState(false);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [state.messages]);
+    // Delay scroll slightly to allow content to render
+    const timer = setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, [state.messages.length]);
 
   const handleSendMessage = (content: string) => {
     // Add user message
@@ -20,127 +28,56 @@ export default function CompassChat() {
       content,
     });
 
-    // Simulate "thinking" delay
+    // Small delay then show thinking indicator
     setTimeout(() => {
+      setIsThinking(true);
+    }, 300);
+
+    // Simulate "thinking" delay before response
+    setTimeout(() => {
+      setIsThinking(false);
       handleAssistantResponse(content.toLowerCase());
-    }, 800);
+    }, 1500);
   };
 
   const handleAssistantResponse = (userInput: string) => {
-    // Simple scripted conversation flow for the hotel scenario
+    // For prototype: Always show categorized hotel products response
     
-    // Scenario 1: Initial hotel/NYC request
-    if (
-      (userInput.includes('hotel') || userInput.includes('premium')) &&
-      (userInput.includes('nyc') || userInput.includes('new york') || userInput.includes('local'))
-    ) {
-      const premiumProducts = filterProducts(compassProducts, {
-        tags: ['nyc-local', 'premium'],
-      }).slice(0, 8); // Show first 8 products
+    // Get products by category
+    const snacks = filterProducts(compassProducts, {
+      categories: ['snack'],
+      tags: ['nyc-local', 'premium'],
+    }).slice(0, 3);
 
-      addMessage({
-        role: 'assistant',
-        content: "I found premium NYC-local products perfect for hotel amenities. These are handpicked from local artisans and premium brands in the New York area.",
-        interpretation: "Sourcing NYC-local brands tagged as 'premium' with hotel-appropriate packaging",
-        products: premiumProducts,
-        chips: ['Add beverages', 'Show bath products only', 'Filter by tray fit'],
-      });
-      return;
-    }
+    const beverages = filterProducts(compassProducts, {
+      categories: ['beverage'],
+      tags: ['nyc-local', 'premium'],
+    }).slice(0, 3);
 
-    // Scenario 2: Add beverages
-    if (userInput.includes('beverage') || userInput.includes('drink') || userInput.includes('coffee') || userInput.includes('tea')) {
-      const beverages = filterProducts(compassProducts, {
-        categories: ['beverage'],
-        tags: ['nyc-local', 'premium'],
-      });
+    const soaps = filterProducts(compassProducts, {
+      categories: ['soap'],
+      tags: ['nyc-local', 'premium'],
+    }).slice(0, 3);
 
-      addMessage({
-        role: 'assistant',
-        content: "Here are premium NYC-local beverages that would complement your hotel tray. From Brooklyn cold brew to Hudson Valley teas.",
-        interpretation: "Added beverages from local NYC roasters and tea companies",
-        products: beverages,
-        chips: ['Show snacks too', 'Check brand minimums', 'Filter by tray size'],
-      });
-      return;
-    }
-
-    // Scenario 3: Tray size constraint
-    if (userInput.includes('tray') || userInput.includes('fit') || userInput.includes('12') || userInput.includes('24')) {
-      const compactProducts = compassProducts.filter(p => 
-        p.weight <= 1.5 && 
-        p.dimensions.width <= 6 && 
-        p.dimensions.height <= 8 &&
-        p.tags.includes('nyc-local')
-      ).slice(0, 8);
-
-      addMessage({
-        role: 'assistant',
-        content: "I've filtered for products that fit a 12x24-inch tray. These items are under 1.5 lbs and have compact dimensions perfect for your welcome amenity.",
-        interpretation: "Filtering for items ≤1.5 lbs, width ≤6\", height ≤8\" that fit 12x24\" tray layout",
-        products: compactProducts,
-        chips: ['Show tray visualization', 'Check brand minimums', 'Add to cart'],
-      });
-      return;
-    }
-
-    // Scenario 4: Bath/soap products
-    if (userInput.includes('soap') || userInput.includes('bath') || userInput.includes('lotion') || userInput.includes('wellness')) {
-      const bathProducts = filterProducts(compassProducts, {
-        categories: ['soap'],
-        tags: ['nyc-local', 'premium'],
-      });
-
-      addMessage({
-        role: 'assistant',
-        content: "Here are luxury bath and body products from NYC-area artisans. Perfect for a premium hotel experience.",
-        interpretation: "Showing soaps and bath products from Hudson Valley and Brooklyn makers",
-        products: bathProducts,
-        chips: ['Add snacks', 'Show all categories', 'Check minimums'],
-      });
-      return;
-    }
-
-    // Scenario 5: Brand minimums
-    if (userInput.includes('minimum') || userInput.includes('order') || userInput.includes('requirement')) {
-      const mixedProducts = compassProducts.slice(0, 8);
-      
-      addMessage({
-        role: 'assistant',
-        content: "I've grouped products by brand to help you meet minimums. Most NYC artisan brands have $150-$250 minimums, which you can reach with 2-3 items per brand.",
-        interpretation: "Organizing by brand minimum requirements: Brooklyn Bites ($200), Hudson Valley Soap Co. ($200), Manhattan Candle Co. ($200)",
-        products: mixedProducts,
-        chips: ['Suggest products to meet minimums', 'View by brand', 'Add to cart'],
-      });
-      return;
-    }
-
-    // Scenario 6: Snacks
-    if (userInput.includes('snack') || userInput.includes('food') || userInput.includes('eat')) {
-      const snacks = filterProducts(compassProducts, {
-        categories: ['snack'],
-        tags: ['nyc-local', 'premium'],
-      });
-
-      addMessage({
-        role: 'assistant',
-        content: "These are artisanal snacks from Brooklyn, Manhattan, and Hudson Valley producers. Perfect for hotel welcome trays.",
-        interpretation: "Showing gourmet snacks from NYC-area makers, all shelf-stable and gift-ready",
-        products: snacks,
-        chips: ['Add beverages', 'Show all products', 'Filter by price'],
-      });
-      return;
-    }
-
-    // Default: Show curated selection
-    const defaultProducts = compassProducts.slice(0, 8);
     addMessage({
       role: 'assistant',
-      content: "Here's a curated selection of premium NYC-local products. Let me know what you're looking for and I can refine these results.",
-      interpretation: "Showing a mix of local NYC products across snacks, beverages, bath products, and accessories",
-      products: defaultProducts,
-      chips: ['Filter by category', 'Show tray-fit items', 'Check brand minimums'],
+      content: "I found a curated selection of NYC-local products perfect for your hotel rooms. I've organized them by category—food items, beverages, and bath products.",
+      interpretation: "Sourcing NYC-local brands across food, beverages, and soaps with premium packaging suitable for in-room amenities",
+      productsByCategory: [
+        { category: 'Food Items', products: snacks },
+        { category: 'Beverages', products: beverages },
+        { category: 'Bath Products', products: soaps },
+      ],
     });
+
+    // Add follow-up message after products have been revealed (after all 3 categories animate in)
+    setTimeout(() => {
+      addMessage({
+        role: 'assistant',
+        content: "What do you think? Is there anything you'd like me to adjust?",
+        chips: ['Adjust selection', 'Check brand minimums', 'Filter by tray size'],
+      });
+    }, 2000); // Wait for all categories to appear (3 categories * 400ms + buffer)
   };
 
   const handleProductSelect = (productId: string) => {
@@ -160,78 +97,78 @@ export default function CompassChat() {
   if (state.messages.length === 0) {
     return (
       <div className="flex flex-col h-full">
-        {/* Centered welcome content */}
-        <div className="flex-1 flex items-center justify-center px-8">
-          <div className="max-w-md text-center">
-            <div className="mb-6 flex justify-center">
-              <div className="w-16 h-16 rounded-full bg-[#f5f5f5] flex items-center justify-center">
-                <svg
-                  className="w-8 h-8"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#333333"
-                  strokeWidth="1.5"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M16 8L12 12L8 16L12 12L16 8Z" fill="#333333" />
-                </svg>
-              </div>
-            </div>
-            
-            <h3 className="text-xl font-semibold text-[#333333] mb-3">
-              👋 Welcome to Compass
+        {/* Left-aligned welcome content */}
+        <div className="flex-1 flex flex-col justify-end px-8 pb-6">
+          <div className="max-w-md">
+            <h3 className="text-xl font-semibold text-[#333333] mb-3 text-left flex items-center gap-2">
+              <svg
+                className="w-6 h-6"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#333333"
+                strokeWidth="1.5"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M16 8L12 12L8 16L12 12L16 8Z" fill="#333333" />
+              </svg>
+              Welcome to Compass
             </h3>
             
-            <p className="text-sm text-[#757575] mb-6">
-              I can help you find multiple product types that work together—all in one search.
+            <p className="text-sm text-[#757575] mb-8 text-left">
+              I can help you find multiple products that work together—all in one search.
             </p>
 
-            {/* How it works */}
-            <div className="bg-[#f5f5f5] rounded-lg p-4 mb-6 text-left">
-              <p className="text-xs font-semibold text-[#333333] mb-3">💡 How it works:</p>
-              <div className="space-y-2 text-xs text-[#757575]">
-                <div className="flex gap-2">
-                  <span className="font-semibold text-[#333333]">1.</span>
-                  <span>Tell me what you need (like "NYC snacks for hotels")</span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="font-semibold text-[#333333]">2.</span>
-                  <span>I'll curate products that fit your needs</span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="font-semibold text-[#333333]">3.</span>
-                  <span>Review & add to cart</span>
-                </div>
-              </div>
-            </div>
-
             {/* Example buttons */}
-            <div className="space-y-2 text-left mb-6">
-              <p className="text-xs font-medium text-[#333333] mb-2">
-                Try these examples:
+            <div className="space-y-3 mb-6">
+              <p className="text-sm font-medium text-[#333333] mb-3">
+                What would you like to look for first?
               </p>
               
               <button
-                onClick={() => handleSendMessage("I'm a hotel operator looking for local NYC products for premium welcome trays")}
+                onClick={() => handleSendMessage("Find me snacks, beverages, and napkins")}
                 className="w-full text-left px-4 py-3 bg-white border border-[#dfe0e1] rounded-lg hover:border-[#333333] hover:bg-[#f5f5f5] transition-colors"
               >
-                <p className="text-sm text-[#333333]">
-                  Local NYC products for hotel welcome trays
-                </p>
+                <p className="text-xs text-[#757575] mb-2">Food & entertaining:</p>
+                <div className="flex items-center gap-2 flex-wrap text-sm">
+                  <span className="px-2 py-1 bg-[#f5f5f5] text-[#333333] rounded">snacks</span>
+                  <span className="text-[#757575]">+</span>
+                  <span className="px-2 py-1 bg-[#f5f5f5] text-[#333333] rounded">beverages</span>
+                  <span className="text-[#757575]">+</span>
+                  <span className="px-2 py-1 bg-[#f5f5f5] text-[#333333] rounded">napkins</span>
+                </div>
               </button>
               
               <button
-                onClick={() => handleSendMessage("Show me premium artisanal snacks and beverages")}
+                onClick={() => handleSendMessage("Show me bath products, candles, and hand towels")}
                 className="w-full text-left px-4 py-3 bg-white border border-[#dfe0e1] rounded-lg hover:border-[#333333] hover:bg-[#f5f5f5] transition-colors"
               >
-                <p className="text-sm text-[#333333]">
-                  Premium artisanal snacks and beverages
-                </p>
+                <p className="text-xs text-[#757575] mb-2">Wellness & spa:</p>
+                <div className="flex items-center gap-2 flex-wrap text-sm">
+                  <span className="px-2 py-1 bg-[#f5f5f5] text-[#333333] rounded">bath products</span>
+                  <span className="text-[#757575]">+</span>
+                  <span className="px-2 py-1 bg-[#f5f5f5] text-[#333333] rounded">candles</span>
+                  <span className="text-[#757575]">+</span>
+                  <span className="px-2 py-1 bg-[#f5f5f5] text-[#333333] rounded">hand towels</span>
+                </div>
+              </button>
+              
+              <button
+                onClick={() => handleSendMessage("I need home decor, throw pillows, and small accessories")}
+                className="w-full text-left px-4 py-3 bg-white border border-[#dfe0e1] rounded-lg hover:border-[#333333] hover:bg-[#f5f5f5] transition-colors"
+              >
+                <p className="text-xs text-[#757575] mb-2">Home & living:</p>
+                <div className="flex items-center gap-2 flex-wrap text-sm">
+                  <span className="px-2 py-1 bg-[#f5f5f5] text-[#333333] rounded">home decor</span>
+                  <span className="text-[#757575]">+</span>
+                  <span className="px-2 py-1 bg-[#f5f5f5] text-[#333333] rounded">throw pillows</span>
+                  <span className="text-[#757575]">+</span>
+                  <span className="px-2 py-1 bg-[#f5f5f5] text-[#333333] rounded">accessories</span>
+                </div>
               </button>
             </div>
 
-            <p className="text-xs text-[#757575] mb-3">
-              Or describe what you need below:
+            <p className="text-xs text-[#757575] mb-3 text-left">
+              Or describe what you need:
             </p>
           </div>
         </div>
@@ -255,11 +192,28 @@ export default function CompassChat() {
             selectedProductIds={state.selectedProducts.map(p => p.id)}
           />
         ))}
+        
+        {/* Thinking indicator */}
+        {isThinking && (
+          <div className="flex mb-6 px-6">
+            <div className="max-w-[85%] bg-[#f5f5f5] text-[#333333] px-4 py-3 rounded-2xl rounded-tl-sm">
+              <div className="flex items-center gap-2">
+                <div className="flex gap-1">
+                  <span className="w-2 h-2 bg-[#757575] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                  <span className="w-2 h-2 bg-[#757575] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                  <span className="w-2 h-2 bg-[#757575] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                </div>
+                <span className="text-sm text-[#757575]">Compass is thinking...</span>
+              </div>
+            </div>
+          </div>
+        )}
+        
         <div ref={messagesEndRef} />
       </div>
 
       {/* Input at bottom */}
-      <CompassInput onSend={handleSendMessage} />
+      <CompassInput onSend={handleSendMessage} disabled={isThinking} />
     </div>
   );
 }

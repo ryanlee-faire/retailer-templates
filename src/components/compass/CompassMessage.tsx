@@ -1,5 +1,6 @@
 import React from 'react';
-import { Message } from '../../contexts/CompassContext';
+import { Message, CompassProduct } from '../../contexts/CompassContext';
+import { useCompass } from '../../contexts/CompassContext';
 import CompassProductCard from './CompassProductCard';
 
 interface CompassMessageProps {
@@ -13,8 +14,17 @@ export default function CompassMessage({
   onProductSelect,
   selectedProductIds = [],
 }: CompassMessageProps) {
+  const { addToCart, state } = useCompass();
   const isUser = message.role === 'user';
   const isAssistant = message.role === 'assistant';
+
+  const handleAddToCart = (product: CompassProduct) => {
+    addToCart(product, 1);
+  };
+
+  const isProductInCart = (productId: string) => {
+    return state.cartItems.some(item => item.product.id === productId);
+  };
 
   if (isUser) {
     return (
@@ -31,7 +41,7 @@ export default function CompassMessage({
       <div className="flex flex-col mb-6 px-6">
         {/* Assistant message bubble */}
         <div className="max-w-[85%] bg-[#f5f5f5] text-[#333333] px-4 py-3 rounded-2xl rounded-tl-sm">
-          <p className="text-sm">{message.content}</p>
+          <p className="text-sm whitespace-pre-line">{message.content}</p>
         </div>
 
         {/* System interpretation (if present) */}
@@ -43,15 +53,50 @@ export default function CompassMessage({
           </div>
         )}
 
-        {/* Product grid (if present) */}
-        {message.products && message.products.length > 0 && (
+        {/* Product grid by category (if present) */}
+        {message.productsByCategory && message.productsByCategory.length > 0 && (
+          <div className="mt-4 space-y-6">
+            {message.productsByCategory.map((categoryGroup, idx) => (
+              <div 
+                key={idx}
+                className="animate-fadeInUp"
+                style={{ 
+                  animationDelay: `${idx * 400}ms`,
+                  opacity: 0,
+                  animationFillMode: 'forwards'
+                }}
+              >
+                <h4 className="text-sm font-semibold text-[#333333] mb-3 px-1">
+                  {categoryGroup.category}
+                </h4>
+                <div className="grid grid-cols-2 gap-3">
+                  {categoryGroup.products.map((product) => (
+                    <CompassProductCard
+                      key={product.id}
+                      product={product}
+                      onSelect={(p) => onProductSelect?.(p.id)}
+                      onAddToCart={handleAddToCart}
+                      isSelected={selectedProductIds.includes(product.id)}
+                      isInCart={isProductInCart(product.id)}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Product grid (if present - for backward compatibility) */}
+        {message.products && message.products.length > 0 && !message.productsByCategory && (
           <div className="mt-4 grid grid-cols-2 gap-3">
             {message.products.map((product) => (
               <CompassProductCard
                 key={product.id}
                 product={product}
                 onSelect={(p) => onProductSelect?.(p.id)}
+                onAddToCart={handleAddToCart}
                 isSelected={selectedProductIds.includes(product.id)}
+                isInCart={isProductInCart(product.id)}
               />
             ))}
           </div>

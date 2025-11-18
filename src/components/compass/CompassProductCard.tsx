@@ -1,17 +1,29 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CompassProduct } from '../../contexts/CompassContext';
 
 interface CompassProductCardProps {
   product: CompassProduct;
   onSelect?: (product: CompassProduct) => void;
+  onAddToCart?: (product: CompassProduct) => void;
   isSelected?: boolean;
+  isInCart?: boolean;
 }
 
 export default function CompassProductCard({
   product,
   onSelect,
+  onAddToCart,
   isSelected = false,
+  isInCart = false,
 }: CompassProductCardProps) {
+  const navigate = useNavigate();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
+    onAddToCart?.(product);
+  };
+
   // Star icon component
   const StarIcon = () => (
     <svg
@@ -28,12 +40,17 @@ export default function CompassProductCard({
     </svg>
   );
 
+  const handleClick = () => {
+    // Navigate to PDP page
+    navigate('/pdp');
+  };
+
   return (
     <div
       className={`relative w-full cursor-pointer transition-all ${
         isSelected ? 'ring-2 ring-[#333333] rounded' : ''
       }`}
-      onClick={() => onSelect?.(product)}
+      onClick={handleClick}
     >
       {/* Image Container (slightly wider aspect ratio for space efficiency) */}
       <div
@@ -55,14 +72,22 @@ export default function CompassProductCard({
           }}
         />
 
-        {/* Selection indicator */}
-        {isSelected && (
-          <div className="absolute top-2 right-2 z-10 bg-[#333333] text-white rounded-full p-1">
+        {/* Add to Cart Button */}
+        <button
+          onClick={handleAddToCart}
+          className="absolute top-2 right-2 z-10 bg-white text-[#333333] rounded-full p-2 shadow-md hover:bg-[#333333] hover:text-white transition-colors"
+          aria-label={isInCart ? "In cart" : "Add to cart"}
+        >
+          {isInCart ? (
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
               <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </div>
-        )}
+          ) : (
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
+        </button>
       </div>
 
       {/* Product Info - more compact than BrandTile */}

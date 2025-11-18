@@ -28,9 +28,16 @@ export interface Message {
   role: MessageRole;
   content: string;
   products?: CompassProduct[]; // Products to display with this message
+  productsByCategory?: { category: string; products: CompassProduct[] }[]; // Products organized by category
   chips?: string[]; // Suggestion chips to show
   interpretation?: string; // System interpretation text
   timestamp: Date;
+}
+
+// Cart item with quantity
+export interface CartItem {
+  product: CompassProduct;
+  quantity: number;
 }
 
 // Conversation state
@@ -44,6 +51,7 @@ export interface CompassState {
     categories?: string[];
   };
   selectedProducts: CompassProduct[];
+  cartItems: CartItem[]; // Cart with quantities
   entryPoint?: 'icon' | 'search'; // Track how user opened Compass
 }
 
@@ -57,6 +65,12 @@ interface CompassContextType {
   addProductToSelection: (product: CompassProduct) => void;
   removeProductFromSelection: (productId: string) => void;
   updateConstraints: (constraints: Partial<CompassState['activeConstraints']>) => void;
+  // Cart methods
+  addToCart: (product: CompassProduct, quantity?: number) => void;
+  removeFromCart: (productId: string) => void;
+  updateCartQuantity: (productId: string, quantity: number) => void;
+  getCartTotal: () => number;
+  getCartItemsByBrand: () => Record<string, CartItem[]>;
 }
 
 const CompassContext = createContext<CompassContextType | undefined>(undefined);
@@ -67,6 +81,7 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     messages: [],
     activeConstraints: {},
     selectedProducts: [],
+    cartItems: [],
     entryPoint: undefined,
   });
 
@@ -124,6 +139,71 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  // Cart methods
+  const addToCart = (product: CompassProduct, quantity: number = 1) => {
+    setState(prev => {
+      const existingItem = prev.cartItems.find(item => item.product.id === product.id);
+      
+      if (existingItem) {
+        // Update quantity if already in cart
+        return {
+          ...prev,
+          cartItems: prev.cartItems.map(item =>
+            item.product.id === product.id
+              ? { ...item, quantity: item.quantity + quantity }
+              : item
+          ),
+        };
+      } else {
+        // Add new item
+        return {
+          ...prev,
+          cartItems: [...prev.cartItems, { product, quantity }],
+        };
+      }
+    });
+  };
+
+  const removeFromCart = (productId: string) => {
+    setState(prev => ({
+      ...prev,
+      cartItems: prev.cartItems.filter(item => item.product.id !== productId),
+    }));
+  };
+
+  const updateCartQuantity = (productId: string, quantity: number) => {
+    if (quantity <= 0) {
+      removeFromCart(productId);
+      return;
+    }
+    
+    setState(prev => ({
+      ...prev,
+      cartItems: prev.cartItems.map(item =>
+        item.product.id === productId
+          ? { ...item, quantity }
+          : item
+      ),
+    }));
+  };
+
+  const getCartTotal = () => {
+    return state.cartItems.reduce((total, item) => {
+      return total + (item.product.price * item.quantity);
+    }, 0);
+  };
+
+  const getCartItemsByBrand = () => {
+    return state.cartItems.reduce((grouped, item) => {
+      const brandName = item.product.brandName;
+      if (!grouped[brandName]) {
+        grouped[brandName] = [];
+      }
+      grouped[brandName].push(item);
+      return grouped;
+    }, {} as Record<string, CartItem[]>);
+  };
+
   const value: CompassContextType = {
     state,
     openPanel,
@@ -134,6 +214,11 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     addProductToSelection,
     removeProductFromSelection,
     updateConstraints,
+    addToCart,
+    removeFromCart,
+    updateCartQuantity,
+    getCartTotal,
+    getCartItemsByBrand,
   };
 
   return (

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCompass } from '../../contexts/CompassContext';
 import CompassChat from './CompassChat';
+import CompassCartSummary from './CompassCartSummary';
 
 export default function CompassSidePanel() {
   const { state, closePanel } = useCompass();
@@ -9,7 +10,7 @@ export default function CompassSidePanel() {
     <>
       {/* Side Panel */}
       <div
-        className="fixed top-0 right-0 h-full bg-white shadow-2xl z-[500] flex flex-col border-l border-[#dfe0e1]"
+        className="fixed top-0 right-0 h-full bg-white z-[500] flex flex-col border-l border-[#dfe0e1]"
         style={{
           width: '480px',
           maxWidth: '100vw',
@@ -72,6 +73,9 @@ export default function CompassSidePanel() {
         <div className="flex-1 overflow-y-auto">
           <CompassChat />
         </div>
+
+        {/* Cart Summary - sticky above input */}
+        <CompassCartSummary />
       </div>
 
       {/* Mobile: Full screen on small devices */}

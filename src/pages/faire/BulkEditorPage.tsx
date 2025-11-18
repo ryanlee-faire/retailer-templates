@@ -4,19 +4,10 @@ import { useState, useEffect } from "react";
 
 export default function BulkEditorPage() {
   const navigate = useNavigate();
-  const [activeFilters, setActiveFilters] = useState<string[]>(["gtin", "weight", "countryOfOrigin", "dimensions"]);
 
   useEffect(() => {
     document.title = "Bulk Editor - Faire Prototype";
   }, []);
-
-  const toggleFilter = (filter: string) => {
-    if (activeFilters.includes(filter)) {
-      setActiveFilters(activeFilters.filter(f => f !== filter));
-    } else {
-      setActiveFilters([...activeFilters, filter]);
-    }
-  };
 
   const [products, setProducts] = useState([
     {
@@ -342,83 +333,53 @@ export default function BulkEditorPage() {
 
         {/* Alert Banner */}
         <div className="px-8 pt-4 pb-2">
-          <div className="bg-[#F2E5E1] px-6 py-4 rounded">
-            <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 mt-0.5">
-                <svg width="24" height="24" viewBox="0 0 20 20" fill="none">
-                  <circle cx="10" cy="10" r="9" fill="#8B3A3A"/>
-                  <path d="M10 6v5M10 14v1" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+          <div className="bg-[#F5EFE7] px-6 py-4 rounded">
+            <div className="flex items-center gap-3">
+              <div className="flex-shrink-0">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3L21 19H3L12 3Z" fill="#D4A574"/>
+                  <path d="M12 10v4M12 16v1" stroke="white" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
               </div>
-              <div>
-                <div className="type-paragraph-medium mb-0.5 text-[var(--color-text-primary)]">
-                  {productsMissingAny} products are missing at least one key attribute
-                </div>
-                <div className="type-paragraph text-[var(--color-text-subdued)]">
-                  You can increase conversion to large retailers by adding them in the table below or you can <span className="underline cursor-pointer hover:text-[var(--color-text-primary)]">upload an existing file</span>.
-                </div>
+              <div className="type-paragraph text-[var(--color-text-primary)]">
+                <span className="font-semibold">You have {missingCounts.gtin} products missing GTINs:</span> Increase conversion with large retailers by adding GTINs in the table below, or <span className="underline cursor-pointer hover:text-[var(--color-text-subdued)]">let us help you</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Filter Bar */}
-        <div className="border-b border-[var(--color-border-subdued)] px-8 pt-2 pb-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => toggleFilter("gtin")}
-                className={`rounded-full border px-5 py-2.5 type-paragraph transition-all ${
-                  activeFilters.includes("gtin")
-                    ? "bg-[var(--color-grey-900)] text-white border-[var(--color-grey-900)]"
-                    : "bg-white text-[var(--color-text-subdued)] border-[var(--color-border-subdued)] hover:border-[var(--color-text-primary)]"
-                }`}
-              >
-                GTIN ({missingCounts.gtin})
-              </button>
-              <button
-                onClick={() => toggleFilter("weight")}
-                className={`rounded-full border px-5 py-2.5 type-paragraph transition-all ${
-                  activeFilters.includes("weight")
-                    ? "bg-[var(--color-grey-900)] text-white border-[var(--color-grey-900)]"
-                    : "bg-white text-[var(--color-text-subdued)] border-[var(--color-border-subdued)] hover:border-[var(--color-text-primary)]"
-                }`}
-              >
-                Weight ({missingCounts.weight})
-              </button>
-              <button
-                onClick={() => toggleFilter("countryOfOrigin")}
-                className={`rounded-full border px-5 py-2.5 type-paragraph transition-all ${
-                  activeFilters.includes("countryOfOrigin")
-                    ? "bg-[var(--color-grey-900)] text-white border-[var(--color-grey-900)]"
-                    : "bg-white text-[var(--color-text-subdued)] border-[var(--color-border-subdued)] hover:border-[var(--color-text-primary)]"
-                }`}
-              >
-                Country of Origin ({missingCounts.countryOfOrigin})
-              </button>
-              <button
-                onClick={() => toggleFilter("dimensions")}
-                className={`rounded-full border px-5 py-2.5 type-paragraph transition-all ${
-                  activeFilters.includes("dimensions")
-                    ? "bg-[var(--color-grey-900)] text-white border-[var(--color-grey-900)]"
-                    : "bg-white text-[var(--color-text-subdued)] border-[var(--color-border-subdued)] hover:border-[var(--color-text-primary)]"
-                }`}
-              >
-                Dimensions ({missingCounts.dimensions})
-              </button>
-            </div>
-            <div className="flex items-center gap-2">
-              <button className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--color-border-subdued)] bg-white text-[var(--color-text-subdued)] hover:bg-[var(--color-grey-200)] hover:text-[var(--color-text-primary)]">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M10 4L6 8l4 4" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-              <button className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--color-border-subdued)] bg-white text-[var(--color-text-subdued)] hover:bg-[var(--color-grey-200)] hover:text-[var(--color-text-primary)]">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M6 4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-            </div>
+        {/* Filter/Control Bar */}
+        <div className="border-b border-[var(--color-border-subdued)] px-8 py-4">
+          <div className="flex items-center gap-3">
+            {/* Sort Button */}
+            <button className="flex items-center gap-2 rounded-full border border-[var(--color-border-subdued)] bg-white px-5 py-2.5 type-paragraph text-[var(--color-text-primary)] hover:bg-[var(--color-grey-100)] transition-colors">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M4 10l2 2 2-2M6 12V4M10 6l2-2 2 2M12 4v8" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span>Sort: A-Z</span>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M3 4.5l3 3 3-3" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+
+            {/* Search Button */}
+            <button className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--color-border-subdued)] bg-white text-[var(--color-text-primary)] hover:bg-[var(--color-grey-100)] transition-colors">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="8.5" cy="8.5" r="5.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12.5 12.5L16 16" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+
+            {/* Change Columns Button */}
+            <button className="flex items-center gap-2 rounded-full border border-[var(--color-border-subdued)] bg-white px-5 py-2.5 type-paragraph text-[var(--color-text-primary)] hover:bg-[var(--color-grey-100)] transition-colors">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <rect x="2" y="2" width="5" height="5" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="9" y="2" width="5" height="5" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="2" y="9" width="5" height="5" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="9" y="9" width="5" height="5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span>Change columns</span>
+            </button>
           </div>
         </div>
 
@@ -433,40 +394,22 @@ export default function BulkEditorPage() {
                 <th className="border-r border-[var(--color-border-subdued)]" style={{ width: '40px' }}></th>
                 <th className="border-r border-[var(--color-border-subdued)] px-4 py-3 text-left type-paragraph-medium" style={{ width: '100px' }}>Image</th>
                 <th className="border-r border-[var(--color-border-subdued)] px-4 py-3 text-left type-paragraph-medium" style={{ maxWidth: '300px' }}>Product name</th>
-                {activeFilters.includes("gtin") && (
-                  <th className="border-r border-[var(--color-border-subdued)] px-4 py-3 text-left type-paragraph-medium" style={{ width: '180px' }}>GTIN</th>
-                )}
-                {activeFilters.includes("weight") && (
-                  <th className="border-r border-[var(--color-border-subdued)] px-4 py-3 text-left type-paragraph-medium" style={{ width: '150px' }}>Weight</th>
-                )}
-                {activeFilters.includes("countryOfOrigin") && (
-                  <th className="border-r border-[var(--color-border-subdued)] px-4 py-3 text-left type-paragraph-medium" style={{ width: '180px' }}>Country of origin</th>
-                )}
-                {activeFilters.includes("dimensions") && (
-                  <th className="px-4 py-3 text-left type-paragraph-medium" colSpan={3}>Dimensions</th>
-                )}
+                <th className="border-r border-[var(--color-border-subdued)] px-4 py-3 text-left type-paragraph-medium" style={{ width: '180px' }}>GTIN</th>
+                <th className="border-r border-[var(--color-border-subdued)] px-4 py-3 text-left type-paragraph-medium" style={{ width: '150px' }}>Weight</th>
+                <th className="border-r border-[var(--color-border-subdued)] px-4 py-3 text-left type-paragraph-medium" style={{ width: '180px' }}>Country of origin</th>
+                <th className="px-4 py-3 text-left type-paragraph-medium" colSpan={3}>Dimensions</th>
               </tr>
               <tr className="border-b border-[var(--color-border-subdued)] bg-white">
                 <th className="border-r border-[var(--color-border-subdued)]"></th>
                 <th className="border-r border-[var(--color-border-subdued)]"></th>
                 <th className="border-r border-[var(--color-border-subdued)]"></th>
                 <th className="border-r border-[var(--color-border-subdued)]"></th>
-                {activeFilters.includes("gtin") && (
-                  <th className="border-r border-[var(--color-border-subdued)]"></th>
-                )}
-                {activeFilters.includes("weight") && (
-                  <th className="border-r border-[var(--color-border-subdued)]"></th>
-                )}
-                {activeFilters.includes("countryOfOrigin") && (
-                  <th className="border-r border-[var(--color-border-subdued)]"></th>
-                )}
-                {activeFilters.includes("dimensions") && (
-                  <>
-                    <th className="border-r border-[var(--color-border-subdued)] px-4 py-2 text-left type-paragraph text-[var(--color-text-subdued)]" style={{ width: '120px' }}>Length</th>
-                    <th className="border-r border-[var(--color-border-subdued)] px-4 py-2 text-left type-paragraph text-[var(--color-text-subdued)]" style={{ width: '120px' }}>Width</th>
-                    <th className="px-4 py-2 text-left type-paragraph text-[var(--color-text-subdued)]" style={{ width: '120px' }}>Height</th>
-                  </>
-                )}
+                <th className="border-r border-[var(--color-border-subdued)]"></th>
+                <th className="border-r border-[var(--color-border-subdued)]"></th>
+                <th className="border-r border-[var(--color-border-subdued)]"></th>
+                <th className="border-r border-[var(--color-border-subdued)] px-4 py-2 text-left type-paragraph text-[var(--color-text-subdued)]" style={{ width: '120px' }}>Length</th>
+                <th className="border-r border-[var(--color-border-subdued)] px-4 py-2 text-left type-paragraph text-[var(--color-text-subdued)]" style={{ width: '120px' }}>Width</th>
+                <th className="px-4 py-2 text-left type-paragraph text-[var(--color-text-subdued)]" style={{ width: '120px' }}>Height</th>
               </tr>
             </thead>
             <tbody className="bg-white">
@@ -482,8 +425,8 @@ export default function BulkEditorPage() {
                     {isProductMissingAttribute(product) && (
                       <div className="flex items-center justify-center h-full">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                          <circle cx="10" cy="10" r="9" fill="#8B3A3A"/>
-                          <path d="M10 6v5M10 14v1" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                          <path d="M10 2L18 17H2L10 2Z" fill="#D4A574"/>
+                          <path d="M10 8v4M10 14v1" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
                         </svg>
                       </div>
                     )}
@@ -496,118 +439,108 @@ export default function BulkEditorPage() {
                       {product.name}
                     </div>
                   </td>
-                  {activeFilters.includes("gtin") && (
-                    <td className="border-r border-[var(--color-border-subdued)] p-0 relative">
-                      {!product.gtin && (
-                        <div className="absolute top-0 right-0 w-0 h-0 border-r-[12px] border-b-[12px] border-r-[#D4A574] border-b-transparent pointer-events-none z-20"></div>
-                      )}
-                      <input
-                        type="text"
-                        value={product.gtin}
-                        onChange={(e) => updateProduct(product.id, "gtin", e.target.value)}
-                        onBlur={handleInputBlur}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.currentTarget.blur();
-                          }
-                        }}
-                        className="absolute inset-0 w-full h-full px-4 type-paragraph text-[var(--color-text-subdued)] bg-transparent border-2 border-transparent focus:border-[#0066FF] focus:outline-none focus:z-10"
-                      />
-                    </td>
-                  )}
-                  {activeFilters.includes("weight") && (
-                    <td className="border-r border-[var(--color-border-subdued)] p-0 relative">
-                      {!product.weight && (
-                        <div className="absolute top-0 right-0 w-0 h-0 border-r-[12px] border-b-[12px] border-r-[#D4A574] border-b-transparent pointer-events-none z-20"></div>
-                      )}
-                      <input
-                        type="text"
-                        value={product.weight}
-                        onChange={(e) => updateProduct(product.id, "weight", e.target.value)}
-                        onBlur={handleInputBlur}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.currentTarget.blur();
-                          }
-                        }}
-                        className="absolute inset-0 w-full h-full px-4 type-paragraph text-[var(--color-text-subdued)] bg-transparent border-2 border-transparent focus:border-[#0066FF] focus:outline-none focus:z-10"
-                      />
-                    </td>
-                  )}
-                  {activeFilters.includes("countryOfOrigin") && (
-                    <td className="border-r border-[var(--color-border-subdued)] p-0 relative">
-                      {!product.countryOfOrigin && (
-                        <div className="absolute top-0 right-0 w-0 h-0 border-r-[12px] border-b-[12px] border-r-[#D4A574] border-b-transparent pointer-events-none z-20"></div>
-                      )}
-                      <input
-                        type="text"
-                        value={product.countryOfOrigin}
-                        onChange={(e) => updateProduct(product.id, "countryOfOrigin", e.target.value)}
-                        onBlur={handleInputBlur}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.currentTarget.blur();
-                          }
-                        }}
-                        className="absolute inset-0 w-full h-full px-4 type-paragraph text-[var(--color-text-subdued)] bg-transparent border-2 border-transparent focus:border-[#0066FF] focus:outline-none focus:z-10"
-                      />
-                    </td>
-                  )}
-                  {activeFilters.includes("dimensions") && (
-                    <>
-                      <td className="border-r border-[var(--color-border-subdued)] p-0 relative">
-                        {!product.length && (
-                          <div className="absolute top-0 right-0 w-0 h-0 border-r-[12px] border-b-[12px] border-r-[#D4A574] border-b-transparent pointer-events-none z-20"></div>
-                        )}
-                        <input
-                          type="text"
-                          value={product.length}
-                          onChange={(e) => updateProduct(product.id, "length", e.target.value)}
-                          onBlur={handleInputBlur}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              e.currentTarget.blur();
-                            }
-                          }}
-                          className="absolute inset-0 w-full h-full px-4 type-paragraph text-[var(--color-text-subdued)] bg-transparent border-2 border-transparent focus:border-[#0066FF] focus:outline-none focus:z-10"
-                        />
-                      </td>
-                      <td className="border-r border-[var(--color-border-subdued)] p-0 relative">
-                        {!product.width && (
-                          <div className="absolute top-0 right-0 w-0 h-0 border-r-[12px] border-b-[12px] border-r-[#D4A574] border-b-transparent pointer-events-none z-20"></div>
-                        )}
-                        <input
-                          type="text"
-                          value={product.width}
-                          onChange={(e) => updateProduct(product.id, "width", e.target.value)}
-                          onBlur={handleInputBlur}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              e.currentTarget.blur();
-                            }
-                          }}
-                          className="absolute inset-0 w-full h-full px-4 type-paragraph text-[var(--color-text-subdued)] bg-transparent border-2 border-transparent focus:border-[#0066FF] focus:outline-none focus:z-10"
-                        />
-                      </td>
-                      <td className="border-[var(--color-border-subdued)] p-0 relative">
-                        {!product.height && (
-                          <div className="absolute top-0 right-0 w-0 h-0 border-r-[12px] border-b-[12px] border-r-[#D4A574] border-b-transparent pointer-events-none z-20"></div>
-                        )}
-                        <input
-                          type="text"
-                          value={product.height}
-                          onChange={(e) => updateProduct(product.id, "height", e.target.value)}
-                          onBlur={handleInputBlur}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              e.currentTarget.blur();
-                            }
-                          }}
-                          className="absolute inset-0 w-full h-full px-4 type-paragraph text-[var(--color-text-subdued)] bg-transparent border-2 border-transparent focus:border-[#0066FF] focus:outline-none focus:z-10"
-                        />
-                      </td>
-                    </>
-                  )}
+                  <td className="border-r border-[var(--color-border-subdued)] p-0 relative">
+                    {!product.gtin && (
+                      <div className="absolute top-0 right-0 w-0 h-0 border-r-[12px] border-b-[12px] border-r-[#D4A574] border-b-transparent pointer-events-none z-20"></div>
+                    )}
+                    <input
+                      type="text"
+                      value={product.gtin}
+                      onChange={(e) => updateProduct(product.id, "gtin", e.target.value)}
+                      onBlur={handleInputBlur}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.currentTarget.blur();
+                        }
+                      }}
+                      className="absolute inset-0 w-full h-full px-4 type-paragraph text-[var(--color-text-subdued)] bg-transparent border-2 border-transparent focus:border-[#0066FF] focus:outline-none focus:z-10"
+                    />
+                  </td>
+                  <td className="border-r border-[var(--color-border-subdued)] p-0 relative">
+                    {!product.weight && (
+                      <div className="absolute top-0 right-0 w-0 h-0 border-r-[12px] border-b-[12px] border-r-[#D4A574] border-b-transparent pointer-events-none z-20"></div>
+                    )}
+                    <input
+                      type="text"
+                      value={product.weight}
+                      onChange={(e) => updateProduct(product.id, "weight", e.target.value)}
+                      onBlur={handleInputBlur}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.currentTarget.blur();
+                        }
+                      }}
+                      className="absolute inset-0 w-full h-full px-4 type-paragraph text-[var(--color-text-subdued)] bg-transparent border-2 border-transparent focus:border-[#0066FF] focus:outline-none focus:z-10"
+                    />
+                  </td>
+                  <td className="border-r border-[var(--color-border-subdued)] p-0 relative">
+                    {!product.countryOfOrigin && (
+                      <div className="absolute top-0 right-0 w-0 h-0 border-r-[12px] border-b-[12px] border-r-[#D4A574] border-b-transparent pointer-events-none z-20"></div>
+                    )}
+                    <input
+                      type="text"
+                      value={product.countryOfOrigin}
+                      onChange={(e) => updateProduct(product.id, "countryOfOrigin", e.target.value)}
+                      onBlur={handleInputBlur}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.currentTarget.blur();
+                        }
+                      }}
+                      className="absolute inset-0 w-full h-full px-4 type-paragraph text-[var(--color-text-subdued)] bg-transparent border-2 border-transparent focus:border-[#0066FF] focus:outline-none focus:z-10"
+                    />
+                  </td>
+                  <td className="border-r border-[var(--color-border-subdued)] p-0 relative">
+                    {!product.length && (
+                      <div className="absolute top-0 right-0 w-0 h-0 border-r-[12px] border-b-[12px] border-r-[#D4A574] border-b-transparent pointer-events-none z-20"></div>
+                    )}
+                    <input
+                      type="text"
+                      value={product.length}
+                      onChange={(e) => updateProduct(product.id, "length", e.target.value)}
+                      onBlur={handleInputBlur}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.currentTarget.blur();
+                        }
+                      }}
+                      className="absolute inset-0 w-full h-full px-4 type-paragraph text-[var(--color-text-subdued)] bg-transparent border-2 border-transparent focus:border-[#0066FF] focus:outline-none focus:z-10"
+                    />
+                  </td>
+                  <td className="border-r border-[var(--color-border-subdued)] p-0 relative">
+                    {!product.width && (
+                      <div className="absolute top-0 right-0 w-0 h-0 border-r-[12px] border-b-[12px] border-r-[#D4A574] border-b-transparent pointer-events-none z-20"></div>
+                    )}
+                    <input
+                      type="text"
+                      value={product.width}
+                      onChange={(e) => updateProduct(product.id, "width", e.target.value)}
+                      onBlur={handleInputBlur}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.currentTarget.blur();
+                        }
+                      }}
+                      className="absolute inset-0 w-full h-full px-4 type-paragraph text-[var(--color-text-subdued)] bg-transparent border-2 border-transparent focus:border-[#0066FF] focus:outline-none focus:z-10"
+                    />
+                  </td>
+                  <td className="border-[var(--color-border-subdued)] p-0 relative">
+                    {!product.height && (
+                      <div className="absolute top-0 right-0 w-0 h-0 border-r-[12px] border-b-[12px] border-r-[#D4A574] border-b-transparent pointer-events-none z-20"></div>
+                    )}
+                    <input
+                      type="text"
+                      value={product.height}
+                      onChange={(e) => updateProduct(product.id, "height", e.target.value)}
+                      onBlur={handleInputBlur}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.currentTarget.blur();
+                        }
+                      }}
+                      className="absolute inset-0 w-full h-full px-4 type-paragraph text-[var(--color-text-subdued)] bg-transparent border-2 border-transparent focus:border-[#0066FF] focus:outline-none focus:z-10"
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>
