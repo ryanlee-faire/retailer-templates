@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import SurfacesMenu from "./SurfacesMenu";
+import { useCompass } from "../contexts/CompassContext";
+import SearchDropdown from "./SearchDropdown";
 
 // Hook to detect viewport size
 function useViewport() {
@@ -145,6 +147,44 @@ function ChevronDownIcon({ className }: { className?: string }) {
   );
 }
 
+function CompassIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      focusable="false"
+      viewBox="0 0 24 24"
+      aria-labelledby="titleAccess-compass"
+      role="img"
+      style={{ color: "#333333", fill: "none", fontSize: "20px" }}
+    >
+      <circle 
+        cx="12" 
+        cy="12" 
+        r="10" 
+        stroke="currentColor" 
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path 
+        d="M16 8L12 12L8 16L12 12L16 8Z" 
+        fill="currentColor" 
+        stroke="currentColor"
+        strokeWidth="1"
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+      <path 
+        d="M12 2v2M12 20v2M2 12h2M20 12h2" 
+        stroke="currentColor" 
+        strokeWidth="1.5" 
+        strokeLinecap="round"
+      />
+      <title id="titleAccess-compass">Compass</title>
+    </svg>
+  );
+}
+
 type RetailerGlobalNavLoggedInProps = {
   languageSelector?: boolean;
   device?: "Desktop" | "Tablet" | "Mobile web";
@@ -163,6 +203,35 @@ export default function RetailerGlobalNavLoggedIn({
   const detectedDevice = useViewport();
   const currentDevice = device || detectedDevice;
   const [searchValue, setSearchValue] = useState("");
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const { togglePanel } = useCompass();
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+        setShowSearchDropdown(false);
+      }
+    };
+
+    if (showSearchDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showSearchDropdown]);
+
+  const handleSearchFocus = () => {
+    setShowSearchDropdown(true);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchValue(value);
+    setShowSearchDropdown(true);
+  };
 
   // Production bottom nav links
   const bottomNavLinks = [
@@ -195,7 +264,7 @@ export default function RetailerGlobalNavLoggedIn({
               target.src = "http://localhost:3845/assets/1e3ffc68be20eda669774f7388f9632f2f0bab67.svg";
             }} />
           </a>
-          <div className="flex-1">
+          <div className="flex-1" style={{ position: "relative" }} ref={searchContainerRef}>
             <div className="bg-white border border-[#757575] rounded-full flex items-center gap-2 h-10 px-4 pr-5">
               <input
                 id="top-search"
@@ -205,15 +274,33 @@ export default function RetailerGlobalNavLoggedIn({
                 data-test-id="searchBarInput"
                 className="flex-1 bg-transparent border-0 outline-0 text-[#333333] text-sm placeholder:text-[#757575]"
                 value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                onFocus={handleSearchFocus}
               />
               <div className="flex items-center justify-center">
                 <SearchIcon className="w-4 h-4" />
               </div>
             </div>
+            {showSearchDropdown && (
+              <SearchDropdown 
+                searchQuery={searchValue} 
+                onClose={() => setShowSearchDropdown(false)} 
+              />
+            )}
           </div>
           <div className="flex items-center gap-2">
             <SurfacesMenu />
+            <button
+              data-test-id="compassButton"
+              onClick={togglePanel}
+              className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
+              aria-label="Compass"
+              type="button"
+            >
+              <div className="flex items-center justify-center w-10 h-10 relative">
+                <CompassIcon className="w-5 h-5" />
+              </div>
+            </button>
             <button
               data-test-id="notificationDropdown"
               className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
@@ -259,7 +346,7 @@ export default function RetailerGlobalNavLoggedIn({
   if (currentDevice === "Mobile web") {
     return (
       <header className="relative z-[301] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b h-[112px] print:hidden">
-        <div className="h-[112px] relative w-full">
+        <div className="h-[112px] relative w-full" ref={searchContainerRef}>
           <div className="absolute bg-white h-[112px] left-0 top-0 w-full" />
           <div className="absolute bg-white border border-[#757575] rounded-full flex items-center gap-2 h-10 left-4 right-4 px-4 pr-5 top-14">
             <input
@@ -270,12 +357,21 @@ export default function RetailerGlobalNavLoggedIn({
               data-test-id="searchBarInput"
               className="flex-1 bg-transparent border-0 outline-0 text-[#333333] text-sm placeholder:text-[#757575]"
               value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              onFocus={handleSearchFocus}
             />
             <div className="flex items-center justify-center">
               <SearchIcon className="w-4 h-4" />
             </div>
           </div>
+          {showSearchDropdown && (
+            <div className="absolute top-[72px] left-4 right-4">
+              <SearchDropdown 
+                searchQuery={searchValue} 
+                onClose={() => setShowSearchDropdown(false)} 
+              />
+            </div>
+          )}
           <button
             aria-label="Menu"
             className="absolute bg-white flex items-center justify-center p-2.5 rounded-full w-10 h-10 left-2 top-2"
@@ -300,6 +396,17 @@ export default function RetailerGlobalNavLoggedIn({
               )}
             </div>
           </a>
+          <button
+            data-test-id="compassButton"
+            onClick={togglePanel}
+            className="absolute bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 right-[88px] top-2 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
+            aria-label="Compass"
+            type="button"
+          >
+            <div className="flex items-center justify-center w-10 h-10 relative">
+              <CompassIcon className="w-5 h-5" />
+            </div>
+          </button>
           <button
             data-test-id="notificationDropdown"
             className="absolute bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 right-12 top-2 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
@@ -395,7 +502,7 @@ export default function RetailerGlobalNavLoggedIn({
           </button>
         </div>
         <div className="hidden lg:block" style={{ width: "16px", height: "16px" }} />
-        <div style={{ flex: "1 1 0%" }}>
+        <div style={{ flex: "1 1 0%", position: "relative" }} ref={searchContainerRef}>
           <div className="bg-white border border-[#757575] rounded-full flex items-center h-10 px-4 pr-5">
             <input
               id="top-search"
@@ -405,12 +512,19 @@ export default function RetailerGlobalNavLoggedIn({
               data-test-id="searchBarInput"
               className="flex-1 bg-transparent border-0 outline-0 text-[#333333] text-sm placeholder:text-[#757575]"
               value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              onFocus={handleSearchFocus}
             />
             <div className="flex items-center justify-center">
               <SearchIcon className="w-4 h-4" />
             </div>
           </div>
+          {showSearchDropdown && (
+            <SearchDropdown 
+              searchQuery={searchValue} 
+              onClose={() => setShowSearchDropdown(false)} 
+            />
+          )}
         </div>
         <div className="hidden lg:block" style={{ width: "16px", height: "0px" }} />
         <div className="hidden lg:block" style={{ width: "12px", height: "0px" }} />
@@ -430,6 +544,20 @@ export default function RetailerGlobalNavLoggedIn({
             </button>
           </>
         )}
+        <div>
+          <button
+            data-test-id="compassButton"
+            onClick={togglePanel}
+            className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
+            aria-label="Compass"
+            type="button"
+          >
+            <div className="flex items-center justify-center w-10 h-10 relative">
+              <CompassIcon className="w-5 h-5" />
+            </div>
+          </button>
+        </div>
+        <div className="hidden lg:block" style={{ width: "8px", height: "0px" }} />
         <div>
           <button
             data-test-id="notificationDropdown"

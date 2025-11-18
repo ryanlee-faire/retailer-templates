@@ -17,11 +17,14 @@ import LoginCallback from "./components/LoginCallback";
 import { getTitleForPath } from "./config/surfaces";
 import { getTitleForComponentPath } from "./config/components";
 import { SurfacesMenuProvider } from "./contexts/SurfacesMenuContext";
+import { CompassProvider, useCompass } from "./contexts/CompassContext";
+import CompassSidePanel from "./components/compass/CompassSidePanel";
 import oktaAuth from "./config/okta";
 import "./App.css";
 
 function AppContent() {
   const location = useLocation();
+  const { state: compassState } = useCompass();
 
   useEffect(() => {
     let title = "Retailer Template";
@@ -48,7 +51,15 @@ function AppContent() {
     <div className="App">
       <GridOverlay />
       <SurfacesMenuOverlay />
-      <Routes>
+      <CompassSidePanel />
+      <div
+        className="compass-content-wrapper"
+        style={{
+          marginRight: compassState.isPanelOpen ? '480px' : '0',
+          transition: 'margin-right 350ms cubic-bezier(0.4, 0, 0.2, 1)',
+        }}
+      >
+        <Routes>
         <Route path="/login/callback" element={<LoginCallback />} />
         <Route path="/" element={<RouteWrapper><IndexPage /></RouteWrapper>} />
         <Route path="/template" element={<RouteWrapper><TemplatePage /></RouteWrapper>} />
@@ -69,7 +80,8 @@ function AppContent() {
         {/* Faire Product Management Routes */}
         <Route path="/faire/products" element={<RouteWrapper><ProductsPage /></RouteWrapper>} />
         <Route path="/faire/bulk-editor" element={<RouteWrapper><BulkEditorPage /></RouteWrapper>} />
-      </Routes>
+        </Routes>
+      </div>
     </div>
   );
 }
@@ -81,7 +93,9 @@ function App() {
   const appContent = (
     <BrowserRouter>
       <SurfacesMenuProvider>
-        <AppContent />
+        <CompassProvider>
+          <AppContent />
+        </CompassProvider>
       </SurfacesMenuProvider>
     </BrowserRouter>
   );
