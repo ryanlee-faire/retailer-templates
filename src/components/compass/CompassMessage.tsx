@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Message, CompassProduct } from '../../contexts/CompassContext';
 import { useCompass } from '../../contexts/CompassContext';
 import CompassProductCard from './CompassProductCard';
@@ -8,6 +9,136 @@ interface CompassMessageProps {
   onProductSelect?: (productId: string) => void;
   onChipClick?: (chipText: string) => void;
   selectedProductIds?: string[];
+}
+
+// Category scroll row component with navigation
+function CategoryScrollRow({
+  categoryGroup,
+  idx,
+  onProductSelect,
+  handleAddToCart,
+  selectedProductIds,
+  isProductInCart,
+}: {
+  categoryGroup: { category: string; products: CompassProduct[] };
+  idx: number;
+  onProductSelect?: (productId: string) => void;
+  handleAddToCart: (product: CompassProduct) => void;
+  selectedProductIds: string[];
+  isProductInCart: (productId: string) => boolean;
+}) {
+  const navigate = useNavigate();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const handleSeeAll = () => {
+    // Navigate to category page without closing Compass panel
+    const categorySlug = categoryGroup.category.toLowerCase().replace(/\s+/g, '-');
+    navigate(`/category/${encodeURIComponent(categoryGroup.category)}?from=compass`);
+  };
+
+  const checkScroll = () => {
+    if (!scrollRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+    setCanScrollLeft(scrollLeft > 5);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 5);
+  };
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (!scrollRef.current) return;
+    const scrollAmount = 300; // Scroll about 2 cards
+    scrollRef.current.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth',
+    });
+  };
+
+  return (
+    <div
+      className="animate-fadeInUp relative group"
+      style={{
+        animationDelay: `${idx * 400}ms`,
+        opacity: 0,
+        animationFillMode: 'forwards'
+      }}
+    >
+      <div className="flex items-center justify-between mb-3">
+        <h4 className="text-sm font-semibold text-[#333333]">
+          {categoryGroup.category}
+        </h4>
+        <button
+          onClick={handleSeeAll}
+          className="text-xs text-[#333333] hover:text-[#757575] hover:underline transition-colors"
+        >
+          See all
+        </button>
+      </div>
+
+      {/* Left arrow */}
+      {canScrollLeft && (
+        <button
+          onClick={() => scroll('left')}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-50"
+          style={{ marginTop: '12px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.25)' }}
+          aria-label="Scroll left"
+        >
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="m17 2-9.767 9.455A.77.77 0 0 0 7 12a.75.75 0 0 0 .233.545L17 22" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      )}
+
+      {/* Right arrow */}
+      {canScrollRight && (
+        <button
+          onClick={() => scroll('right')}
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-50"
+          style={{ marginTop: '12px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.25)' }}
+          aria-label="Scroll right"
+        >
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="m7 2 9.767 9.455A.77.77 0 0 1 17 12a.75.75 0 0 1-.233.545L7 22" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      )}
+
+      <div
+        ref={scrollRef}
+        onScroll={checkScroll}
+        className="flex gap-3 overflow-x-auto pb-2"
+        style={{
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          scrollSnapType: 'x mandatory',
+        }}
+      >
+        {categoryGroup.products.map((product) => (
+          <div
+            key={product.id}
+            className="flex-shrink-0"
+            style={{
+              width: '140px',
+              scrollSnapAlign: 'start',
+            }}
+          >
+            <CompassProductCard
+              product={product}
+              onSelect={(p) => onProductSelect?.(p.id)}
+              onAddToCart={handleAddToCart}
+              isSelected={selectedProductIds.includes(product.id)}
+              isInCart={isProductInCart(product.id)}
+            />
+          </div>
+        ))}
+      </div>
+      <style>{`
+        .overflow-x-auto::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+    </div>
+  );
 }
 
 export default function CompassMessage({
@@ -128,53 +259,7 @@ export default function CompassMessage({
         {/* Product grid by category (if present) */}
         {message.productsByCategory && message.productsByCategory.length > 0 && (
           <div className="mt-4 space-y-6">
-            {message.productsByCategory.map((categoryGroup, idx) => (
-              <div 
-                key={idx}
-                className="animate-fadeInUp"
-                style={{ 
-                  animationDelay: `${idx * 400}ms`,
-                  opacity: 0,
-                  animationFillMode: 'forwards'
-                }}
-              >
-                <h4 className="text-sm font-semibold text-[#333333] mb-3">
-                  {categoryGroup.category}
-                </h4>
-                <div 
-                  className="flex gap-3 overflow-x-auto pb-2 -mx-6 px-6"
-                  style={{
-                    scrollbarWidth: 'none',
-                    msOverflowStyle: 'none',
-                    scrollSnapType: 'x mandatory',
-                  }}
-                >
-                  {categoryGroup.products.map((product) => (
-                    <div 
-                      key={product.id}
-                      className="flex-shrink-0"
-                      style={{ 
-                        width: '140px',
-                        scrollSnapAlign: 'start',
-                      }}
-                    >
-                      <CompassProductCard
-                        product={product}
-                        onSelect={(p) => onProductSelect?.(p.id)}
-                        onAddToCart={handleAddToCart}
-                        isSelected={selectedProductIds.includes(product.id)}
-                        isInCart={isProductInCart(product.id)}
-                      />
-                    </div>
-                  ))}
-                </div>
-                <style>{`
-                  .overflow-x-auto::-webkit-scrollbar {
-                    display: none;
-                  }
-                `}</style>
-              </div>
-            ))}
+            {message.productsByCategory.map((categoryGroup, idx) => <CategoryScrollRow key={idx} categoryGroup={categoryGroup} idx={idx} onProductSelect={onProductSelect} handleAddToCart={handleAddToCart} selectedProductIds={selectedProductIds} isProductInCart={isProductInCart} />)}
           </div>
         )}
 
