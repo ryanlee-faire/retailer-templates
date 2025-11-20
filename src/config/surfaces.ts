@@ -8,6 +8,8 @@ export const surfaces: Surface[] = [
   { name: "New page", path: "/new-page" },
   { name: "PDP", path: "/pdp" },
   { name: "PDP v2", path: "/pdp-v2" },
+  { name: "PDP with drawer", path: "/pdp-with-drawer" },
+  { name: "PDP with drawer (left)", path: "/pdp-with-drawer-left" },
   { name: "Checkout", path: "/checkout" },
   { name: "Order confirmation", path: "/order-confirmation" },
 ];

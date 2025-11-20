@@ -5,6 +5,8 @@ import IndexPage from "./pages/IndexPage";
 import TemplatePage from "./pages/TemplatePage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import ProductDetailPageV2 from "./pages/ProductDetailPageV2";
+import ProductDetailPageWithDrawer from "./pages/ProductDetailPageWithDrawer";
+import ProductDetailPageWithDrawerLeft from "./pages/ProductDetailPageWithDrawerLeft";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import ComponentShowcasePage from "./pages/ComponentShowcasePage";
@@ -48,15 +50,22 @@ function AppContent() {
     return <>{children}</>;
   };
 
+  // Determine which Compass component to show based on route
+  const showCompassDrawer = location.pathname === '/pdp-with-drawer' || location.pathname === '/pdp-with-drawer-left';
+  const showCompassSidePanel = !showCompassDrawer;
+
+  // Don't apply margin transform for drawer routes since they're part of the grid
+  const shouldApplyMargin = showCompassSidePanel && compassState.isPanelOpen;
+
   return (
     <div className="App">
       <GridOverlay />
       <SurfacesMenuOverlay />
-      <CompassSidePanel />
+      {showCompassSidePanel && <CompassSidePanel />}
       <div
         className="compass-content-wrapper"
         style={{
-          marginRight: compassState.isPanelOpen ? '480px' : '0',
+          marginRight: shouldApplyMargin ? '480px' : '0',
           transition: 'margin-right 350ms cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       >
@@ -67,6 +76,8 @@ function AppContent() {
         <Route path="/new-page" element={<RouteWrapper><NewPage /></RouteWrapper>} />
         <Route path="/pdp" element={<RouteWrapper><ProductDetailPage /></RouteWrapper>} />
         <Route path="/pdp-v2" element={<RouteWrapper><ProductDetailPageV2 /></RouteWrapper>} />
+        <Route path="/pdp-with-drawer" element={<RouteWrapper><ProductDetailPageWithDrawer /></RouteWrapper>} />
+        <Route path="/pdp-with-drawer-left" element={<RouteWrapper><ProductDetailPageWithDrawerLeft /></RouteWrapper>} />
         <Route path="/checkout" element={<RouteWrapper><CheckoutPage /></RouteWrapper>} />
         <Route path="/order-confirmation" element={<RouteWrapper><OrderConfirmationPage /></RouteWrapper>} />
         <Route path="/components/global-nav" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
