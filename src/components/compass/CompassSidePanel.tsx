@@ -6,6 +6,11 @@ import CompassCartSummary from './CompassCartSummary';
 export default function CompassSidePanel() {
   const { state, closePanel } = useCompass();
 
+  // Prevent scroll propagation to body when scrolling the panel
+  const handleWheel = (e: React.WheelEvent) => {
+    e.stopPropagation();
+  };
+
   return (
     <>
       {/* Side Panel */}
@@ -17,7 +22,9 @@ export default function CompassSidePanel() {
           transform: state.isPanelOpen ? 'translateX(0)' : 'translateX(100%)',
           transition: 'transform 350ms cubic-bezier(0.4, 0, 0.2, 1)',
           pointerEvents: state.isPanelOpen ? 'auto' : 'none',
+          overscrollBehavior: 'contain',
         }}
+        onWheel={handleWheel}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4">
@@ -46,7 +53,10 @@ export default function CompassSidePanel() {
         </div>
 
         {/* Chat Content */}
-        <div className="flex-1 overflow-y-auto">
+        <div 
+          className="flex-1 overflow-y-auto"
+          style={{ overscrollBehavior: 'contain' }}
+        >
           <CompassChat />
         </div>
 
