@@ -22,30 +22,6 @@ export default function CompassSidePanel() {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-2">
-            {/* Compass icon */}
-            <svg
-              className="w-5 h-5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#333333"
-            >
-              <circle
-                cx="12"
-                cy="12"
-                r="10"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M16 8L12 12L8 16L12 12L16 8Z"
-                fill="#333333"
-                stroke="#333333"
-                strokeWidth="1"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
             <h2 className="text-lg font-semibold text-[#333333]">Compass</h2>
           </div>
           
