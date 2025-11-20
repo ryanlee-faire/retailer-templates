@@ -27,8 +27,8 @@ export default function CarouselHeader({
             style={{
               fontFamily: "Nantes, serif",
               fontWeight: 400,
-              fontSize: "28px",
-              lineHeight: "36px",
+              fontSize: "22px",
+              lineHeight: "28px",
               letterSpacing: "-0.3px",
             }}
           >

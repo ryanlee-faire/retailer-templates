@@ -12,6 +12,9 @@ interface BrandTileProps {
   isFavorited?: boolean;
   onClick?: () => void;
   className?: string;
+  productName?: string;
+  price?: number;
+  msrp?: number;
 }
 
 export default function BrandTile({
@@ -26,6 +29,9 @@ export default function BrandTile({
   isFavorited = false,
   onClick,
   className = "",
+  productName,
+  price,
+  msrp,
 }: BrandTileProps) {
   // Heart icon component
   const HeartIcon = ({ filled }: { filled: boolean }) => (
@@ -131,20 +137,30 @@ export default function BrandTile({
         </button>
       </div>
 
-      {/* Brand Avatar and Info - positioned below the image, with avatar overlapping */}
-      <div className="relative -mt-5 flex flex-col items-start px-2 z-10">
-        {brandAvatarUrl && (
-          <div className="outline outline-2 outline-white rounded-full overflow-hidden bg-white">
-            <img
-              src={brandAvatarUrl}
-              alt={`${brandName} avatar`}
-              className="w-10 h-10 rounded-full object-cover"
-            />
+      {/* Product Info */}
+      <div className="mt-3 flex flex-col items-start px-1">
+        {/* Price with MSRP */}
+        {price !== undefined && (
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-lg font-semibold text-[#333333]">${price.toFixed(2)}</span>
+            {msrp && msrp > price && (
+              <span className="text-sm text-[#757575]">MSRP ${msrp.toFixed(2)}</span>
+            )}
           </div>
         )}
-        {/* Spacer - 4px between avatar and brand name */}
-        <div style={{ height: "4px", width: "0px" }} />
-        <p className="text-sm font-medium text-[#333333] w-full truncate">{brandName}</p>
+        
+        {/* Product Name */}
+        {productName && (
+          <p className="text-sm font-medium text-[#333333] w-full mb-1" style={{ lineHeight: "1.4" }}>
+            {productName}
+          </p>
+        )}
+        
+        {/* Brand Name - as link */}
+        <a href="#" className="text-sm text-[#333333] underline hover:text-[#757575] transition-colors mb-1">
+          {brandName}
+        </a>
+        
         {/* Rating and Min Order */}
         <div className="flex items-center gap-2 text-sm text-[#333333]">
           {rating !== undefined && (
@@ -155,9 +171,10 @@ export default function BrandTile({
           )}
           {minOrder && <span>{minOrder}</span>}
         </div>
+        
         {/* Free Shipping - separate row */}
         {freeShipping && (
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 mt-1">
             <FreeShippingIcon />
             <span className="text-sm text-[#154548]">Free shipping</span>
           </div>
