@@ -22,6 +22,23 @@ export interface RefinementAction {
 }
 
 /**
+ * Get affected categories from refinement actions
+ * @param actions - Array of refinement actions
+ * @returns Array of affected category names
+ */
+export function getAffectedCategories(actions: RefinementAction[]): string[] {
+  const categories: string[] = [];
+  
+  for (const action of actions) {
+    if (action.category && !categories.includes(action.category)) {
+      categories.push(action.category);
+    }
+  }
+  
+  return categories;
+}
+
+/**
  * Matches conversational refinement patterns and extracts structured actions
  * @param input - User's refinement message
  * @returns Array of parsed refinement actions
@@ -98,6 +115,19 @@ export function parseRefinementRequest(input: string): RefinementAction[] {
       category,
       direction: 'more',
       rawIntent: 'show different options',
+    });
+  }
+
+  // Pattern 7: "other options for [category]" or "more [category] options"
+  const otherOptionsPattern =
+    /(?:other\s+options?\s+for|more\s+options?\s+for|see\s+other)\s+(snacks?|beverages?|drinks?|soaps?|bath\s*products?|amenities|stationery|candles?|decor?)/gi;
+  while ((match = otherOptionsPattern.exec(lowerInput)) !== null) {
+    const category = normalizeCategory(match[1]);
+    actions.push({
+      type: 'adjust_category_quantity',
+      category,
+      direction: 'more',
+      rawIntent: 'show other options',
     });
   }
 

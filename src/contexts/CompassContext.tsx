@@ -39,6 +39,8 @@ export interface Message {
   searchingCategories?: string[]; // Categories being searched during thinking
   categorySearchProgress?: { category: string; count?: number; isSearching: boolean }[]; // Progressive search status with counts
   totalProductsReviewed?: number; // Total number of products reviewed for compact summary
+  isCategorySpecific?: boolean; // Whether this is a single-category refinement
+  specificCategoryName?: string; // Name of the specific category for refinements
   timestamp: Date;
 }
 

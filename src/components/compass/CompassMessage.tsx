@@ -228,6 +228,8 @@ export default function CompassMessage({
     if (message.isThinkingComplete) {
       const categoryCount = message.categorySearchProgress?.length || 4;
       const productCount = message.totalProductsReviewed || 800;
+      const isSingleCategory = message.isCategorySpecific;
+      const categoryName = message.specificCategoryName;
       
       return (
         <div className="flex flex-col mb-4 px-6">
@@ -238,7 +240,10 @@ export default function CompassMessage({
               <path d="M22 4L12 14.01l-3-3" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <span className="text-[#333333]">
-              Reviewed across {categoryCount} categories and {productCount}+ products
+              {isSingleCategory && categoryName
+                ? `Reviewed ${productCount}+ products in the ${categoryName} category`
+                : `Reviewed across ${categoryCount} categories and ${productCount}+ products`
+              }
             </span>
           </div>
         </div>
@@ -259,7 +264,7 @@ export default function CompassMessage({
                   <button
                     key={index}
                     onClick={() => onChipClick?.(chip)}
-                    className="px-3 py-1.5 text-xs text-[#333333] bg-white border border-[#dfe0e1] rounded-full hover:bg-[#f5f5f5] hover:border-[#333333] transition-colors"
+                    className="px-3 py-1.5 text-xs text-[#333333] bg-[#f5f5f5] border border-[#dfe0e1] rounded-full hover:bg-white hover:border-[#333333] transition-colors"
                   >
                     {chip}
                   </button>

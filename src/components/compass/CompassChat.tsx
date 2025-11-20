@@ -5,7 +5,9 @@ import {
   parseRefinementRequest,
   generateConfirmationMessage,
   applyRefinementActions,
+  getAffectedCategories,
   FilterState,
+  RefinementAction,
 } from '../../utils/conversationPatternMatcher';
 import CompassMessage from './CompassMessage';
 import CompassInput from './CompassInput';
@@ -21,7 +23,12 @@ export default function CompassChat() {
     excludeTags: [],
   });
 
-  // Removed auto-scroll to avoid jarring experience when opening Compass
+  // Auto-scroll to bottom when messages update
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [state.messages]);
 
   // Auto-submit query when opened from search
   useEffect(() => {
@@ -56,25 +63,13 @@ export default function CompassChat() {
       // Parse refinement patterns
       const actions = parseRefinementRequest(userInput);
 
-      // If it's a refinement action, apply filters and show updated results
+      // If it's a refinement action, apply filters and show updated results with animation
       if (actions.length > 0 && actions[0].type !== 'unknown') {
         const newFilters = applyRefinementActions(actions, currentFilters);
         setCurrentFilters(newFilters);
 
-        // Generate confirmation message
-        const confirmation = generateConfirmationMessage(actions);
-
-        // Add confirmation message
-        addMessage({
-          role: 'assistant',
-          content: confirmation,
-        });
-
-        // Show updated results after confirmation
-        setTimeout(() => {
-          showFilteredResults(newFilters);
-        }, 800);
-
+        // Show faster, category-specific animation for refinements
+        showRefinementAnimation(actions, newFilters, userInput);
         return;
       }
     }
@@ -206,7 +201,98 @@ export default function CompassChat() {
     }, resultsMessageBaseTime + 800 + (3 * 600) + 800); // After all categories + buffer
   };
 
-  const showFilteredResults = (filters: FilterState) => {
+  const showRefinementAnimation = (actions: RefinementAction[], filters: FilterState, userInput: string) => {
+    // Determine affected categories
+    const affectedCategories = getAffectedCategories(actions);
+    const isGlobalFilter = actions.some(a => a.type === 'filter_attribute' || a.type === 'exclude_attribute');
+    
+    // Categories to animate (only affected ones for category-specific, all for global filters)
+    const categoriesToAnimate = affectedCategories.length > 0 && !isGlobalFilter
+      ? affectedCategories
+      : ['Snacks', 'Beverages', 'Bath Products'];
+    
+    // Simulated counts for refinements (smaller than initial search)
+    const getCategoryCount = (category: string) => {
+      const baseCounts: Record<string, number> = {
+        'Snacks': 280,
+        'Beverages': 180,
+        'Bath Products': 220,
+        'Accessories': 150,
+      };
+      return baseCounts[category] || 200;
+    };
+
+    // Show "Working..." state
+    const thinkingMessage = {
+      role: 'assistant' as const,
+      content: 'Working...',
+      isThinking: true,
+      thinkingStatus: '', // Start empty
+      categorySearchProgress: [],
+      showThinkingDots: false,
+    };
+    const addedMessage = addMessage(thinkingMessage);
+    const refinementMessageId = addedMessage.id;
+
+    // Show status text quickly (200ms instead of 400ms)
+    setTimeout(() => {
+      const statusText = categoriesToAnimate.length === 1
+        ? `Reviewing ${getCategoryCount(categoriesToAnimate[0])}+ products in the ${categoriesToAnimate[0]} category`
+        : `Reviewing products across ${categoriesToAnimate.length} categories`;
+      
+      updateMessage(refinementMessageId, {
+        thinkingStatus: statusText,
+      });
+    }, 200);
+
+    // Animate categories (faster - 400ms per category instead of 700ms)
+    categoriesToAnimate.forEach((category, index) => {
+      setTimeout(() => {
+        const progress = categoriesToAnimate.slice(0, index + 1).map((cat, i) => ({
+          category: cat,
+          count: i < index ? getCategoryCount(cat) : undefined,
+          isSearching: i === index,
+        }));
+
+        updateMessage(refinementMessageId, {
+          categorySearchProgress: progress,
+        });
+
+        // Show count after 300ms (faster than initial 400ms)
+        setTimeout(() => {
+          const progressWithCount = categoriesToAnimate.slice(0, index + 1).map((cat) => ({
+            category: cat,
+            count: getCategoryCount(cat),
+            isSearching: false,
+          }));
+
+          updateMessage(refinementMessageId, {
+            categorySearchProgress: progressWithCount,
+          });
+        }, 300);
+      }, 300 + index * 400);
+    });
+
+    // Collapse to summary (faster timing)
+    const animationTime = 300 + categoriesToAnimate.length * 400 + 600;
+    setTimeout(() => {
+      const totalProducts = categoriesToAnimate.reduce((sum, cat) => sum + getCategoryCount(cat), 0);
+      updateMessage(refinementMessageId, {
+        isThinking: false,
+        isThinkingComplete: true,
+        totalProductsReviewed: totalProducts,
+        isCategorySpecific: categoriesToAnimate.length === 1,
+        specificCategoryName: categoriesToAnimate.length === 1 ? categoriesToAnimate[0] : undefined,
+      });
+    }, animationTime);
+
+    // Show results after summary (400ms pause instead of 600ms)
+    setTimeout(() => {
+      showFilteredResults(filters, actions, categoriesToAnimate);
+    }, animationTime + 400);
+  };
+
+  const showFilteredResults = (filters: FilterState, actions?: RefinementAction[], categoriesToShow?: string[]) => {
     // Get filtered products by category
     const snacks = filterProducts(compassProducts, {
       categories: ['snack'],
@@ -229,16 +315,85 @@ export default function CompassChat() {
       .filter((p) => !filters.excludeTags.some((tag) => p.tags.includes(tag)))
       .slice(0, filters.categories['Bath Products'] || 6);
 
-    const results = [];
-    if (snacks.length > 0) results.push({ category: 'Food Items', products: snacks });
-    if (beverages.length > 0) results.push({ category: 'Beverages', products: beverages });
-    if (soaps.length > 0) results.push({ category: 'Bath Products', products: soaps });
+    // Build results based on what categories to show
+    const allCategoryResults = [
+      { category: 'Food Items', products: snacks, key: 'Snacks' },
+      { category: 'Beverages', products: beverages, key: 'Beverages' },
+      { category: 'Bath Products', products: soaps, key: 'Bath Products' },
+    ];
 
-    addMessage({
+    const results = categoriesToShow
+      ? allCategoryResults.filter(r => categoriesToShow.includes(r.key) && r.products.length > 0)
+      : allCategoryResults.filter(r => r.products.length > 0);
+
+    // Generate context-aware intro message
+    let introMessage = 'Here are your updated results.';
+    if (actions && actions.length > 0) {
+      const firstAction = actions[0];
+      if (firstAction.type === 'adjust_category_quantity' && firstAction.category) {
+        if (firstAction.direction === 'more') {
+          introMessage = `I've found some additional ${firstAction.category.toLowerCase()} options for you.`;
+        }
+      } else if (firstAction.type === 'exclude_attribute') {
+        introMessage = `Here are options without ${firstAction.attribute}.`;
+      } else if (firstAction.type === 'filter_attribute') {
+        introMessage = `Here are ${firstAction.attribute} options.`;
+      } else if (categoriesToShow && categoriesToShow.length === 1) {
+        introMessage = `I've found some additional ${categoriesToShow[0].toLowerCase()} options for you.`;
+      }
+    }
+
+    // Create message with empty products first for progressive reveal
+    const resultsMessage = addMessage({
       role: 'assistant',
-      content: `Here are your updated results.`,
-      productsByCategory: results,
+      content: introMessage,
+      productsByCategory: [],
     });
+
+    // Progressively reveal each category (300ms between each for faster feel)
+    results.forEach((categoryData, index) => {
+      setTimeout(() => {
+        updateMessage(resultsMessage.id, {
+          productsByCategory: results.slice(0, index + 1).map(r => ({ category: r.category, products: r.products })),
+        });
+      }, 400 + index * 300);
+    });
+
+    // Add context-aware follow-up message and chips
+    setTimeout(() => {
+      let followUpMessage = "These are some of my recommendations but I'm happy to refine. Just let me know what you are looking for.";
+      let followUpChips = ['Show more snacks', 'Show local brands only', 'More options'];
+
+      // Customize based on context
+      if (categoriesToShow && categoriesToShow.length === 1) {
+        const categoryName = categoriesToShow[0].toLowerCase();
+        followUpMessage = `What do you think about these ${categoryName.includes('food') ? 'snacks' : categoryName.replace(' products', '')} options?`;
+        
+        // Generate relevant chips for the category
+        if (categoryName.includes('snack') || categoryName.includes('food')) {
+          followUpChips = ['Show beverages', 'Show bath products', 'Back to all categories'];
+        } else if (categoryName.includes('beverage')) {
+          followUpChips = ['Show snacks', 'Show bath products', 'Back to all categories'];
+        } else if (categoryName.includes('bath')) {
+          followUpChips = ['Show snacks', 'Show beverages', 'Back to all categories'];
+        }
+      } else if (actions && actions.length > 0) {
+        const firstAction = actions[0];
+        if (firstAction.type === 'exclude_attribute') {
+          followUpMessage = `What do you think about these options? I've excluded ${firstAction.attribute}.`;
+          followUpChips = ['Show more options', 'Remove filter', 'Back to all'];
+        } else if (firstAction.type === 'filter_attribute') {
+          followUpMessage = `What do you think about these ${firstAction.attribute} options?`;
+          followUpChips = ['Show more', 'Remove filter', 'Back to all'];
+        }
+      }
+
+      addMessage({
+        role: 'assistant',
+        content: followUpMessage,
+        chips: followUpChips,
+      });
+    }, 400 + results.length * 300 + 1000);
   };
 
   const handleProductSelect = (productId: string) => {
