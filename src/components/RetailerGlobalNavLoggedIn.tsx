@@ -207,9 +207,16 @@ export default function RetailerGlobalNavLoggedIn({
   const location = useLocation();
   const [searchValue, setSearchValue] = useState("");
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
-  const { togglePanel } = useCompass();
+  const { togglePanel, openPanel } = useCompass();
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const searchDropdownRef = useRef<SearchDropdownHandle>(null);
+
+  // Dev shortcut: Click bell to open Compass with preset query
+  const handleNotificationClick = () => {
+    if (isCompassEnabled) {
+      openPanel('search', 'New York City hotel room gifts for guests');
+    }
+  };
 
   // Only enable Compass on /template route (Compass prototype)
   const isCompassEnabled = location.pathname === '/template';
@@ -324,6 +331,7 @@ export default function RetailerGlobalNavLoggedIn({
               className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
               aria-label="Notifications"
               type="button"
+              onClick={handleNotificationClick}
             >
               <div className="flex items-center justify-center w-10 h-10 relative">
                 <NotificationIcon className="w-5 h-5" />
@@ -435,6 +443,7 @@ export default function RetailerGlobalNavLoggedIn({
             style={isCompassEnabled ? { right: '48px' } : { right: '12px' }}
             aria-label="Notifications"
             type="button"
+            onClick={handleNotificationClick}
           >
             <div className="flex items-center justify-center w-10 h-10 relative">
               <NotificationIcon className="w-5 h-5" />
@@ -593,6 +602,7 @@ export default function RetailerGlobalNavLoggedIn({
             className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
             aria-label="Notifications"
             type="button"
+            onClick={handleNotificationClick}
           >
             <div className="flex items-center justify-center w-10 h-10 relative">
               <NotificationIcon className="w-5 h-5" />

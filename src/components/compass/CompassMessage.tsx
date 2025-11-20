@@ -2,7 +2,6 @@ import React from 'react';
 import { Message, CompassProduct } from '../../contexts/CompassContext';
 import { useCompass } from '../../contexts/CompassContext';
 import CompassProductCard from './CompassProductCard';
-import CompassCategoryParsing from './CompassCategoryParsing';
 
 interface CompassMessageProps {
   message: Message;
@@ -40,6 +39,27 @@ export default function CompassMessage({
   }
 
   if (isAssistant) {
+    // Thinking complete - compact summary
+    if (message.isThinkingComplete) {
+      const categoryCount = message.categorySearchProgress?.length || 4;
+      const productCount = message.totalProductsReviewed || 800;
+      
+      return (
+        <div className="flex flex-col mb-4 px-6">
+          {/* Compact summary pill */}
+          <div className="inline-flex items-center gap-2 bg-[#f5f5f5] text-[#757575] px-4 py-2 rounded-full text-xs border border-[#dfe0e1]">
+            <svg className="w-3.5 h-3.5 text-[#757575]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M22 4L12 14.01l-3-3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span className="font-medium text-[#333333]">
+              Reviewed across {categoryCount} categories and {productCount}+ products
+            </span>
+          </div>
+        </div>
+      );
+    }
+
     // Thinking state - special rendering
     if (message.isThinking) {
       return (
@@ -89,10 +109,12 @@ export default function CompassMessage({
 
     return (
       <div className="flex flex-col mb-6 px-6">
-        {/* Assistant message bubble */}
-        <div className="max-w-[85%] bg-[#f5f5f5] text-[#333333] px-4 py-3 rounded-2xl rounded-tl-sm">
-          <p className="text-sm whitespace-pre-line">{message.content}</p>
-        </div>
+        {/* Assistant message bubble (only show if there's content) */}
+        {message.content && (
+          <div className="max-w-[85%] bg-[#f5f5f5] text-[#333333] px-4 py-3 rounded-2xl rounded-tl-sm">
+            <p className="text-sm whitespace-pre-line">{message.content}</p>
+          </div>
+        )}
 
         {/* System interpretation (if present) */}
         {message.interpretation && (
@@ -100,13 +122,6 @@ export default function CompassMessage({
             <p className="text-xs text-[#757575] italic">
               {message.interpretation}
             </p>
-          </div>
-        )}
-
-        {/* Category parsing (if present) */}
-        {message.categories && message.categories.length > 0 && (
-          <div className="mt-4 px-4">
-            <CompassCategoryParsing categories={message.categories} />
           </div>
         )}
 

@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useCompass } from '../../contexts/CompassContext';
 import { compassProducts, filterProducts } from '../../data/compassProducts';
-import { extractCategories } from '../../utils/searchIntentDetection';
 import {
   parseRefinementRequest,
   generateConfirmationMessage,
@@ -135,10 +134,17 @@ export default function CompassChat() {
       }, index * 700);
     });
 
-    // After all categories are searched, show results
+    // After all categories are searched, collapse the thinking message and show results
     setTimeout(() => {
-      // Initial search flow: Extract categories and show results
-      const detectedCategories = extractCategories(userInput);
+      // Mark thinking message as complete with compact summary
+      if (thinkingMessageIdRef.current) {
+        const totalProducts = counts.reduce((sum, count) => sum + count, 0);
+        updateMessage(thinkingMessageIdRef.current, {
+          isThinking: false,
+          isThinkingComplete: true,
+          totalProductsReviewed: totalProducts,
+        });
+      }
 
       // Get products by category using current filters
       const snacks = filterProducts(compassProducts, {
@@ -158,8 +164,7 @@ export default function CompassChat() {
 
       addMessage({
         role: 'assistant',
-        content: `It looks like you're searching for "${userInput}"\n\nBased on that, I've interpreted this as you're looking for hospitality + premium + NYC-specific + guest amenities. I've organized the results by category below.`,
-        categories: detectedCategories.length > 0 ? detectedCategories : ['Snacks', 'Beverages', 'Bath Products'],
+        content: `Based on your search, I've found a handful of items that might be a great fit. Feel free to take a look or refine your search by telling me more about what you had in mind.`,
         productsByCategory: [
           { category: 'Food Items', products: snacks },
           { category: 'Beverages', products: beverages },
@@ -168,11 +173,11 @@ export default function CompassChat() {
       });
     }, categories.length * 700 + 800); // Wait for all animations (700ms per category + 400ms for last count + buffer)
 
-    // Add follow-up message after products have been revealed
+    // Add follow-up chips after products have been revealed
     setTimeout(() => {
       addMessage({
         role: 'assistant',
-        content: "What do you think? Add items to your cart or let me know what you want me to adjust in my search criteria.",
+        content: "",
         chips: ['Show more snacks', 'No plastic', 'Local brands only'],
       });
     }, categories.length * 700 + 3300); // Wait for animations + products to appear
