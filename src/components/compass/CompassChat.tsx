@@ -16,7 +16,7 @@ export default function CompassChat() {
   const thinkingMessageIdRef = useRef<string | null>(null);
   const [isThinking, setIsThinking] = useState(false);
   const [currentFilters, setCurrentFilters] = useState<FilterState>({
-    categories: { Snacks: 3, Beverages: 3, 'Bath Products': 3 },
+    categories: { Snacks: 6, Beverages: 6, 'Bath Products': 6 },
     includeTags: ['nyc-local', 'premium'],
     excludeTags: [],
   });
@@ -150,17 +150,17 @@ export default function CompassChat() {
       const snacks = filterProducts(compassProducts, {
         categories: ['snack'],
         tags: currentFilters.includeTags,
-      }).slice(0, currentFilters.categories['Snacks'] || 3);
+      }).slice(0, currentFilters.categories['Snacks'] || 6);
 
       const beverages = filterProducts(compassProducts, {
         categories: ['beverage'],
         tags: currentFilters.includeTags,
-      }).slice(0, currentFilters.categories['Beverages'] || 3);
+      }).slice(0, currentFilters.categories['Beverages'] || 6);
 
       const soaps = filterProducts(compassProducts, {
         categories: ['soap'],
         tags: currentFilters.includeTags,
-      }).slice(0, currentFilters.categories['Bath Products'] || 3);
+      }).slice(0, currentFilters.categories['Bath Products'] || 6);
 
       addMessage({
         role: 'assistant',
@@ -190,21 +190,21 @@ export default function CompassChat() {
       tags: filters.includeTags,
     })
       .filter((p) => !filters.excludeTags.some((tag) => p.tags.includes(tag)))
-      .slice(0, filters.categories['Snacks'] || 3);
+      .slice(0, filters.categories['Snacks'] || 6);
 
     const beverages = filterProducts(compassProducts, {
       categories: ['beverage'],
       tags: filters.includeTags,
     })
       .filter((p) => !filters.excludeTags.some((tag) => p.tags.includes(tag)))
-      .slice(0, filters.categories['Beverages'] || 3);
+      .slice(0, filters.categories['Beverages'] || 6);
 
     const soaps = filterProducts(compassProducts, {
       categories: ['soap'],
       tags: filters.includeTags,
     })
       .filter((p) => !filters.excludeTags.some((tag) => p.tags.includes(tag)))
-      .slice(0, filters.categories['Bath Products'] || 3);
+      .slice(0, filters.categories['Bath Products'] || 6);
 
     const results = [];
     if (snacks.length > 0) results.push({ category: 'Food Items', products: snacks });

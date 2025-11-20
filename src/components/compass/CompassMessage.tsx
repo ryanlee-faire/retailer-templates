@@ -138,21 +138,41 @@ export default function CompassMessage({
                   animationFillMode: 'forwards'
                 }}
               >
-                <h4 className="text-sm font-semibold text-[#333333] mb-3 px-1">
+                <h4 className="text-sm font-semibold text-[#333333] mb-3">
                   {categoryGroup.category}
                 </h4>
-                <div className="grid grid-cols-2 gap-3">
+                <div 
+                  className="flex gap-3 overflow-x-auto pb-2 -mx-6 px-6"
+                  style={{
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none',
+                    scrollSnapType: 'x mandatory',
+                  }}
+                >
                   {categoryGroup.products.map((product) => (
-                    <CompassProductCard
+                    <div 
                       key={product.id}
-                      product={product}
-                      onSelect={(p) => onProductSelect?.(p.id)}
-                      onAddToCart={handleAddToCart}
-                      isSelected={selectedProductIds.includes(product.id)}
-                      isInCart={isProductInCart(product.id)}
-                    />
+                      className="flex-shrink-0"
+                      style={{ 
+                        width: '140px',
+                        scrollSnapAlign: 'start',
+                      }}
+                    >
+                      <CompassProductCard
+                        product={product}
+                        onSelect={(p) => onProductSelect?.(p.id)}
+                        onAddToCart={handleAddToCart}
+                        isSelected={selectedProductIds.includes(product.id)}
+                        isInCart={isProductInCart(product.id)}
+                      />
+                    </div>
                   ))}
                 </div>
+                <style>{`
+                  .overflow-x-auto::-webkit-scrollbar {
+                    display: none;
+                  }
+                `}</style>
               </div>
             ))}
           </div>
