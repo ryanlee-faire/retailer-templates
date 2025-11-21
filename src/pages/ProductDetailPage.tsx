@@ -8,6 +8,14 @@ export default function ProductDetailPage() {
   const [selectedColor, setSelectedColor] = useState("White");
   const [quantity, setQuantity] = useState(1);
   const [buttonLayoutVariant, setButtonLayoutVariant] = useState(false);
+  const [pageProduct, setPageProduct] = useState(state.currentProduct);
+
+  // Save the product to page state when component mounts or currentProduct changes
+  useEffect(() => {
+    if (state.currentProduct) {
+      setPageProduct(state.currentProduct);
+    }
+  }, [state.currentProduct]);
 
   // Keyboard shortcut: Shift + B to toggle button layout
   useEffect(() => {
@@ -22,8 +30,8 @@ export default function ProductDetailPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Use product from Compass if available, otherwise fallback to default
-  const compassProduct = state.currentProduct;
+  // Use page's copy of product (persists even if Compass context is cleared)
+  const compassProduct = pageProduct;
   
   const product = compassProduct ? {
     name: compassProduct.name,

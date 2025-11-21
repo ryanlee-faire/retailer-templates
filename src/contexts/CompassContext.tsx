@@ -86,7 +86,7 @@ interface CompassContextType {
   getCartTotal: () => number;
   getCartItemsByBrand: () => Record<string, CartItem[]>;
   // Product viewing
-  setCurrentProduct: (product: CompassProduct) => void;
+  setCurrentProduct: (product: CompassProduct | undefined) => void;
 }
 
 const CompassContext = createContext<CompassContextType | undefined>(undefined);
@@ -143,6 +143,7 @@ export function CompassProvider({ children }: { children: ReactNode }) {
       messages: [],
       activeConstraints: {},
       selectedProducts: [],
+      currentProduct: undefined, // Clear product context when starting new conversation
     }));
   };
 
@@ -239,7 +240,7 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     }, {} as Record<string, CartItem[]>);
   };
 
-  const setCurrentProduct = (product: CompassProduct) => {
+  const setCurrentProduct = (product: CompassProduct | undefined) => {
     setState(prev => ({
       ...prev,
       currentProduct: product,

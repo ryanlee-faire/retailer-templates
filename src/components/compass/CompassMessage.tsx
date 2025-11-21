@@ -131,13 +131,6 @@ function CategoryScrollRow({
             </div>
           ))}
         </div>
-        {/* Gradient fade on right edge */}
-        <div 
-          className="absolute top-0 right-0 bottom-0 w-16 pointer-events-none"
-          style={{
-            background: 'linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 1) 100%)',
-          }}
-        />
       </div>
       <style>{`
         .overflow-x-auto::-webkit-scrollbar {

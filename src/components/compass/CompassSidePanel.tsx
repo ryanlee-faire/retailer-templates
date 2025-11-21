@@ -80,26 +80,49 @@ export default function CompassSidePanel() {
         onClick={() => setIsPanelFocused(true)}
       >
         {/* Header */}
-        <div className="flex flex-col border-b border-[#dfe0e1]">
+        <div className="flex flex-col">
           <div className="flex items-center justify-between px-6 py-4">
-            <h2 className="text-lg font-semibold text-[#333333] leading-none">Compass</h2>
+            <h2 className="text-lg font-semibold text-[#333333]" style={{ lineHeight: '1' }}>Compass</h2>
             
-            <div className="flex items-center gap-1 leading-none">
-              {/* Conversation title dropdown */}
+            <div className="flex items-center" style={{ gap: '2px' }}>
+              {/* New conversation button (first) */}
+              <button
+                onClick={clearMessages}
+                className="flex items-center justify-center w-10 h-10 rounded hover:bg-gray-100 transition-colors"
+                aria-label="New conversation"
+              >
+                <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#333333"
+                  strokeWidth="1.25"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <path d="M12 8v8M8 12h8" />
+                </svg>
+              </button>
+              
+              {/* History icon dropdown (second) */}
               <div className="relative">
                 <button
                   onClick={() => setShowHistoryDropdown(!showHistoryDropdown)}
-                  className="flex items-center gap-1 text-xs text-[#757575] hover:text-[#333333] transition-colors leading-none px-2 py-1.5 rounded hover:bg-gray-100"
+                  className="flex items-center justify-center w-10 h-10 rounded hover:bg-gray-100 transition-colors"
+                  aria-label="Conversation history"
                 >
-                  <span className="truncate leading-none">{conversationTitle}</span>
                   <svg
-                    className={`w-3 h-3 text-[#757575] flex-shrink-0 transition-transform ${showHistoryDropdown ? 'rotate-180' : ''}`}
+                    className="w-5 h-5"
                     viewBox="0 0 24 24"
                     fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
+                    stroke="#333333"
+                    strokeWidth="1.25"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   >
-                    <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 6v6l4 2" />
                   </svg>
                 </button>
 
@@ -122,30 +145,10 @@ export default function CompassSidePanel() {
                 )}
               </div>
               
-              {/* New conversation button */}
-              <button
-                onClick={clearMessages}
-                className="flex items-center justify-center w-8 h-8 rounded hover:bg-gray-100 transition-colors"
-                aria-label="New conversation"
-              >
-                <svg
-                  className="w-5 h-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#333333"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                  <path d="M12 8v8M8 12h8" />
-                </svg>
-              </button>
-              
-              {/* Close button */}
+              {/* Close button (third) */}
               <button
                 onClick={closePanel}
-                className="flex items-center justify-center w-8 h-8 rounded hover:bg-gray-100 transition-colors"
+                className="flex items-center justify-center w-10 h-10 rounded hover:bg-gray-100 transition-colors"
                 aria-label="Close Compass"
               >
                 <svg
@@ -153,7 +156,7 @@ export default function CompassSidePanel() {
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="#333333"
-                  strokeWidth="2"
+                  strokeWidth="1.25"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >

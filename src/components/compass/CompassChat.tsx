@@ -56,6 +56,17 @@ export default function CompassChat() {
   };
 
   const handleAssistantResponse = (userInput: string) => {
+    // Check if user is asking about a specific product (context is set)
+    if (state.currentProduct) {
+      // Generic product-specific response (visual prototype only)
+      addMessage({
+        role: 'assistant',
+        content: `Based on this product, it appears to be made with premium ingredients and is sourced from local NYC suppliers. The brand has a strong reputation for quality. Let me know if you need more specific details about ingredients, shipping, or anything else!`,
+        chips: ['Tell me about ingredients', 'Shipping information', 'Similar products'],
+      });
+      return;
+    }
+
     // Check if this is a refinement request (conversation already started)
     const isRefinementRequest = state.messages.length > 0;
 
