@@ -15,6 +15,8 @@ export const components: Component[] = [
   { name: "Basic container", path: "/components/basic-container", description: "Standard container with border and padding" },
   { name: "Cart tile", path: "/components/cart-tile", description: "Tile displaying brand info, product images, and item count" },
   { name: "Post-order summary-01", path: "/components/post-order-summary-01", description: "Order summary card with brand, shipping, payment, and savings info" },
+  { name: "Product tile", path: "/components/product-tile", description: "Product display tile with image, price, brand info, and quick add button" },
+  { name: "Pill button", path: "/components/pill-button", description: "Filter/toggle button styled as a pill with pressed state" },
 ];
 
 export const getTitleForComponentPath = (pathname: string): string => {

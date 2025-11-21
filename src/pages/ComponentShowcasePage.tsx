@@ -6,7 +6,7 @@ import { getTitleForComponentPath } from "../config/components";
 // Import components
 import RetailerGlobalNavLoggedIn from "../components/RetailerGlobalNavLoggedIn";
 import Footer from "../components/Footer";
-import { BrandInfo, BrandCartCard, BasicContainer, BrandTile, Carousel, CarouselHeader, CartTile, PostOrderSummary } from "../components/shared";
+import { BrandInfo, BrandCartCard, BasicContainer, BrandTile, Carousel, CarouselHeader, CartTile, PostOrderSummary, ProductTile, PillButton } from "../components/shared";
 
 // Carousel header example with navigation buttons
 function CarouselHeaderExample() {
@@ -301,6 +301,9 @@ export default function ComponentShowcasePage() {
     document.title = title;
   }, [componentPath]);
 
+  // State for pill button toggle example
+  const [pressedFilter, setPressedFilter] = useState<string | null>(null);
+
   const renderComponent = () => {
     switch (componentPath) {
       case "/components/global-nav":
@@ -568,6 +571,179 @@ export default function ComponentShowcasePage() {
                   savings="$465.00"
                   savingsType="Insider & deals"
                 />
+              </div>
+            </div>
+          </div>
+        );
+
+      case "/components/product-tile":
+        return (
+          <div className="flex flex-col gap-8">
+            <div>
+              <h3 className="text-xl font-semibold text-[#333333] mb-4">Default</h3>
+              <div style={{ maxWidth: "300px" }}>
+                <ProductTile
+                  id="1"
+                  name="Brass Dice"
+                  brandName="NOAH MARION"
+                  imageUrl="https://cdn.faire.com/fastly/29a653dcf44f45f47bf8d8e52a358ac91deeb5a3e4a71de77542f3fd6002d0e6.png?bg-color=FFFFFF&dpr=1&fit=crop&format=jpg&height=720&precrop=839,838,x29,y0,safe&width=720"
+                  price="$16.80"
+                  msrp="$28"
+                  minOrder="$150 min"
+                  freeShipping={true}
+                  isTopShop={true}
+                />
+              </div>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold text-[#333333] mb-4">With zoom button</h3>
+              <div style={{ maxWidth: "300px" }}>
+                <ProductTile
+                  id="2"
+                  name="Cubic Table Lamp"
+                  brandName="Misewell"
+                  imageUrl="/images/products/product-image-01.webp"
+                  price="$159.50"
+                  msrp="$319.00"
+                  minOrder="$100 min"
+                  freeShipping={false}
+                  isTopShop={true}
+                  zoomButton={true}
+                />
+              </div>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold text-[#333333] mb-4">Without Top Shop badge</h3>
+              <div style={{ maxWidth: "300px" }}>
+                <ProductTile
+                  id="3"
+                  name="Pink Peppercorn"
+                  brandName="Casa Bosques"
+                  imageUrl="/images/products/product-image-03.webp"
+                  price="$8.50"
+                  msrp="$14"
+                  minOrder="$85 min"
+                  freeShipping={true}
+                  isTopShop={false}
+                />
+              </div>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold text-[#333333] mb-4">Grid example</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 1440:grid-cols-6 gap-4">
+                <ProductTile
+                  id="4"
+                  name="Product One"
+                  brandName="Brand Name"
+                  imageUrl="/images/products/product-image-01.webp"
+                  price="$10"
+                  msrp="$20"
+                  minOrder="$150 min"
+                  freeShipping={true}
+                  isTopShop={true}
+                />
+                <ProductTile
+                  id="5"
+                  name="Product Two"
+                  brandName="Brand Name"
+                  imageUrl="/images/products/product-image-02.webp"
+                  price="$15"
+                  msrp="$30"
+                  minOrder="$150 min"
+                  freeShipping={false}
+                  isTopShop={false}
+                />
+                <ProductTile
+                  id="6"
+                  name="Product Three"
+                  brandName="Brand Name"
+                  imageUrl="/images/products/product-image-03.webp"
+                  price="$20"
+                  minOrder="$150 min"
+                  freeShipping={true}
+                  isTopShop={true}
+                />
+                <ProductTile
+                  id="7"
+                  name="Product Four"
+                  brandName="Brand Name"
+                  imageUrl="/images/products/product-image-04.webp"
+                  price="$25"
+                  msrp="$50"
+                  minOrder="$150 min"
+                  freeShipping={true}
+                  isTopShop={false}
+                />
+                <ProductTile
+                  id="8"
+                  name="Product Five"
+                  brandName="Brand Name"
+                  imageUrl="/images/products/product-image-05.webp"
+                  price="$30"
+                  msrp="$60"
+                  minOrder="$150 min"
+                  freeShipping={false}
+                  isTopShop={true}
+                />
+                <ProductTile
+                  id="9"
+                  name="Product Six"
+                  brandName="Brand Name"
+                  imageUrl="/images/products/product-image-06.webp"
+                  price="$35"
+                  msrp="$70"
+                  minOrder="$150 min"
+                  freeShipping={true}
+                  isTopShop={false}
+                />
+              </div>
+            </div>
+          </div>
+        );
+
+      case "/components/pill-button":
+        return (
+          <div className="space-y-8">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Default State</h2>
+              <div className="flex flex-wrap gap-2">
+                <PillButton>Chocolate bars</PillButton>
+                <PillButton>Spreads & nut butters</PillButton>
+                <PillButton>Snacks</PillButton>
+                <PillButton>Beverages</PillButton>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">With Toggle State</h2>
+              <div className="flex flex-wrap gap-2">
+                <PillButton
+                  isPressed={pressedFilter === "chocolate"}
+                  onClick={() => setPressedFilter(pressedFilter === "chocolate" ? null : "chocolate")}
+                >
+                  Chocolate bars
+                </PillButton>
+                <PillButton
+                  isPressed={pressedFilter === "spreads"}
+                  onClick={() => setPressedFilter(pressedFilter === "spreads" ? null : "spreads")}
+                >
+                  Spreads & nut butters
+                </PillButton>
+                <PillButton
+                  isPressed={pressedFilter === "snacks"}
+                  onClick={() => setPressedFilter(pressedFilter === "snacks" ? null : "snacks")}
+                >
+                  Snacks
+                </PillButton>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Multiple Pressed</h2>
+              <div className="flex flex-wrap gap-2">
+                <PillButton isPressed={true}>Active filter</PillButton>
+                <PillButton isPressed={true}>Another active</PillButton>
+                <PillButton>Inactive filter</PillButton>
               </div>
             </div>
           </div>

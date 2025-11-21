@@ -116,6 +116,20 @@ export default function IndexPage() {
                     AI-powered product discovery that helps retailers find multiple product types in one search
                   </p>
                 </li>
+                <li>
+                  <div className="flex items-center gap-2">
+                    <Link
+                      to="/compass-full-surface"
+                      className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
+                    >
+                      🧭 Compass Full Surface
+                    </Link>
+                    <span className="text-xs bg-[#333333] text-white px-2 py-0.5 rounded">Ryan</span>
+                  </div>
+                  <p className="text-sm text-[#757575] mt-1">
+                    Full surface page for Compass interface
+                  </p>
+                </li>
               </ul>
             )}
           </div>

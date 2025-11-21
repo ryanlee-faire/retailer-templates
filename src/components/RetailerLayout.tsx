@@ -8,6 +8,8 @@ interface RetailerLayoutProps {
   cartCount?: number;
   focusedNav?: boolean;
   hideFooter?: boolean;
+  hideSearch?: boolean; // New prop for variant without search bar
+  navSearchBar?: React.ReactNode; // Search bar to show in nav
 }
 
 /**
@@ -21,6 +23,8 @@ export default function RetailerLayout({
   cartCount = 0,
   focusedNav = false,
   hideFooter = false,
+  hideSearch = false,
+  navSearchBar = null,
 }: RetailerLayoutProps) {
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -28,6 +32,8 @@ export default function RetailerLayout({
         languageSelector={languageSelector} 
         cartCount={cartCount}
         focused={focusedNav}
+        hideSearch={hideSearch}
+        navSearchBar={navSearchBar}
       />
       <main className="flex-1" style={{ paddingBottom: hideFooter ? 0 : "200px" }}>
         {children}

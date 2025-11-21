@@ -11,6 +11,8 @@ import CheckoutPage from "./pages/CheckoutPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import ComponentShowcasePage from "./pages/ComponentShowcasePage";
 import NewPage from "./pages/NewPage";
+import BrandPage from "./pages/BrandPage";
+import CompassFullSurfacePage from "./pages/CompassFullSurfacePage";
 import ProductsPage from "./pages/faire/ProductsPage";
 import BulkEditorPage from "./pages/faire/BulkEditorPage";
 import GridOverlay from "./components/GridOverlay";
@@ -74,6 +76,8 @@ function AppContent() {
         <Route path="/" element={<RouteWrapper><IndexPage /></RouteWrapper>} />
         <Route path="/template" element={<RouteWrapper><TemplatePage /></RouteWrapper>} />
         <Route path="/new-page" element={<RouteWrapper><NewPage /></RouteWrapper>} />
+        <Route path="/brand" element={<RouteWrapper><BrandPage /></RouteWrapper>} />
+        <Route path="/compass-full-surface" element={<RouteWrapper><CompassFullSurfacePage /></RouteWrapper>} />
         <Route path="/pdp" element={<RouteWrapper><ProductDetailPage /></RouteWrapper>} />
         <Route path="/pdp-v2" element={<RouteWrapper><ProductDetailPageV2 /></RouteWrapper>} />
         <Route path="/pdp-with-drawer" element={<RouteWrapper><ProductDetailPageWithDrawer /></RouteWrapper>} />
@@ -90,6 +94,8 @@ function AppContent() {
         <Route path="/components/basic-container" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
         <Route path="/components/cart-tile" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
         <Route path="/components/post-order-summary-01" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
+        <Route path="/components/product-tile" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
+        <Route path="/components/pill-button" element={<RouteWrapper><ComponentShowcasePage /></RouteWrapper>} />
         {/* Faire Product Management Routes */}
         <Route path="/faire/products" element={<RouteWrapper><ProductsPage /></RouteWrapper>} />
         <Route path="/faire/bulk-editor" element={<RouteWrapper><BulkEditorPage /></RouteWrapper>} />

@@ -192,6 +192,8 @@ type RetailerGlobalNavLoggedInProps = {
   cartCount?: number;
   focused?: boolean;
   focused2?: boolean;
+  hideSearch?: boolean; // New prop for variant without search bar
+  navSearchBar?: React.ReactNode; // Search bar to show in nav
 };
 
 export default function RetailerGlobalNavLoggedIn({
@@ -200,6 +202,8 @@ export default function RetailerGlobalNavLoggedIn({
   cartCount = 0,
   focused = false,
   focused2 = false,
+  hideSearch = false,
+  navSearchBar = null,
 }: RetailerGlobalNavLoggedInProps) {
   const detectedDevice = useViewport();
   const currentDevice = device || detectedDevice;
@@ -481,7 +485,7 @@ export default function RetailerGlobalNavLoggedIn({
 
   // Desktop layout
   return (
-    <header className="relative z-[301] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
+    <header className="sticky top-0 z-[301] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
       {/* Top Nav */}
       <div className="m-auto w-full lg:px-12 lg:pt-4 flex items-center justify-center px-4 py-4" style={{ maxWidth: "1920px", width: "100%" }}>
         <button
@@ -511,33 +515,54 @@ export default function RetailerGlobalNavLoggedIn({
             <ChevronDownIcon className="w-3 h-2" />
           </button>
         </div>
-        <div className="hidden lg:block" style={{ width: "16px", height: "16px" }} />
-        <div style={{ flex: "1 1 0%", position: "relative" }} ref={searchContainerRef}>
-          <div className="bg-white border border-[#757575] rounded-full flex items-center h-10 px-4 pr-5">
-            <input
-              id="top-search"
-              placeholder="Search products or brands"
-              aria-label="Search products or brands"
-              autoComplete="off"
-              data-test-id="searchBarInput"
-              className="flex-1 bg-transparent border-0 outline-0 text-[#333333] text-sm placeholder:text-[#757575]"
-              value={searchValue}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              onFocus={handleSearchFocus}
-            />
-            <div className="flex items-center justify-center">
-              <SearchIcon className="w-4 h-4" />
+        {navSearchBar ? (
+          <>
+            <div className="hidden lg:block flex-1" />
+            <div className="hidden lg:flex items-center justify-center max-w-2xl w-full">
+              <div 
+                className="w-full max-w-2xl"
+                style={{
+                  animation: 'fade-in-scale 0.3s ease-out forwards'
+                }}
+              >
+                {navSearchBar}
+              </div>
             </div>
-          </div>
-          {showSearchDropdown && isCompassEnabled && (
-            <SearchDropdown 
-              searchQuery={searchValue} 
-              onClose={() => setShowSearchDropdown(false)} 
-            />
-          )}
-        </div>
-        <div className="hidden lg:block" style={{ width: "16px", height: "0px" }} />
-        <div className="hidden lg:block" style={{ width: "12px", height: "0px" }} />
+            <div className="hidden lg:block flex-1" />
+          </>
+        ) : !hideSearch && (
+          <>
+            <div className="hidden lg:block" style={{ width: "16px", height: "16px" }} />
+            <div style={{ flex: "1 1 0%", position: "relative" }} ref={searchContainerRef}>
+              <div className="bg-white border border-[#757575] rounded-full flex items-center h-10 px-4 pr-5">
+                <input
+                  id="top-search"
+                  placeholder="Search products or brands"
+                  aria-label="Search products or brands"
+                  autoComplete="off"
+                  data-test-id="searchBarInput"
+                  className="flex-1 bg-transparent border-0 outline-0 text-[#333333] text-sm placeholder:text-[#757575]"
+                  value={searchValue}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  onFocus={handleSearchFocus}
+                />
+                <div className="flex items-center justify-center">
+                  <SearchIcon className="w-4 h-4" />
+                </div>
+              </div>
+              {showSearchDropdown && isCompassEnabled && (
+                <SearchDropdown 
+                  searchQuery={searchValue} 
+                  onClose={() => setShowSearchDropdown(false)} 
+                />
+              )}
+            </div>
+            <div className="hidden lg:block" style={{ width: "16px", height: "0px" }} />
+            <div className="hidden lg:block" style={{ width: "12px", height: "0px" }} />
+          </>
+        )}
+        {hideSearch && <div className="hidden lg:block flex-1" />}
+        {!hideSearch && <div className="hidden lg:block" style={{ width: "12px", height: "0px" }} />}
         {languageSelector && (
           <>
             <div className="hidden lg:block" style={{ width: "12px" }} />
@@ -617,31 +642,33 @@ export default function RetailerGlobalNavLoggedIn({
         </div>
       </div>
 
-      {/* Bottom Nav Links */}
-      <div className="bg-white flex min-h-[47px] w-full flex-row justify-center hidden lg:flex">
-        <div className="bg-white relative flex">
-          <div
-            data-test-id="desktop-header-c1-categories"
-            className="relative flex flex-row flex-wrap justify-center px-6 pt-2.5 pb-2"
-          >
-            {bottomNavLinks.map((link) => (
-              <div key={link.href} aria-haspopup="menu" className="relative px-2 py-1 flex cursor-pointer">
-                <a
-                  className={`text-sm leading-5 active:text-[#757575] focus:text-[#757575] border-b border-solid border-transparent whitespace-nowrap hover:border-[#333333] transition-colors duration-500 ease-in-out ${
-                    link.isSale ? "text-[#7d3e1e]" : "text-[#333333]"
-                  }`}
-                  aria-label={link.label}
-                  data-test-id={link.testId}
-                  href={link.href}
-                >
-                  {link.label}
-                </a>
-              </div>
-            ))}
-            <div className="invisible absolute bottom-0 w-full" />
+      {/* Bottom Nav Links - Only show if search is not hidden */}
+      {!hideSearch && (
+        <div className="bg-white flex min-h-[47px] w-full flex-row justify-center hidden lg:flex">
+          <div className="bg-white relative flex">
+            <div
+              data-test-id="desktop-header-c1-categories"
+              className="relative flex flex-row flex-wrap justify-center px-6 pt-2.5 pb-2"
+            >
+              {bottomNavLinks.map((link) => (
+                <div key={link.href} aria-haspopup="menu" className="relative px-2 py-1 flex cursor-pointer">
+                  <a
+                    className={`text-sm leading-5 active:text-[#757575] focus:text-[#757575] border-b border-solid border-transparent whitespace-nowrap hover:border-[#333333] transition-colors duration-500 ease-in-out ${
+                      link.isSale ? "text-[#7d3e1e]" : "text-[#333333]"
+                    }`}
+                    aria-label={link.label}
+                    data-test-id={link.testId}
+                    href={link.href}
+                  >
+                    {link.label}
+                  </a>
+                </div>
+              ))}
+              <div className="invisible absolute bottom-0 w-full" />
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </header>
   );
 }
