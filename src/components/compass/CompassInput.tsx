@@ -1,4 +1,4 @@
-import React, { useState, KeyboardEvent } from 'react';
+import React, { useState, KeyboardEvent, useRef, useEffect } from 'react';
 import { useCompass } from '../../contexts/CompassContext';
 
 interface CompassInputProps {
@@ -13,8 +13,25 @@ export default function CompassInput({
   disabled = false,
 }: CompassInputProps) {
   const [value, setValue] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { state, setCurrentProduct } = useCompass();
   const currentProduct = state.currentProduct;
+
+  // Auto-resize textarea to grow with content
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      // Reset height to auto to get the correct scrollHeight
+      textarea.style.height = 'auto';
+      // Set height to scrollHeight - let it grow naturally
+      // Cap at reasonable max (around 5-6 lines)
+      const maxHeight = 120; // pixels
+      const newHeight = Math.min(textarea.scrollHeight, maxHeight);
+      textarea.style.height = `${newHeight}px`;
+      // Only show scrollbar if content exceeds maxHeight
+      textarea.style.overflowY = textarea.scrollHeight > maxHeight ? 'auto' : 'hidden';
+    }
+  }, [value]);
 
   const handleRemoveContext = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -26,6 +43,10 @@ export default function CompassInput({
     if (value.trim() && !disabled) {
       onSend(value.trim());
       setValue('');
+      // Reset textarea height after sending
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+      }
     }
   };
 
@@ -48,23 +69,23 @@ export default function CompassInput({
         }}
       />
       {/* Single bordered container with everything inside */}
-      <div className="relative border border-[#757575] rounded-lg focus-within:border-[#333333] transition-colors" style={{ minHeight: currentProduct ? '130px' : '80px' }}>
-        <div className="p-3 pr-14">
+      <div className="relative border border-[#757575] rounded-lg focus-within:border-[#333333] transition-colors overflow-hidden" style={{ minHeight: '56px' }}>
+        <div className="p-3 pr-14 flex flex-col min-h-[56px]">
           {/* Context pill with image preview */}
           {currentProduct && (
-            <div className="mb-2 inline-flex items-center gap-2 bg-[#f5f5f5] border border-[#dfe0e1] rounded px-2 py-1.5">
+            <div className="mb-2 inline-flex items-center gap-2 bg-[#f5f5f5] border border-[#dfe0e1] rounded px-2 py-1.5 w-fit">
               {/* Product image thumbnail */}
               <img 
                 src={currentProduct.imageUrl} 
                 alt={currentProduct.name}
-                className="w-6 h-6 object-cover rounded"
+                className="w-6 h-6 object-cover rounded flex-shrink-0"
               />
-              <span className="text-xs text-[#333333] truncate max-w-[180px]">
+              <span className="text-xs text-[#333333] whitespace-nowrap">
                 {currentProduct.name}
               </span>
               <button
                 onClick={handleRemoveContext}
-                className="ml-1 flex items-center justify-center hover:bg-[#e5e5e5] rounded-full p-0.5 transition-colors"
+                className="flex items-center justify-center hover:bg-[#e5e5e5] rounded-full p-0.5 transition-colors flex-shrink-0"
                 aria-label="Remove context"
               >
                 <svg className="w-3 h-3 text-[#757575]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -75,16 +96,19 @@ export default function CompassInput({
           )}
           
           <textarea
+            ref={textareaRef}
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder={currentProduct ? "Ask about this product..." : placeholder}
             disabled={disabled}
             rows={1}
-            className="w-full resize-none focus:outline-none text-sm text-[#333333] placeholder:text-[#757575] bg-transparent border-0 p-0"
+            className="w-full resize-none focus:outline-none text-sm text-[#333333] placeholder:text-[#757575] bg-transparent border-0 p-0 overflow-hidden"
             style={{
-              maxHeight: '120px',
               minHeight: '20px',
+              maxHeight: '120px',
+              lineHeight: '20px',
+              height: '20px',
             }}
           />
         </div>
@@ -109,6 +133,21 @@ export default function CompassInput({
           </svg>
         </button>
       </div>
+      <style>{`
+        textarea::-webkit-scrollbar {
+          width: 4px;
+        }
+        textarea::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        textarea::-webkit-scrollbar-thumb {
+          background: #dfe0e1;
+          border-radius: 2px;
+        }
+        textarea::-webkit-scrollbar-thumb:hover {
+          background: #757575;
+        }
+      `}</style>
     </div>
   );
 }

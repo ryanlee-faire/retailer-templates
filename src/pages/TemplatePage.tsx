@@ -7,15 +7,39 @@ import Carousel from "../components/shared/Carousel";
 export default function TemplatePage() {
   const [navigationButtons, setNavigationButtons] = useState<React.ReactNode>(null);
 
+  // Array of realistic product images from Default directory
+  const defaultImages = [
+    "/images/products/Default/1565290934.webp",
+    "/images/products/Default/1618166dde38754f57692881a20b111002a6f9fae9cc8e93ebd58c08448351a2.webp",
+    "/images/products/Default/3001b77de13a4072a16dd12ee09773fe51fabff290db53967c58d6510f52ff07.webp",
+    "/images/products/Default/553bf4b20a923f7c10f179813993b30cd027e8dc1c513a6db5e47e9a513e5d53.webp",
+    "/images/products/Default/57a0c96049999c0e7be3f320c5e01ca92d4953a7da174c3b07fb1606316aacbf.webp",
+    "/images/products/Default/58db048f069354bfaa564a07f97b2d4159b4a3fea081c277809a7e8c204229b4.webp",
+    "/images/products/Default/5e6981ab0f39041ce2422cb55672eabbd3cbacfc59e6435af05f9a53a544e3cf.webp",
+    "/images/products/Default/7265a0c9750cb54fc9c03862cbe90568bd7ab3271da4180f5764e7feb6764c55.webp",
+    "/images/products/Default/7a9b5d2cdc4e1ff5078d71528529ba1bc2c4aff48c7202766bc88f1e5f62990a.webp",
+    "/images/products/Default/8078c47c34f8aef4404782deaeadee1e80c650b05db0f534c2ac6d8696669bb2.webp",
+    "/images/products/Default/958b63ee76666b0280650779b05e4abbb1ae0309990b024e61a21f1c5c19de2d.webp",
+    "/images/products/Default/9adeb822f48a470da18e78becbcf650740169e3ca49b8ca633af8760994bee97.webp",
+    "/images/products/Default/9c280de0751734a2c550be885d5cbc756c76b79708a58550ca08b121ce367587.webp",
+    "/images/products/Default/a1457c95983e68fca0a5d977b67de565e8722ac9c4ed1d11b6de12fa05001228.webp",
+    "/images/products/Default/b0291b855e92bf283e3dcedf70c904645dc008cdef5a317125cea816c21de932.webp",
+    "/images/products/Default/bfd8233b3934b80196bf56bc39b9f98a1652a60f03498eec830a39c0b24e4421.webp",
+    "/images/products/Default/ca98a03ecefa2d01952e4ed1da31728ea62d0a424c195ec165bfc5ad66845e68.webp",
+    "/images/products/Default/e36dcab586d885d817289d12d571109c89b1ca0eacc20ea515d8ff03293bdfb5.webp",
+    "/images/products/Default/e39504ca29716992ba120454f7a89060c63896f580b047900060dae0e664ca8e.webp",
+    "/images/products/Default/e6e0203a7912a7c3025adb94e72754d7ae01ceb5dea68cb2f5b7179a9930f983.webp",
+  ];
+
   // Mock data for "Your team's recently viewed"
   const recentlyViewedProducts = [
     {
-      imageUrl: "/images/products/product-image-01.webp",
-      brandName: "normal® ice cream",
-      productName: "The Handle Ice Cream Bar",
-      brandAvatarUrl: "/images/products/product-image-01.webp",
-      price: 3.75,
-      msrp: 5.50,
+      imageUrl: defaultImages[0],
+      brandName: "Terracotta Pottery",
+      productName: "Ceramic Planter Pot - Terracotta",
+      brandAvatarUrl: defaultImages[0],
+      price: 18.50,
+      msrp: 32.00,
       rating: 4.9,
       minOrder: "$100 min",
       freeShipping: false,
@@ -23,12 +47,12 @@ export default function TemplatePage() {
       isFavorited: false,
     },
     {
-      imageUrl: "/images/products/product-image-02.webp",
-      brandName: "Silpaca",
-      productName: "Alpaca Throw Blanket - Grapevine",
-      brandAvatarUrl: "/images/products/product-image-02.webp",
-      price: 58.00,
-      msrp: 130.00,
+      imageUrl: defaultImages[1],
+      brandName: "Linen & Co.",
+      productName: "Linen Throw Pillow Cover - Natural",
+      brandAvatarUrl: defaultImages[1],
+      price: 24.00,
+      msrp: 42.00,
       rating: 5.0,
       minOrder: "$150 min",
       freeShipping: true,
@@ -36,12 +60,12 @@ export default function TemplatePage() {
       isFavorited: true,
     },
     {
-      imageUrl: "/images/products/product-image-03.webp",
-      brandName: "Raaka Chocolate",
-      productName: "Fig Ginger Snap Chocolate - Holiday Limited Batch",
-      brandAvatarUrl: "/images/products/product-image-03.webp",
-      price: 4.09,
-      msrp: 8.00,
+      imageUrl: defaultImages[2],
+      brandName: "Olive Grove Co.",
+      productName: "Extra Virgin Olive Oil - 500ml",
+      brandAvatarUrl: defaultImages[2],
+      price: 16.75,
+      msrp: 28.00,
       rating: 5.0,
       minOrder: "$150 min",
       freeShipping: false,
@@ -49,12 +73,12 @@ export default function TemplatePage() {
       isFavorited: false,
     },
     {
-      imageUrl: "/images/products/product-image-04.webp",
-      brandName: "Papa Barista",
-      productName: "Toasting To A Fine Wine Birthday | Celebration Greeting Card",
-      brandAvatarUrl: "/images/products/product-image-04.webp",
-      price: 2.50,
-      msrp: 5.00,
+      imageUrl: defaultImages[3],
+      brandName: "Scented Home",
+      productName: "Soy Candle - Vanilla & Sandalwood",
+      brandAvatarUrl: defaultImages[3],
+      price: 19.50,
+      msrp: 34.00,
       rating: 5.0,
       minOrder: "$75 min",
       freeShipping: false,
@@ -62,12 +86,12 @@ export default function TemplatePage() {
       isFavorited: false,
     },
     {
-      imageUrl: "/images/products/product-image-05.webp",
-      brandName: "Piecework",
-      productName: "Top Dog Jigsaw Puzzle",
-      brandAvatarUrl: "/images/products/product-image-05.webp",
-      price: 20.00,
-      msrp: 40.00,
+      imageUrl: defaultImages[4],
+      brandName: "Natural Woven",
+      productName: "Rattan Storage Basket - Medium",
+      brandAvatarUrl: defaultImages[4],
+      price: 22.00,
+      msrp: 38.00,
       rating: 5.0,
       minOrder: "$150 min",
       freeShipping: false,
@@ -75,12 +99,12 @@ export default function TemplatePage() {
       isFavorited: false,
     },
     {
-      imageUrl: "/images/products/product-image-06.webp",
-      brandName: "Cellar Door Preserves",
-      productName: "Dehydrated Orange Wheels",
-      brandAvatarUrl: "/images/products/product-image-06.webp",
-      price: 4.99,
-      msrp: 9.99,
+      imageUrl: defaultImages[5],
+      brandName: "Wildflower Honey",
+      productName: "Raw Honey Jar - 12oz",
+      brandAvatarUrl: defaultImages[5],
+      price: 14.99,
+      msrp: 24.00,
       rating: 5.0,
       minOrder: "$150 min",
       freeShipping: true,
@@ -92,72 +116,72 @@ export default function TemplatePage() {
   // Mock data for carousel
   const brandUpdates = [
     {
-      imageUrl: "/images/products/product-image-01.webp",
-      brandName: "Objet Paris",
-      brandAvatarUrl: "/images/products/product-image-01.webp",
+      imageUrl: defaultImages[6],
+      brandName: "Garden Vases",
+      brandAvatarUrl: defaultImages[6],
       rating: 4.8,
       minOrder: "$200 min",
       freeShipping: false,
       topShop: false,
     },
     {
-      imageUrl: "/images/products/product-image-02.webp",
-      brandName: "Cabi",
-      brandAvatarUrl: "/images/products/product-image-02.webp",
+      imageUrl: defaultImages[7],
+      brandName: "Pure Soap Co.",
+      brandAvatarUrl: defaultImages[7],
       rating: 4.9,
       minOrder: "$150 min",
       freeShipping: true,
       topShop: false,
     },
     {
-      imageUrl: "/images/products/product-image-03.webp",
-      brandName: "Abrams",
-      brandAvatarUrl: "/images/products/product-image-03.webp",
+      imageUrl: defaultImages[8],
+      brandName: "Tea Leaf Co.",
+      brandAvatarUrl: defaultImages[8],
       rating: 5.0,
       minOrder: "$100 min",
       freeShipping: false,
       topShop: true,
     },
     {
-      imageUrl: "/images/products/product-image-04.webp",
-      brandName: "The Gourmet Kitchen",
-      brandAvatarUrl: "/images/products/product-image-04.webp",
+      imageUrl: defaultImages[9],
+      brandName: "Clay Pottery",
+      brandAvatarUrl: defaultImages[9],
       rating: 4.7,
       minOrder: "$125 min",
       freeShipping: false,
       topShop: false,
     },
     {
-      imageUrl: "/images/products/product-image-05.webp",
-      brandName: "Hellenic Farms",
-      brandAvatarUrl: "/images/products/product-image-05.webp",
+      imageUrl: defaultImages[10],
+      brandName: "Skin Essentials",
+      brandAvatarUrl: defaultImages[10],
       rating: 4.9,
       minOrder: "$175 min",
       freeShipping: true,
       topShop: false,
     },
     {
-      imageUrl: "/images/products/product-image-06.webp",
-      brandName: "Saarde",
-      brandAvatarUrl: "/images/products/product-image-06.webp",
+      imageUrl: defaultImages[11],
+      brandName: "Beach House Decor",
+      brandAvatarUrl: defaultImages[11],
       rating: 5.0,
       minOrder: "$150 min",
       freeShipping: false,
       topShop: false,
     },
     {
-      imageUrl: "/images/products/product-image-07.webp",
-      brandName: "The Get Out",
-      brandAvatarUrl: "/images/products/product-image-07.webp",
+      imageUrl: defaultImages[12],
+      brandName: "Gourmet Pantry",
+      brandAvatarUrl: defaultImages[12],
       rating: 4.8,
       minOrder: "$100 min",
       freeShipping: false,
       topShop: false,
     },
     {
-      imageUrl: "/images/products/product-image-08.webp",
-      brandName: "Cocktail Mixes",
-      brandAvatarUrl: "/images/products/product-image-08.webp",
+      imageUrl: defaultImages[13],
+      brandName: "Craft Beverages",
+      brandAvatarUrl: defaultImages[13],
       rating: 4.9,
       minOrder: "$125 min",
       freeShipping: true,
@@ -201,88 +225,88 @@ export default function TemplatePage() {
               </div>
               <div className="absolute bottom-0 right-0 flex gap-1.5 items-end" style={{ transform: "translate(4px, 4px)" }}>
                 <img
-                  src="/images/products/product-image-01.webp"
+                  src={defaultImages[14]}
                   alt="Brand update"
                   className="w-12 h-14 object-cover rounded"
                 />
                 <img
-                  src="/images/products/product-image-02.webp"
+                  src={defaultImages[15]}
                   alt="Brand update"
                   className="w-10 h-12 object-cover rounded"
                 />
               </div>
             </div>
 
-            {/* Hellenic Farms card */}
+            {/* Skin Essentials card */}
             <div
               className="bg-[#f5f5f5] rounded-lg p-6 cursor-pointer hover:bg-[#ececec] transition-colors relative overflow-hidden"
               style={{ height: "128px" }}
             >
               <div className="flex flex-col h-full relative z-10">
                 <div className="flex-1">
-                  <h3 className="text-sm font-medium text-[#333333] mb-1">Hellenic Farms</h3>
+                  <h3 className="text-sm font-medium text-[#333333] mb-1">Skin Essentials</h3>
                   <p className="text-sm text-[#757575]">On sale</p>
                 </div>
               </div>
               <div className="absolute bottom-0 right-0 flex gap-1.5 items-end" style={{ transform: "translate(4px, 4px)" }}>
                 <img
-                  src="/images/products/product-image-03.webp"
-                  alt="Hellenic Farms product"
+                  src={defaultImages[16]}
+                  alt="Skin Essentials product"
                   className="w-10 h-14 object-cover rounded"
                 />
                 <img
-                  src="/images/products/product-image-04.webp"
-                  alt="Hellenic Farms product"
+                  src={defaultImages[17]}
+                  alt="Skin Essentials product"
                   className="w-10 h-14 object-cover rounded"
                 />
               </div>
             </div>
 
-            {/* Saarde card */}
+            {/* Beach House Decor card */}
             <div
               className="bg-[#f5f5f5] rounded-lg p-6 cursor-pointer hover:bg-[#ececec] transition-colors relative overflow-hidden"
               style={{ height: "128px" }}
             >
               <div className="flex flex-col h-full relative z-10">
                 <div className="flex-1">
-                  <h3 className="text-sm font-medium text-[#333333] mb-1">Saarde</h3>
+                  <h3 className="text-sm font-medium text-[#333333] mb-1">Beach House Decor</h3>
                   <p className="text-sm text-[#757575]">New products</p>
                 </div>
               </div>
               <div className="absolute bottom-0 right-0 flex gap-1.5 items-end" style={{ transform: "translate(4px, 4px)" }}>
                 <img
-                  src="/images/products/product-image-05.webp"
-                  alt="Saarde product"
+                  src={defaultImages[18]}
+                  alt="Beach House Decor product"
                   className="w-14 h-16 object-cover rounded"
                 />
                 <img
-                  src="/images/products/product-image-06.webp"
-                  alt="Saarde product"
+                  src={defaultImages[19]}
+                  alt="Beach House Decor product"
                   className="w-10 h-14 object-cover rounded"
                 />
               </div>
             </div>
 
-            {/* The Get Out card */}
+            {/* Gourmet Pantry card */}
             <div
               className="bg-[#f5f5f5] rounded-lg p-6 cursor-pointer hover:bg-[#ececec] transition-colors relative overflow-hidden"
               style={{ height: "128px" }}
             >
               <div className="flex flex-col h-full relative z-10">
                 <div className="flex-1">
-                  <h3 className="text-sm font-medium text-[#333333] mb-1">The Get Out</h3>
+                  <h3 className="text-sm font-medium text-[#333333] mb-1">Gourmet Pantry</h3>
                   <p className="text-sm text-[#757575]">Jump back in</p>
                 </div>
               </div>
               <div className="absolute bottom-0 right-0 flex gap-1.5 items-end" style={{ transform: "translate(4px, 4px)" }}>
                 <img
-                  src="/images/products/product-image-07.webp"
-                  alt="The Get Out product"
+                  src={defaultImages[0]}
+                  alt="Gourmet Pantry product"
                   className="w-12 h-14 object-cover rounded"
                 />
                 <img
-                  src="/images/products/product-image-08.webp"
-                  alt="The Get Out product"
+                  src={defaultImages[1]}
+                  alt="Gourmet Pantry product"
                   className="w-12 h-14 object-cover rounded"
                 />
               </div>
@@ -301,12 +325,12 @@ export default function TemplatePage() {
               </div>
               <div className="absolute bottom-0 right-0 flex gap-1.5 items-end" style={{ transform: "translate(4px, 4px)" }}>
                 <img
-                  src="/images/products/product-image-01.webp"
+                  src={defaultImages[2]}
                   alt="Cocktail mix"
                   className="w-10 h-14 object-cover rounded"
                 />
                 <img
-                  src="/images/products/product-image-02.webp"
+                  src={defaultImages[3]}
                   alt="Cocktail mix"
                   className="w-10 h-14 object-cover rounded"
                 />

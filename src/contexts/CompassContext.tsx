@@ -41,6 +41,7 @@ export interface Message {
   totalProductsReviewed?: number; // Total number of products reviewed for compact summary
   isCategorySpecific?: boolean; // Whether this is a single-category refinement
   specificCategoryName?: string; // Name of the specific category for refinements
+  productContext?: CompassProduct; // Product being asked about in this message
   timestamp: Date;
 }
 

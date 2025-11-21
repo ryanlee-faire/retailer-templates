@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { useCompass } from '../../contexts/CompassContext';
+import { useCompass, CompassProduct } from '../../contexts/CompassContext';
 import { compassProducts, filterProducts } from '../../data/compassProducts';
 import {
   parseRefinementRequest,
@@ -13,7 +13,7 @@ import CompassMessage from './CompassMessage';
 import CompassInput from './CompassInput';
 
 export default function CompassChat() {
-  const { state, addMessage, updateMessage, addProductToSelection, removeProductFromSelection, clearInitialQuery } = useCompass();
+  const { state, addMessage, updateMessage, addProductToSelection, removeProductFromSelection, clearInitialQuery, setCurrentProduct } = useCompass();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const thinkingMessageIdRef = useRef<string | null>(null);
   const [isThinking, setIsThinking] = useState(false);
@@ -43,10 +43,11 @@ export default function CompassChat() {
   }, [state.entryPoint, state.initialQuery, state.messages.length]);
 
   const handleSendMessage = (content: string) => {
-    // Add user message
+    // Add user message with product context if available
     addMessage({
       role: 'user',
       content,
+      productContext: state.currentProduct,
     });
 
     // Show thinking state, then transition to working state
@@ -55,15 +56,86 @@ export default function CompassChat() {
     }, 300);
   };
 
+  // Helper function to generate product-specific responses
+  const generateProductResponse = (product: CompassProduct, question: string): string => {
+    const lowerQuestion = question.toLowerCase();
+    
+    // Gluten-free questions
+    if (lowerQuestion.includes('gluten') || lowerQuestion.includes('gluten free') || lowerQuestion.includes('gluten-free')) {
+      if (product.category === 'snack') {
+        return `Yes! The ${product.name} from ${product.brandName} is gluten-free. It's made with natural ingredients and doesn't contain any gluten-containing grains. Perfect for customers with gluten sensitivities or celiac disease.`;
+      } else {
+        return `The ${product.name} from ${product.brandName} is gluten-free. All ingredients are carefully sourced to ensure no cross-contamination.`;
+      }
+    }
+    
+    // Ingredient questions
+    if (lowerQuestion.includes('ingredient') || lowerQuestion.includes('what\'s in') || lowerQuestion.includes('made with')) {
+      if (product.category === 'snack') {
+        return `The ${product.name} is made with premium, natural ingredients. Based on the product details, it features high-quality components sourced from ${product.tags.includes('nyc-local') ? 'local NYC suppliers' : 'trusted suppliers'}. The brand ${product.brandName} is known for using ${product.tags.includes('organic') ? 'organic' : 'premium'} ingredients.`;
+      } else if (product.category === 'soap') {
+        return `The ${product.name} from ${product.brandName} is crafted with ${product.tags.includes('organic') ? 'organic' : 'natural'} ingredients. It's ${product.tags.includes('vegan') ? 'vegan' : 'made with plant-based'} and free from harsh chemicals. Perfect for sensitive skin!`;
+      } else {
+        return `The ${product.name} features carefully selected ingredients. ${product.brandName} uses ${product.tags.includes('organic') ? 'organic' : 'premium'} ingredients and follows strict quality standards.`;
+      }
+    }
+    
+    // Shipping questions
+    if (lowerQuestion.includes('shipping') || lowerQuestion.includes('ship') || lowerQuestion.includes('delivery')) {
+      const shippingInfo = product.freeShipping 
+        ? `Yes! ${product.brandName} offers free shipping on orders.`
+        : `Shipping is available for ${product.brandName} products. The brand has a minimum order of ${product.minOrder || `$${product.brandMinimum}`}.`;
+      return `${shippingInfo} Orders typically arrive within 5-7 business days. The ${product.name} weighs ${product.weight} lbs, so shipping costs will be calculated at checkout.`;
+    }
+    
+    // Price/cost questions
+    if (lowerQuestion.includes('price') || lowerQuestion.includes('cost') || lowerQuestion.includes('how much')) {
+      return `The ${product.name} from ${product.brandName} is priced at $${product.price.toFixed(2)} per unit. The brand has a minimum order requirement of ${product.minOrder || `$${product.brandMinimum}`}. ${product.freeShipping ? 'Plus, they offer free shipping!' : ''}`;
+    }
+    
+    // Vegan/vegetarian questions
+    if (lowerQuestion.includes('vegan') || lowerQuestion.includes('vegetarian')) {
+      const isVegan = product.tags.includes('vegan');
+      return isVegan 
+        ? `Yes! The ${product.name} from ${product.brandName} is vegan. It's made without any animal products or by-products.`
+        : `The ${product.name} may contain some animal-derived ingredients. I'd recommend checking with ${product.brandName} directly for specific dietary requirements, as product formulations can vary.`;
+    }
+    
+    // Organic questions
+    if (lowerQuestion.includes('organic')) {
+      const isOrganic = product.tags.includes('organic');
+      return isOrganic
+        ? `Yes! The ${product.name} from ${product.brandName} is made with organic ingredients. It's certified organic and sourced from trusted suppliers.`
+        : `The ${product.name} uses high-quality ingredients, though it may not be certified organic. ${product.brandName} focuses on ${product.tags.includes('premium') ? 'premium' : 'natural'} ingredients.`;
+    }
+    
+    // Allergen questions
+    if (lowerQuestion.includes('allergen') || lowerQuestion.includes('allergy') || lowerQuestion.includes('contains')) {
+      return `The ${product.name} from ${product.brandName} is made in a facility that may process common allergens. For specific allergen information, I'd recommend reaching out to ${product.brandName} directly, as they can provide the most up-to-date ingredient and allergen information.`;
+    }
+    
+    // Stock/availability questions
+    if (lowerQuestion.includes('stock') || lowerQuestion.includes('available') || lowerQuestion.includes('in stock')) {
+      return product.inStock
+        ? `Great news! The ${product.name} is currently in stock. ${product.brandName} typically maintains good inventory levels, and orders can be processed quickly.`
+        : `I'll need to check current availability for the ${product.name}. ${product.brandName} can provide real-time stock information when you place an order.`;
+    }
+    
+    // Default product-specific response
+    return `The ${product.name} from ${product.brandName} is a ${product.tags.includes('premium') ? 'premium' : 'quality'} product${product.tags.includes('nyc-local') ? ' sourced from local NYC suppliers' : ''}. ${product.description} It's priced at $${product.price.toFixed(2)} and has a ${product.rating ? `${product.rating}-star` : 'great'} rating. Is there anything specific you'd like to know about ingredients, shipping, or availability?`;
+  };
+
   const handleAssistantResponse = (userInput: string) => {
     // Check if user is asking about a specific product (context is set)
     if (state.currentProduct) {
-      // Generic product-specific response (visual prototype only)
+      // Generate contextual response based on question type
+      const response = generateProductResponse(state.currentProduct, userInput);
       addMessage({
         role: 'assistant',
-        content: `Based on this product, it appears to be made with premium ingredients and is sourced from local NYC suppliers. The brand has a strong reputation for quality. Let me know if you need more specific details about ingredients, shipping, or anything else!`,
-        chips: ['Tell me about ingredients', 'Shipping information', 'Similar products'],
+        content: response,
       });
+      // Clear product context after responding (optional - you might want to keep it)
+      // setCurrentProduct(undefined);
       return;
     }
 
@@ -187,7 +259,7 @@ export default function CompassChat() {
       }).slice(0, currentFilters.categories['Bath Products'] || 6);
 
       const allCategories = [
-        { category: 'Food Items', products: snacks },
+        { category: 'Snack Items', products: snacks },
         { category: 'Beverages', products: beverages },
         { category: 'Bath Products', products: soaps },
       ];
@@ -245,7 +317,7 @@ export default function CompassChat() {
     const addedMessage = addMessage(thinkingMessage);
     const refinementMessageId = addedMessage.id;
 
-    // Show status text quickly (200ms instead of 400ms)
+    // Show status text (400ms to let user see it)
     setTimeout(() => {
       const statusText = categoriesToAnimate.length === 1
         ? `Reviewing ${getCategoryCount(categoriesToAnimate[0])}+ products in the ${categoriesToAnimate[0]} category`
@@ -254,9 +326,9 @@ export default function CompassChat() {
       updateMessage(refinementMessageId, {
         thinkingStatus: statusText,
       });
-    }, 200);
+    }, 400);
 
-    // Animate categories (faster - 400ms per category instead of 700ms)
+    // Animate categories (500ms per category - slower to show work being done)
     categoriesToAnimate.forEach((category, index) => {
       setTimeout(() => {
         const progress = categoriesToAnimate.slice(0, index + 1).map((cat, i) => ({
@@ -269,7 +341,7 @@ export default function CompassChat() {
           categorySearchProgress: progress,
         });
 
-        // Show count after 300ms (faster than initial 400ms)
+        // Show count after 400ms (give time to see the searching state)
         setTimeout(() => {
           const progressWithCount = categoriesToAnimate.slice(0, index + 1).map((cat) => ({
             category: cat,
@@ -280,12 +352,12 @@ export default function CompassChat() {
           updateMessage(refinementMessageId, {
             categorySearchProgress: progressWithCount,
           });
-        }, 300);
-      }, 300 + index * 400);
+        }, 400);
+      }, 500 + index * 500);
     });
 
-    // Collapse to summary (faster timing)
-    const animationTime = 300 + categoriesToAnimate.length * 400 + 600;
+    // Collapse to summary
+    const animationTime = 500 + categoriesToAnimate.length * 500 + 700;
     setTimeout(() => {
       const totalProducts = categoriesToAnimate.reduce((sum, cat) => sum + getCategoryCount(cat), 0);
       updateMessage(refinementMessageId, {
@@ -297,10 +369,10 @@ export default function CompassChat() {
       });
     }, animationTime);
 
-    // Show results after summary (400ms pause instead of 600ms)
+    // Show results after summary (600ms pause to let user read)
     setTimeout(() => {
       showFilteredResults(filters, actions, categoriesToAnimate);
-    }, animationTime + 400);
+    }, animationTime + 600);
   };
 
   const showFilteredResults = (filters: FilterState, actions?: RefinementAction[], categoriesToShow?: string[]) => {
@@ -328,7 +400,7 @@ export default function CompassChat() {
 
     // Build results based on what categories to show
     const allCategoryResults = [
-      { category: 'Food Items', products: snacks, key: 'Snacks' },
+      { category: 'Snack Items', products: snacks, key: 'Snacks' },
       { category: 'Beverages', products: beverages, key: 'Beverages' },
       { category: 'Bath Products', products: soaps, key: 'Bath Products' },
     ];
@@ -370,41 +442,8 @@ export default function CompassChat() {
       }, 400 + index * 300);
     });
 
-    // Add context-aware follow-up message and chips
-    setTimeout(() => {
-      let followUpMessage = "These are some of my recommendations but I'm happy to refine. Just let me know what you are looking for.";
-      let followUpChips = ['Show more snacks', 'Show local brands only', 'More options'];
-
-      // Customize based on context
-      if (categoriesToShow && categoriesToShow.length === 1) {
-        const categoryName = categoriesToShow[0].toLowerCase();
-        followUpMessage = `What do you think about these ${categoryName.includes('food') ? 'snacks' : categoryName.replace(' products', '')} options?`;
-        
-        // Generate relevant chips for the category
-        if (categoryName.includes('snack') || categoryName.includes('food')) {
-          followUpChips = ['Show beverages', 'Show bath products', 'Back to all categories'];
-        } else if (categoryName.includes('beverage')) {
-          followUpChips = ['Show snacks', 'Show bath products', 'Back to all categories'];
-        } else if (categoryName.includes('bath')) {
-          followUpChips = ['Show snacks', 'Show beverages', 'Back to all categories'];
-        }
-      } else if (actions && actions.length > 0) {
-        const firstAction = actions[0];
-        if (firstAction.type === 'exclude_attribute') {
-          followUpMessage = `What do you think about these options? I've excluded ${firstAction.attribute}.`;
-          followUpChips = ['Show more options', 'Remove filter', 'Back to all'];
-        } else if (firstAction.type === 'filter_attribute') {
-          followUpMessage = `What do you think about these ${firstAction.attribute} options?`;
-          followUpChips = ['Show more', 'Remove filter', 'Back to all'];
-        }
-      }
-
-      addMessage({
-        role: 'assistant',
-        content: followUpMessage,
-        chips: followUpChips,
-      });
-    }, 400 + results.length * 300 + 1000);
+    // Only add follow-up chips for refinements, not for all filtered results
+    // This gets called for refinements, so we skip adding chips here
   };
 
   const handleProductSelect = (productId: string) => {
@@ -415,8 +454,14 @@ export default function CompassChat() {
     
     if (isAlreadySelected) {
       removeProductFromSelection(productId);
+      // Clear product context if deselecting
+      if (state.currentProduct?.id === productId) {
+        setCurrentProduct(undefined);
+      }
     } else {
       addProductToSelection(product);
+      // Set product context for follow-up questions
+      setCurrentProduct(product);
     }
   };
 

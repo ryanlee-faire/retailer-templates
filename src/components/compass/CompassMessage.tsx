@@ -163,6 +163,19 @@ export default function CompassMessage({
     return (
       <div className="flex justify-end mb-4 px-6">
         <div className="max-w-[80%] bg-[#333333] text-white px-4 py-3 rounded-2xl rounded-tr-sm">
+          {/* Show product context if available */}
+          {message.productContext && (
+            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/20">
+              <img 
+                src={message.productContext.imageUrl} 
+                alt={message.productContext.name}
+                className="w-6 h-6 object-cover rounded"
+              />
+              <span className="text-xs text-white/90 truncate">
+                {message.productContext.name}
+              </span>
+            </div>
+          )}
           <p className="text-sm">{message.content}</p>
         </div>
       </div>
