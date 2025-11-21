@@ -65,6 +65,8 @@ export interface CompassState {
   cartItems: CartItem[]; // Cart with quantities
   entryPoint?: 'icon' | 'search'; // Track how user opened Compass
   currentProduct?: CompassProduct; // Product being viewed on PDP
+  currentCategory?: string; // Category being viewed (from "See all")
+  pairedProducts?: CompassProduct[]; // Paired products for "Paired Products" category
   initialQuery?: string; // Query passed from search bar
 }
 
@@ -88,6 +90,10 @@ interface CompassContextType {
   getCartItemsByBrand: () => Record<string, CartItem[]>;
   // Product viewing
   setCurrentProduct: (product: CompassProduct | undefined) => void;
+  // Category viewing
+  setCurrentCategory: (category: string | undefined) => void;
+  // Paired products
+  setPairedProducts: (products: CompassProduct[] | undefined) => void;
 }
 
 const CompassContext = createContext<CompassContextType | undefined>(undefined);
@@ -101,6 +107,8 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     cartItems: [],
     entryPoint: undefined,
     currentProduct: undefined,
+    currentCategory: undefined,
+    pairedProducts: undefined,
     initialQuery: undefined,
   });
 
@@ -145,6 +153,8 @@ export function CompassProvider({ children }: { children: ReactNode }) {
       activeConstraints: {},
       selectedProducts: [],
       currentProduct: undefined, // Clear product context when starting new conversation
+      currentCategory: undefined, // Clear category context when starting new conversation
+      pairedProducts: undefined, // Clear paired products when starting new conversation
     }));
   };
 
@@ -245,6 +255,24 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     setState(prev => ({
       ...prev,
       currentProduct: product,
+      // Clear category when product is set
+      currentCategory: product ? undefined : prev.currentCategory,
+    }));
+  };
+
+  const setCurrentCategory = (category: string | undefined) => {
+    setState(prev => ({
+      ...prev,
+      currentCategory: category,
+      // Always clear product when category is set (no special cases)
+      currentProduct: category ? undefined : prev.currentProduct,
+    }));
+  };
+
+  const setPairedProducts = (products: CompassProduct[] | undefined) => {
+    setState(prev => ({
+      ...prev,
+      pairedProducts: products,
     }));
   };
 
@@ -266,6 +294,8 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     getCartTotal,
     getCartItemsByBrand,
     setCurrentProduct,
+    setCurrentCategory,
+    setPairedProducts,
   };
 
   return (

@@ -4,7 +4,7 @@ import { BrandInfo } from "../components/shared";
 import { useCompass } from "../contexts/CompassContext";
 
 export default function ProductDetailPage() {
-  const { state } = useCompass();
+  const { state, setCurrentProduct } = useCompass();
   const [selectedColor, setSelectedColor] = useState("White");
   const [quantity, setQuantity] = useState(1);
   const [buttonLayoutVariant, setButtonLayoutVariant] = useState(false);
@@ -16,6 +16,17 @@ export default function ProductDetailPage() {
       setPageProduct(state.currentProduct);
     }
   }, [state.currentProduct]);
+
+  // Set product context when on PDP
+  useEffect(() => {
+    if (pageProduct) {
+      setCurrentProduct(pageProduct);
+    }
+    // CRITICAL: Clear product context when leaving PDP
+    return () => {
+      setCurrentProduct(undefined);
+    };
+  }, [pageProduct, setCurrentProduct]);
 
   // Keyboard shortcut: Shift + B to toggle button layout
   useEffect(() => {

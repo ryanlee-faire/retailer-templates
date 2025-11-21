@@ -1,4 +1,5 @@
 import React, { useState, KeyboardEvent, useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useCompass } from '../../contexts/CompassContext';
 
 interface CompassInputProps {
@@ -14,8 +15,12 @@ export default function CompassInput({
 }: CompassInputProps) {
   const [value, setValue] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const location = useLocation();
   const { state, setCurrentProduct } = useCompass();
-  const currentProduct = state.currentProduct;
+  
+  // Only show product context when on PDP
+  const isOnPDP = location.pathname === '/pdp';
+  const currentProduct = isOnPDP ? state.currentProduct : undefined;
 
   // Auto-resize textarea to grow with content
   useEffect(() => {
@@ -36,6 +41,7 @@ export default function CompassInput({
   const handleRemoveContext = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
+    // Just clear the product context
     setCurrentProduct(undefined);
   };
 
@@ -71,7 +77,7 @@ export default function CompassInput({
       {/* Single bordered container with everything inside */}
       <div className="relative border border-[#757575] rounded-lg focus-within:border-[#333333] transition-colors overflow-hidden" style={{ minHeight: '56px' }}>
         <div className="p-3 pr-14 flex flex-col min-h-[56px]">
-          {/* Context pill with image preview */}
+          {/* Context pill - show only product context when on PDP */}
           {currentProduct && (
             <div className="mb-2 inline-flex items-center gap-2 bg-[#f5f5f5] border border-[#dfe0e1] rounded px-2 py-1.5 w-fit">
               {/* Product image thumbnail */}

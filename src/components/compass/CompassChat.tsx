@@ -13,7 +13,7 @@ import CompassMessage from './CompassMessage';
 import CompassInput from './CompassInput';
 
 export default function CompassChat() {
-  const { state, addMessage, updateMessage, addProductToSelection, removeProductFromSelection, clearInitialQuery, setCurrentProduct } = useCompass();
+  const { state, addMessage, updateMessage, addProductToSelection, removeProductFromSelection, clearInitialQuery, setCurrentProduct, setPairedProducts } = useCompass();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const thinkingMessageIdRef = useRef<string | null>(null);
   const [isThinking, setIsThinking] = useState(false);
@@ -43,17 +43,19 @@ export default function CompassChat() {
   }, [state.entryPoint, state.initialQuery, state.messages.length]);
 
   const handleSendMessage = (content: string) => {
-    // Add user message with product context if available
-    addMessage({
-      role: 'user',
-      content,
-      productContext: state.currentProduct,
-    });
-
-    // Show thinking state, then transition to working state
+    // Add user message with product context if available (with slight delay for realism)
     setTimeout(() => {
-      handleAssistantResponse(content.toLowerCase());
-    }, 300);
+      addMessage({
+        role: 'user',
+        content,
+        productContext: state.currentProduct,
+      });
+
+      // Show thinking state, then transition to working state
+      setTimeout(() => {
+        handleAssistantResponse(content.toLowerCase());
+      }, 400);
+    }, 150);
   };
 
   // Helper function to generate product-specific responses
@@ -197,6 +199,9 @@ export default function CompassChat() {
       if (isPairingRequest) {
         // Find paired products
         const pairedProducts = findPairedProducts(state.currentProduct);
+        
+        // Store paired products in context for "See all" navigation
+        setPairedProducts(pairedProducts);
         
         // Add message with paired products
         addMessage({
@@ -401,7 +406,7 @@ export default function CompassChat() {
     const addedMessage = addMessage(thinkingMessage);
     const refinementMessageId = addedMessage.id;
 
-    // Show status text (400ms to let user see it)
+    // Show status text (600ms to let user see it)
     setTimeout(() => {
       const statusText = categoriesToAnimate.length === 1
         ? `Reviewing ${getCategoryCount(categoriesToAnimate[0])}+ products in the ${categoriesToAnimate[0]} category`
@@ -410,9 +415,9 @@ export default function CompassChat() {
       updateMessage(refinementMessageId, {
         thinkingStatus: statusText,
       });
-    }, 400);
+    }, 600);
 
-    // Animate categories (500ms per category - slower to show work being done)
+    // Animate categories (800ms per category - slower to show work being done)
     categoriesToAnimate.forEach((category, index) => {
       setTimeout(() => {
         const progress = categoriesToAnimate.slice(0, index + 1).map((cat, i) => ({
@@ -425,7 +430,7 @@ export default function CompassChat() {
           categorySearchProgress: progress,
         });
 
-        // Show count after 400ms (give time to see the searching state)
+        // Show count after 600ms (give time to see the searching state)
         setTimeout(() => {
           const progressWithCount = categoriesToAnimate.slice(0, index + 1).map((cat) => ({
             category: cat,
@@ -436,12 +441,12 @@ export default function CompassChat() {
           updateMessage(refinementMessageId, {
             categorySearchProgress: progressWithCount,
           });
-        }, 400);
-      }, 500 + index * 500);
+        }, 600);
+      }, 800 + index * 800);
     });
 
     // Collapse to summary
-    const animationTime = 500 + categoriesToAnimate.length * 500 + 700;
+    const animationTime = 800 + categoriesToAnimate.length * 800 + 900;
     setTimeout(() => {
       const totalProducts = categoriesToAnimate.reduce((sum, cat) => sum + getCategoryCount(cat), 0);
       updateMessage(refinementMessageId, {
@@ -453,10 +458,10 @@ export default function CompassChat() {
       });
     }, animationTime);
 
-    // Show results after summary (600ms pause to let user read)
+    // Show results after summary (800ms pause to let user read)
     setTimeout(() => {
       showFilteredResults(filters, actions, categoriesToAnimate);
-    }, animationTime + 600);
+    }, animationTime + 800);
   };
 
   const showFilteredResults = (filters: FilterState, actions?: RefinementAction[], categoriesToShow?: string[]) => {
@@ -584,7 +589,7 @@ export default function CompassChat() {
             <div className="space-y-3 mb-6">
               <button
                 onClick={() => handleSendMessage("I'm looking for wellness & spa items")}
-                className="w-full text-left px-4 py-3 bg-white border border-[#dfe0e1] rounded-lg hover:border-[#333333] hover:bg-[#f5f5f5] transition-colors"
+                className="w-full text-left px-4 py-3 border border-[#dfe0e1] rounded-lg hover:border-[#333333] hover:bg-[#f5f5f5] transition-colors"
               >
                 <p className="text-sm text-[#757575] mb-2">
                   "I'm looking for wellness & spa items" — then Compass will search across:
@@ -600,7 +605,7 @@ export default function CompassChat() {
               
               <button
                 onClick={() => handleSendMessage("I'm looking for food & entertaining")}
-                className="w-full text-left px-4 py-3 bg-white border border-[#dfe0e1] rounded-lg hover:border-[#333333] hover:bg-[#f5f5f5] transition-colors"
+                className="w-full text-left px-4 py-3 border border-[#dfe0e1] rounded-lg hover:border-[#333333] hover:bg-[#f5f5f5] transition-colors"
               >
                 <p className="text-sm text-[#757575] mb-2">
                   "I'm looking for food & entertaining" — then Compass will search across:
@@ -616,7 +621,7 @@ export default function CompassChat() {
               
               <button
                 onClick={() => handleSendMessage("I'm looking for home & living items")}
-                className="w-full text-left px-4 py-3 bg-white border border-[#dfe0e1] rounded-lg hover:border-[#333333] hover:bg-[#f5f5f5] transition-colors"
+                className="w-full text-left px-4 py-3 border border-[#dfe0e1] rounded-lg hover:border-[#333333] hover:bg-[#f5f5f5] transition-colors"
               >
                 <p className="text-sm text-[#757575] mb-2">
                   "I'm looking for home & living items" — then Compass will search across:

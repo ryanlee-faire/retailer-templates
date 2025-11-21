@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import SurfacesMenu from "./SurfacesMenu";
 import { useCompass } from "../contexts/CompassContext";
@@ -203,16 +203,35 @@ export default function RetailerGlobalNavLoggedIn({
   };
 
   // Reset prototype to beginning when clicking person icon
-  const handleProfileClick = () => {
-    // Clear all Compass state
-    clearMessages();
+  const handleProfileClick = useCallback(() => {
+    // Close panel first
     closePanel();
-    // Navigate back to home page
-    navigate('/template');
-  };
+    // Clear all Compass state first
+    clearMessages();
+    // Navigate to home page (use replace to avoid back button issues)
+    navigate('/template', { replace: true });
+  }, [closePanel, clearMessages, navigate]);
 
-  // Only enable Compass on /template route (Compass prototype)
-  const isCompassEnabled = location.pathname === '/template';
+  // Enable Compass on template, category, and PDP routes (Compass prototype)
+  const isCompassEnabled = 
+    location.pathname === '/template' ||
+    location.pathname.startsWith('/category/') ||
+    location.pathname === '/pdp';
+
+  // Keyboard shortcut: CMD/CTRL + Shift + R to restart prototype
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'r') {
+        e.preventDefault();
+        handleProfileClick();
+      }
+    };
+
+    if (isCompassEnabled) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isCompassEnabled, handleProfileClick]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -263,7 +282,7 @@ export default function RetailerGlobalNavLoggedIn({
   // Tablet layout
   if (currentDevice === "Tablet") {
     return (
-      <header className="relative z-[301] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
+      <header className="relative z-[600] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
         <div className="m-auto w-full lg:px-12 lg:pt-4 flex items-center justify-center gap-4 px-4 py-4" style={{ maxWidth: "1920px", width: "100%" }}>
           <button
             aria-label="Menu"
@@ -339,6 +358,7 @@ export default function RetailerGlobalNavLoggedIn({
               data-test-id="accountDropdown"
               className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
               type="button"
+              onClick={handleProfileClick}
             >
               <div className="flex items-center justify-center w-10 h-10 relative">
                 <AccountIcon className="w-6 h-6" />
@@ -368,7 +388,7 @@ export default function RetailerGlobalNavLoggedIn({
   // Mobile web layout
   if (currentDevice === "Mobile web") {
     return (
-      <header className="relative z-[301] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b h-[112px] print:hidden">
+      <header className="relative z-[600] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b h-[112px] print:hidden">
         <div className="h-[112px] relative w-full" ref={searchContainerRef}>
           <div className="absolute bg-white h-[112px] left-0 top-0 w-full" />
           <div className="absolute bg-white border border-[#757575] rounded-full flex items-center gap-2 h-10 left-4 right-4 px-4 pr-5 top-14">
@@ -458,7 +478,7 @@ export default function RetailerGlobalNavLoggedIn({
   // Focused variant - only logo (centered, same position as full variant)
   if (focused) {
     return (
-      <header className="sticky top-0 z-[301] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
+      <header className="sticky top-0 z-[600] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
         <div className="m-auto w-full lg:px-12 lg:pt-4 flex items-center justify-center px-4 py-4" style={{ maxWidth: "1920px", width: "100%" }}>
           <button
             aria-label="Menu"
@@ -482,7 +502,7 @@ export default function RetailerGlobalNavLoggedIn({
   // Adjusted padding to account for search bar height in standard variant
   if (focused2) {
     return (
-      <header className="sticky top-0 z-[301] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
+      <header className="sticky top-0 z-[600] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
         <div className="m-auto w-full lg:px-12 flex items-center px-4 pt-5 pb-5 lg:pt-5" style={{ maxWidth: "1920px", width: "100%" }}>
           <button
             aria-label="Menu"
@@ -504,7 +524,7 @@ export default function RetailerGlobalNavLoggedIn({
 
   // Desktop layout
   return (
-    <header className="relative z-[301] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
+    <header className="relative z-[600] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
       {/* Top Nav */}
       <div className="m-auto w-full lg:px-12 lg:pt-4 flex items-center justify-center px-4 py-4" style={{ maxWidth: "1920px", width: "100%" }}>
         <button

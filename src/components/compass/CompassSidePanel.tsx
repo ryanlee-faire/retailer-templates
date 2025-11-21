@@ -57,10 +57,11 @@ export default function CompassSidePanel() {
       {/* Side Panel */}
       <div
         data-compass-panel
-        className="fixed top-0 right-0 h-full bg-white z-[500] flex flex-col border-l border-[#dfe0e1]"
+        className="fixed top-0 right-0 h-full z-[500] flex flex-col border-l border-[#dfe0e1]"
         style={{
           width: '385px',
           maxWidth: '100vw',
+          backgroundColor: '#f7f7f7',
           transform: state.isPanelOpen ? 'translateX(0)' : 'translateX(100%)',
           transition: 'transform 350ms cubic-bezier(0.4, 0, 0.2, 1)',
           pointerEvents: state.isPanelOpen ? 'auto' : 'none',
@@ -159,7 +160,15 @@ export default function CompassSidePanel() {
         </div>
 
         {/* Chat Content */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto relative">
+          {/* Fade-up gradient at top */}
+          <div 
+            className="absolute top-0 left-0 right-0 z-10 pointer-events-none"
+            style={{
+              height: '20px',
+              background: 'linear-gradient(to bottom, rgba(247, 247, 247, 0.8) 0%, rgba(247, 247, 247, 0) 100%)',
+            }}
+          />
           <CompassChat />
         </div>
       </div>

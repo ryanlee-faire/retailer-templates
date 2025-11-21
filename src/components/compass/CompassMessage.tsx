@@ -24,13 +24,18 @@ function CategoryScrollRow({
   selectedProductIds: string[];
 }) {
   const navigate = useNavigate();
+  const { setPairedProducts } = useCompass();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
   const handleSeeAll = () => {
+    // If this is "Paired Products", ensure the products are stored in context
+    if (categoryGroup.category === 'Paired Products' && categoryGroup.products.length > 0) {
+      setPairedProducts(categoryGroup.products);
+    }
+    
     // Navigate to category page without closing Compass panel
-    const categorySlug = categoryGroup.category.toLowerCase().replace(/\s+/g, '-');
     navigate(`/category/${encodeURIComponent(categoryGroup.category)}?from=compass`);
   };
 
@@ -66,6 +71,7 @@ function CategoryScrollRow({
           </h4>
           {/* See all link */}
           <button
+            type="button"
             onClick={handleSeeAll}
             className="text-xs text-[#333333] hover:text-[#757575] hover:underline transition-colors"
           >
@@ -173,7 +179,7 @@ export default function CompassMessage({
       return (
         <div className="flex flex-col mb-6 px-6">
           {/* Working container */}
-          <div className="max-w-[85%] bg-white text-[#333333] px-4 py-3 rounded border border-[#dfe0e1]">
+          <div className="max-w-[85%] text-[#333333] px-4 py-3 rounded border border-[#dfe0e1]">
             <div className="flex items-center gap-2 mb-2">
               <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" strokeLinecap="round" />
@@ -222,20 +228,28 @@ export default function CompassMessage({
       const isSingleCategory = message.isCategorySpecific;
       const categoryName = message.specificCategoryName;
       
+      // Format product count (e.g., 1010 -> "1k+", 500 -> "500+")
+      const formatProductCount = (count: number) => {
+        if (count >= 1000) {
+          const k = Math.floor(count / 1000);
+          return `${k}k+`;
+        }
+        return `${count}+`;
+      };
+      
       return (
         <div className="flex flex-col mb-4 px-6">
-          {/* Compact summary */}
-          <div className="inline-flex items-center gap-2 bg-white text-[#757575] px-4 py-2 rounded text-sm border border-[#dfe0e1]">
-            <svg className="w-4 h-4 text-[#757575] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M22 4L12 14.01l-3-3" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <span className="text-[#333333]">
+          {/* Compact summary - plain text with chevron */}
+          <div className="inline-flex items-center gap-1 text-sm text-[#757575]">
+            <span>
               {isSingleCategory && categoryName
-                ? `Reviewed ${productCount}+ products in the ${categoryName} category`
-                : `Reviewed across ${categoryCount} categories and ${productCount}+ products`
+                ? `Reviewed ${formatProductCount(productCount)} products in ${categoryName}`
+                : `Reviewed ${categoryCount} categories, ${formatProductCount(productCount)} products`
               }
             </span>
+            <svg className="w-3.5 h-3.5 text-[#757575] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
         </div>
       );
@@ -245,7 +259,7 @@ export default function CompassMessage({
       <div className="flex flex-col mb-6 px-6" style={{ width: '100%' }}>
         {/* Assistant message bubble (only show if there's content) */}
         {message.content && (
-          <div className="bg-[#f5f5f5] text-[#333333] px-4 py-3 rounded-2xl rounded-tl-sm" style={{ width: '100%' }}>
+          <div className="bg-[#f5f5f5] text-[#333333] px-4 py-3 rounded-2xl rounded-tl-sm border border-[#dfe0e1]" style={{ width: '100%' }}>
             <p className="text-sm whitespace-pre-line">{message.content}</p>
             
             {/* Suggestion chips inside the bubble (if present) */}

@@ -9,23 +9,32 @@ export default function CategoryPage() {
   const { categoryName } = useParams<{ categoryName: string }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { setCurrentProduct } = useCompass();
+  const { state, setCurrentProduct } = useCompass();
   const fromCompass = searchParams.get('from') === 'compass';
 
-  // Map category names to product categories
-  const getCategoryFilter = (categoryName: string) => {
-    const normalized = categoryName?.toLowerCase() || '';
-    if (normalized.includes('food') || normalized.includes('snack')) return 'snack';
-    if (normalized.includes('beverage') || normalized.includes('drink')) return 'beverage';
-    if (normalized.includes('bath') || normalized.includes('soap')) return 'soap';
-    if (normalized.includes('accessor')) return 'accessory';
-    return null;
-  };
-
-  const categoryFilter = getCategoryFilter(categoryName || '');
-  const filteredProducts = categoryFilter
-    ? compassProducts.filter(p => p.category === categoryFilter)
-    : compassProducts;
+  // Handle "Paired Products" and other categories with proper memoization
+  const filteredProducts = React.useMemo(() => {
+    const isPairedProducts = categoryName === 'Paired Products';
+    
+    if (isPairedProducts) {
+      return state.pairedProducts || [];
+    }
+    
+    // Map category names to product categories
+    const getCategoryFilter = (name: string) => {
+      const normalized = name?.toLowerCase() || '';
+      if (normalized.includes('food') || normalized.includes('snack')) return 'snack';
+      if (normalized.includes('beverage') || normalized.includes('drink')) return 'beverage';
+      if (normalized.includes('bath') || normalized.includes('soap')) return 'soap';
+      if (normalized.includes('accessor')) return 'accessory';
+      return null;
+    };
+    
+    const categoryFilter = getCategoryFilter(categoryName || '');
+    return categoryFilter
+      ? compassProducts.filter(p => p.category === categoryFilter)
+      : compassProducts;
+  }, [categoryName, state.pairedProducts]);
 
   // Mock product data with full details
   const displayProducts = filteredProducts.map(product => ({
