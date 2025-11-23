@@ -216,14 +216,11 @@ export default function RetailerGlobalNavLoggedIn({
     navigate('/template', { replace: true });
   }, [closePanel, clearMessages, navigate]);
 
-  // Enable Compass on both prototypes' routes
+  // Enable Compass on template, category, and PDP routes (Compass prototype)
   const isCompassEnabled = 
     location.pathname === '/template' ||
     location.pathname.startsWith('/category/') ||
-    location.pathname === '/pdp' ||
-    location.pathname === '/compass-full-surface' ||
-    location.pathname === '/pdp-with-drawer' ||
-    location.pathname === '/pdp-with-drawer-left';
+    location.pathname === '/pdp';
 
   // Keyboard shortcut: CMD/CTRL + Shift + R to restart prototype
   useEffect(() => {
@@ -531,7 +528,7 @@ export default function RetailerGlobalNavLoggedIn({
 
   // Desktop layout
   return (
-    <header className="sticky top-0 z-[600] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
+    <header className="relative z-[600] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
       {/* Top Nav */}
       <div className="m-auto w-full lg:px-12 lg:pt-4 flex items-center justify-center px-4 py-4" style={{ maxWidth: "1920px", width: "100%" }}>
         <button
@@ -561,56 +558,35 @@ export default function RetailerGlobalNavLoggedIn({
             <ChevronDownIcon className="w-3 h-2" />
           </button>
         </div>
-        {navSearchBar ? (
-          <>
-            <div className="hidden lg:block flex-1" />
-            <div className="hidden lg:flex items-center justify-center max-w-2xl w-full">
-              <div 
-                className="w-full max-w-2xl"
-                style={{
-                  animation: 'fade-in-scale 0.3s ease-out forwards'
-                }}
-              >
-                {navSearchBar}
-              </div>
+        <div className="hidden lg:block" style={{ width: "16px", height: "16px" }} />
+        <div style={{ flex: "1 1 0%", position: "relative" }} ref={searchContainerRef}>
+          <div className="bg-white border border-[#757575] rounded-full flex items-center h-10 px-4 pr-5">
+            <input
+              id="top-search"
+              placeholder="Search or use a phrase"
+              aria-label="Search or use a phrase"
+              autoComplete="off"
+              data-test-id="searchBarInput"
+              className="flex-1 bg-transparent border-0 outline-0 text-[#333333] text-sm placeholder:text-[#757575]"
+              value={searchValue}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              onFocus={handleSearchFocus}
+              onKeyDown={handleSearchKeyDown}
+            />
+            <div className="flex items-center justify-center">
+              <SearchIcon className="w-4 h-4" />
             </div>
-            <div className="hidden lg:block flex-1" />
-          </>
-        ) : !hideSearch && (
-          <>
-            <div className="hidden lg:block" style={{ width: "16px", height: "16px" }} />
-            <div style={{ flex: "1 1 0%", position: "relative" }} ref={searchContainerRef}>
-              <div className="bg-white border border-[#757575] rounded-full flex items-center h-10 px-4 pr-5">
-                <input
-                  id="top-search"
-                  placeholder="Search or use a phrase"
-                  aria-label="Search or use a phrase"
-                  autoComplete="off"
-                  data-test-id="searchBarInput"
-                  className="flex-1 bg-transparent border-0 outline-0 text-[#333333] text-sm placeholder:text-[#757575]"
-                  value={searchValue}
-                  onChange={(e) => handleSearchChange(e.target.value)}
-                  onFocus={handleSearchFocus}
-                  onKeyDown={handleSearchKeyDown}
-                />
-                <div className="flex items-center justify-center">
-                  <SearchIcon className="w-4 h-4" />
-                </div>
-              </div>
-              {showSearchDropdown && isCompassEnabled && (
-                <SearchDropdown
-                  ref={searchDropdownRef}
-                  searchQuery={searchValue}
-                  onClose={() => setShowSearchDropdown(false)}
-                />
-              )}
-            </div>
-            <div className="hidden lg:block" style={{ width: "16px", height: "0px" }} />
-            <div className="hidden lg:block" style={{ width: "12px", height: "0px" }} />
-          </>
-        )}
-        {hideSearch && <div className="hidden lg:block flex-1" />}
-        {!hideSearch && <div className="hidden lg:block" style={{ width: "12px", height: "0px" }} />}
+          </div>
+          {showSearchDropdown && isCompassEnabled && (
+            <SearchDropdown
+              ref={searchDropdownRef}
+              searchQuery={searchValue}
+              onClose={() => setShowSearchDropdown(false)}
+            />
+          )}
+        </div>
+        <div className="hidden lg:block" style={{ width: "16px", height: "0px" }} />
+        <div className="hidden lg:block" style={{ width: "12px", height: "0px" }} />
         {languageSelector && (
           <>
             <div className="hidden lg:block" style={{ width: "12px" }} />
