@@ -9,6 +9,7 @@ interface COIUploadModalProps {
 export function COIUploadModal({ isOpen, onClose, onUpload }: COIUploadModalProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   if (!isOpen) return null;
 
@@ -39,174 +40,212 @@ export function COIUploadModal({ isOpen, onClose, onUpload }: COIUploadModalProp
   const handleUpload = () => {
     if (selectedFile) {
       onUpload(selectedFile.name);
-      setSelectedFile(null); // Reset for next time
+      setSelectedFile(null);
     }
   };
 
   const handleClose = () => {
-    setSelectedFile(null); // Reset file when closing
+    setSelectedFile(null);
+    setOpenFaq(null);
     onClose();
   };
 
+  const toggleFaq = (index: number) => {
+    setOpenFaq(openFaq === index ? null : index);
+  };
+
+  const faqs = [
+    {
+      question: "What is a Certificate of Insurance?",
+      answer: "A COI is proof from your insurer showing you have active liability coverage. It's a standard document that your insurance provider can issue."
+    },
+    {
+      question: "My policy is below $2M, what should I do?",
+      answer: "Contact your insurance provider to request a coverage increase or add a rider to meet the $2M aggregate requirement."
+    },
+    {
+      question: "How do I add Faire as an additional insured?",
+      answer: "Request your insurance provider to list \"Faire Wholesale, Inc.\" as an additional insured on your certificate."
+    },
+    {
+      question: "How long does verification take?",
+      answer: "COI verification typically takes 1-2 business days. You'll receive an email once your document has been reviewed."
+    }
+  ];
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="relative w-full max-w-2xl rounded-2xl bg-white shadow-xl">
-        {/* Header */}
-        <div className="flex items-start justify-between border-b border-[var(--color-border-subdued)] p-6">
-          <div>
-            <h2 className="text-2xl font-semibold text-[var(--color-text-primary)]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="relative w-full max-w-[720px] flex rounded-2xl shadow-xl overflow-hidden">
+        {/* Close button */}
+        <button
+          onClick={handleClose}
+          className="absolute right-4 top-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full hover:bg-black/10 z-10"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M12 4L4 12M4 4l8 8" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+
+        {/* ===== LEFT PANEL: Upload ===== */}
+        <div className="flex-1 bg-white flex flex-col overflow-y-auto max-h-[80vh]">
+          {/* Header */}
+          <div className="px-6 pt-6 pb-4">
+            <h2 className="text-lg font-medium text-[#333333] pr-8">
               Upload your Certificate of Insurance
             </h2>
           </div>
-          <button
-            onClick={handleClose}
-            className="ml-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full hover:bg-[var(--color-grey-200)]"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M12 4L4 12M4 4l8 8" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
+
+          {/* Content */}
+          <div className="px-6 flex-1">
+            {/* File Upload Dropzone */}
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              className={`relative mb-6 rounded-lg border border-dashed h-[200px] flex flex-col items-center justify-center transition-colors ${
+                isDragging
+                  ? 'border-[#333333] bg-[#f7f7f7]'
+                  : 'border-[#757575] bg-[#fbfbfb]'
+              }`}
+            >
+              <input
+                type="file"
+                id="file-upload"
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+              
+              {!selectedFile ? (
+                <>
+                  <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#e5e5e5]">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333333" strokeWidth="1.5">
+                      <path d="M12 16V4M12 4l-5 5M12 4l5 5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <label htmlFor="file-upload" className="cursor-pointer">
+                    <span className="text-sm text-[#333333]">
+                      Drop your file here or{' '}
+                      <span className="underline">
+                        click to browse
+                      </span>
+                    </span>
+                  </label>
+                </>
+              ) : (
+                <div className="flex items-center justify-between rounded-lg border border-[#dfe0e1] bg-white p-3 mx-4 w-[calc(100%-32px)]">
+                  <div className="flex items-center gap-3">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#333333" strokeWidth="1.5">
+                      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M14 2v6h6" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span className="text-sm text-[#333333]">
+                      {selectedFile.name}
+                    </span>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedFile(null);
+                    }}
+                    className="flex h-6 w-6 items-center justify-center rounded-full hover:bg-[#e5e5e5]"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#333333" strokeWidth="1.5">
+                      <path d="M12 4L4 12M4 4l8 8" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Info Banner with Requirements */}
+            <div className="rounded-lg bg-[#f7f7f7] p-4 mb-6">
+              <p className="text-sm text-[#333333] mb-2">
+                Enterprise retailers require basic insurance documentation before ordering. Uploading your COI ensures you're eligible for high-value orders.
+              </p>
+              
+              <p className="text-sm font-medium text-[#333333] mt-4 mb-2">
+                COI Requirements:
+              </p>
+              <ul className="text-sm ml-5 list-disc text-[#666666]">
+                <li>Minimum $2M aggregate general liability coverage</li>
+                <li>Policy must be active and unexpired</li>
+                <li>Must list 'Faire Wholesale, Inc.' as additional insured</li>
+                <li>Accepted formats: PDF, JPG, PNG (≤ 25 MB)</li>
+              </ul>
+              
+              <p className="text-xs text-[#333333] mt-4">
+                <button className="underline">Learn more</button>
+                {' '}about Certificate of Insurance or{' '}
+                <button className="underline">contact support</button>
+                {' '}for additional help.
+              </p>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="bg-[#fbfbfb] px-6 py-4 flex justify-end rounded-bl-lg">
+            <button
+              onClick={handleUpload}
+              disabled={!selectedFile}
+              className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${
+                selectedFile
+                  ? 'bg-[#333333] text-white hover:bg-[#444444]'
+                  : 'bg-[#e5e5e5] text-[#999999] cursor-not-allowed'
+              }`}
+            >
+              Continue
+            </button>
+          </div>
         </div>
 
-        {/* Content */}
-        <div className="p-6">
-          {/* File Upload Dropzone */}
-          <div
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            className={`relative mb-6 rounded-lg border-2 border-dashed p-8 text-center transition-colors ${
-              isDragging
-                ? 'border-[var(--color-grey-900)] bg-[var(--color-grey-100)]'
-                : 'border-[var(--color-border-subdued)] bg-white'
-            }`}
-          >
-            <input
-              type="file"
-              id="file-upload"
-              accept=".pdf,.jpg,.jpeg,.png"
-              onChange={handleFileSelect}
-              className="hidden"
-            />
-            
-            {!selectedFile ? (
-              <>
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-grey-200)]">
-                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M16 10v12M10 16h12" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M28 22v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4M22 10l-6-6-6 6M16 4v12" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-                <label htmlFor="file-upload" className="cursor-pointer">
-                  <span className="type-paragraph text-[var(--color-text-primary)]">
-                    Drop your file here or{' '}
-                    <span className="underline hover:text-[var(--color-text-subdued)]">
-                      click to browse
-                    </span>
-                  </span>
-                </label>
-              </>
-            ) : (
-              <div className="flex items-center justify-between rounded-lg border border-[var(--color-border-subdued)] bg-[var(--color-grey-100)] p-4">
-                <div className="flex items-center gap-3">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  <span className="type-paragraph text-[var(--color-text-primary)]">
-                    {selectedFile.name}
-                  </span>
-                </div>
+        {/* ===== RIGHT PANEL: FAQs ===== */}
+        <div className="w-[300px] flex-shrink-0 bg-[#f7f7f7] p-6 flex flex-col overflow-y-auto max-h-[80vh]">
+          <h3 className="text-base font-semibold text-[#333333] mb-4">
+            Frequently Asked Questions
+          </h3>
+          
+          <div className="space-y-0 flex-1">
+            {faqs.map((faq, index) => (
+              <div key={index} className="border-b border-[#e5e5e5] last:border-b-0">
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedFile(null);
-                  }}
-                  className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-[var(--color-grey-300)]"
+                  onClick={() => toggleFaq(index)}
+                  className="flex items-start justify-between w-full text-left py-3"
                 >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M12 4L4 12M4 4l8 8" strokeLinecap="round" strokeLinejoin="round"/>
+                  <span className="text-sm font-medium text-[#333333] pr-2">{faq.question}</span>
+                  <svg 
+                    width="12" 
+                    height="12" 
+                    viewBox="0 0 12 12" 
+                    fill="none" 
+                    stroke="#333333" 
+                    strokeWidth="1.5"
+                    className={`flex-shrink-0 mt-1 transition-transform ${openFaq === index ? 'rotate-180' : ''}`}
+                  >
+                    <path d="M2 4l4 4 4-4" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </button>
+                {openFaq === index && (
+                  <p className="text-sm text-[#666666] pb-3">
+                    {faq.answer}
+                  </p>
+                )}
               </div>
-            )}
+            ))}
           </div>
 
-          {/* Information Banner */}
-          <div className="rounded-lg bg-[#F5F7FA] p-4">
-            <p className="type-paragraph mb-3 text-[var(--color-text-primary)]">
-              Enterprise retailers require basic insurance documentation before ordering. Uploading your COI ensures you're eligible for high-value orders.
-            </p>
-            <p className="type-paragraph text-[var(--color-text-subdued)]">
-              <button className="underline hover:text-[var(--color-text-primary)]">
-                Learn more about Certificate of Insurance
+          {/* Footer - Contact Support */}
+          <div className="mt-auto pt-6 border-t border-[#e5e5e5]">
+            <p className="text-sm text-[#333333]">
+              Need help?{' '}
+              <button className="underline hover:text-[#666666]">
+                Contact support
               </button>
-              {' '}or{' '}
-              <button className="underline hover:text-[var(--color-text-primary)]">
-                contact support
-              </button>
-              {' '}for additional help.
             </p>
           </div>
-
-          {/* Requirements */}
-          <div className="mt-6 space-y-2">
-            <p className="type-paragraph-medium text-[var(--color-text-primary)]">
-              COI Requirements:
-            </p>
-            <ul className="type-paragraph ml-6 list-disc space-y-1 text-[var(--color-text-subdued)]">
-              <li>Minimum $2M aggregate general liability coverage</li>
-              <li>Policy must be active and unexpired</li>
-              <li>Must list 'Faire Wholesale, Inc.' as additional insured</li>
-              <li>Accepted formats: PDF, JPG, PNG (≤ 25 MB)</li>
-            </ul>
-          </div>
-
-          {/* FAQs */}
-          <div className="mt-6 space-y-3 border-t border-[var(--color-border-subdued)] pt-4">
-            <details className="group">
-              <summary className="type-paragraph-medium cursor-pointer text-[var(--color-text-primary)] hover:text-[var(--color-text-subdued)]">
-                What is a Certificate of Insurance?
-              </summary>
-              <p className="type-paragraph mt-2 text-[var(--color-text-subdued)]">
-                Proof from your insurer showing active liability coverage.
-              </p>
-            </details>
-            <details className="group">
-              <summary className="type-paragraph-medium cursor-pointer text-[var(--color-text-primary)] hover:text-[var(--color-text-subdued)]">
-                My policy is below $2M, what should I do?
-              </summary>
-              <p className="type-paragraph mt-2 text-[var(--color-text-subdued)]">
-                Ask your insurer for a coverage rider or increase.
-              </p>
-            </details>
-            <details className="group">
-              <summary className="type-paragraph-medium cursor-pointer text-[var(--color-text-primary)] hover:text-[var(--color-text-subdued)]">
-                How do I add Faire as an additional insured?
-              </summary>
-              <p className="type-paragraph mt-2 text-[var(--color-text-subdued)]">
-                Request your provider include "Faire Wholesale, Inc." on the certificate.
-              </p>
-            </details>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="border-t border-[var(--color-border-subdued)] p-6">
-          <button
-            onClick={handleUpload}
-            disabled={!selectedFile}
-            className={`w-full rounded-lg py-3 type-paragraph-medium transition-colors ${
-              selectedFile
-                ? 'bg-[var(--color-grey-900)] text-white hover:bg-[var(--color-grey-800)]'
-                : 'bg-[var(--color-grey-300)] text-[var(--color-text-subdued)] cursor-not-allowed'
-            }`}
-          >
-            Upload
-          </button>
         </div>
       </div>
     </div>
   );
 }
-

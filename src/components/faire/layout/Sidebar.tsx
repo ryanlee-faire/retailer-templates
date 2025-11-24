@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export function Sidebar() {
   return (
-    <aside className="w-60 border-r border-[var(--color-border-subdued)] bg-white p-6">
+    <aside className="w-60 min-w-[240px] flex-shrink-0 border-r border-[var(--color-border-subdued)] bg-white p-6 h-screen sticky top-0 overflow-y-auto">
       {/* Faire Logo and Icons */}
       <div className="mb-8 flex items-center justify-between">
         <img src="https://cdn.faire.com/static/logo-360px.svg" alt="Faire" className="h-6" />
