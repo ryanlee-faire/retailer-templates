@@ -1,36 +1,176 @@
-# Retailer Template Project
+# Design Prototype Playground (DPP)
 
-This is a React + TypeScript e-commerce retailer template project.
+You are helping build prototypes in Faire's Design Prototype Playground - a rapid prototyping environment for exploring product ideas outside the production monorepo.
 
-## Tech Stack
-- React 18 with TypeScript
-- Tailwind CSS for styling
-- React Router for navigation
-- Uses a 12-column grid system (retailer-12col-grid)
+## What This Is
+
+The Design Prototype Playground is a lightweight, standalone React app where designers and collaborators rapidly prototype using similar-ish looking UI. It's NOT connected to production data or live experiments - it's a standalone environment for exploration and validation.
+
+**Key Principles:**
+- Near-production fidelity, not pixel-perfect
+- Mock data is expected and encouraged
+- Speed and clarity over polish
+- Each prototype should be self-contained
+- Demonstrate behavioral intent, not complete business logic
 
 ## Project Structure
-- `src/pages/` - Page components (ProductDetailPage, IndexPage, TemplatePage)
-- `src/components/` - Reusable components (RetailerLayout, Footer, etc.)
-- `src/utils/` - Utility functions (gridUtils)
 
-## Key Features
-- Product Detail Page (PDP) with:
-  - Product images with zoom
-  - Color selection
-  - Quantity input
-  - Add to cart functionality
-  - Shipping & policies information
-  - Product description and details
+```
+faire-proto-playground/
+├── src/
+│   ├── pages/              # All prototype pages
+│   │   ├── faire/          # Brand surface prototypes
+│   │   └── [Other pages]   # Retailer and other surfaces
+│   ├── components/         # Reusable components
+│   ├── config/
+│   │   └── prototypes.ts   # Prototype metadata registry
+│   └── App.tsx             # Route definitions
+```
+
+## Tech Stack
+
+- React 18 + TypeScript (strict mode)
+- Tailwind CSS for styling
+- React Router v7 for navigation
+- No backend - all mock data
 
 ## Design System
-- Uses a 12-column grid layout system
-- Max width: 1920px
-- Padding: 48px on sides
-- Colors: #333333 (primary text), #757575 (secondary text), #dfe0e1 (borders)
 
-## Code Style
-- TypeScript strict mode
-- Functional components with hooks
-- Tailwind utility classes for styling
-- Semantic HTML with accessibility in mind
+**Typography:**
+- Font: Inter (400, 500, 600)
+- Headings: font-semibold or font-bold
+- Use Nantes serif for hero/display text
 
+**Colors:**
+- Primary text: #333333
+- Secondary text: #757575
+- Borders: #dfe0e1
+- Background: #f5f5f5
+- White cards: #ffffff
+
+**Spacing:**
+- Max width: 1440px
+- Page padding: 48px (px-12 in Tailwind)
+- Section spacing: 48px or 32px
+
+**Components:**
+- Cards: bg-white, rounded-3xl, shadow-sm
+- Buttons: rounded-lg, appropriate padding
+- Use Tailwind utility classes
+
+## Adding a New Prototype
+
+When the user wants to create a new prototype, follow this workflow:
+
+### 1. Ask for Context
+
+**Ask the user:**
+- "What's the prototype name?"
+- "Is this for Brand or Retailer surface?"
+- "Do you have a PRD or Notion doc I can read?"
+- "What's the core interaction or flow you want to demonstrate?"
+
+### 2. Read Existing Patterns
+
+Before building, review these files:
+- `src/config/prototypes.ts` - Metadata structure
+- `src/pages/faire/BulkEditorPage.tsx` - Brand prototype example
+- `src/pages/ProductDetailPage.tsx` - Retailer prototype example
+- `src/App.tsx` - Routing patterns
+
+### 3. Create Three Things
+
+**A. Create the page file:**
+- Location: `src/pages/[PrototypeName]Page.tsx`
+- Use existing design patterns (fonts, colors, spacing)
+- Include mock data inline or in separate file
+- Keep it focused and self-contained
+
+**B. Add the route** in `src/App.tsx`:
+```tsx
+<Route path="/[route-path]" element={<RouteWrapper><YourPrototypePage /></RouteWrapper>} />
+```
+
+**C. Register metadata** in `src/config/prototypes.ts`:
+```tsx
+{
+  id: 'your-prototype-id',
+  name: 'Your Prototype Name',
+  path: '/your-route-path',
+  description: '2-3 sentences about what this demonstrates',
+  owner: 'John', // or whoever
+  lastUpdated: 'YYYY-MM-DD',
+  surfaceArea: 'Brand', // or 'Retailer'
+  category: 'experimental', // or 'template'
+  status: 'wip', // or 'ready', 'active'
+}
+```
+
+### 4. Important: Keep Prototypes Isolated
+
+- Each prototype should be completely self-contained
+- Don't modify other prototype files
+- Don't change shared components unless necessary
+- Use local state, don't affect global context
+- Test that your prototype doesn't break others
+
+### 5. Test
+
+- Navigate to your prototype URL
+- Verify it appears in the index gallery
+- Check that all interactions work
+- Ensure no errors in console
+
+## URL Structure
+
+The DPP uses URL-based navigation:
+- `/` - Landing page (hero + intro)
+- `/experimental` - Experimental prototypes gallery
+- `/templates` - Template prototypes gallery
+- `/components` - Component showcase
+- `/[your-prototype]` - Individual prototype pages
+
+## Fidelity Guidelines
+
+**This prototype should:**
+- ✅ Be visually close to production
+- ✅ Demonstrate intended behavior and interactions
+- ✅ Use mock data (hardcoded is fine)
+- ✅ Focus on the core user experience
+- ✅ Work as a clickable demo
+
+**This prototype should NOT:**
+- ❌ Be production-ready code
+- ❌ Connect to real APIs or databases
+- ❌ Have complete error handling
+- ❌ Cover every edge case
+- ❌ Be pixel-perfect
+
+## When User Says "I want to build a new prototype"
+
+1. **Acknowledge** you understand this is for the DPP
+2. **Ask for PRD/Notion context** - "Do you have a PRD or design doc?"
+3. **Ask for specifics** - surface area, key flows, interactions
+4. **Read existing examples** - Learn from similar prototypes
+5. **Build iteratively** - Start simple, add complexity
+6. **Keep it isolated** - Don't touch other prototypes
+
+## Quick Reference
+
+**Prototype checklist:**
+- [ ] Page file created in src/pages/
+- [ ] Route added to src/App.tsx
+- [ ] Metadata added to src/config/prototypes.ts
+- [ ] Uses existing design patterns
+- [ ] Mock data included
+- [ ] Tested and working
+- [ ] Shows up in index gallery
+
+## Vision Document
+
+For full context on the DPP vision and long-term goals:
+https://www.notion.so/faire/Design-Prototyping-Playground-Leveraging-Slate-Community-Components-AI-Tooling-2a72efb5c25a80ad93fbd33a5f82ff82
+
+---
+
+Remember: This is a playground for rapid exploration. Prioritize speed and clarity over perfection. Help the user prototype their ideas quickly and effectively!
