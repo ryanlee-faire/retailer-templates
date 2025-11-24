@@ -76,6 +76,9 @@ function AppContent() {
         <Routes>
         <Route path="/login/callback" element={<LoginCallback />} />
         <Route path="/" element={<RouteWrapper><IndexPage /></RouteWrapper>} />
+        <Route path="/experimental" element={<RouteWrapper><IndexPage /></RouteWrapper>} />
+        <Route path="/templates" element={<RouteWrapper><IndexPage /></RouteWrapper>} />
+        <Route path="/components" element={<RouteWrapper><IndexPage /></RouteWrapper>} />
         <Route path="/template" element={<RouteWrapper><TemplatePage /></RouteWrapper>} />
         <Route path="/category/:categoryName" element={<RouteWrapper><CategoryPage /></RouteWrapper>} />
         <Route path="/new-page" element={<RouteWrapper><NewPage /></RouteWrapper>} />

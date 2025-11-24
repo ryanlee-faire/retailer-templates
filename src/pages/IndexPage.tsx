@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
 import { components } from "../config/components";
 import { 
   prototypes, 
@@ -7,45 +7,28 @@ import {
   getTemplatesBySurface 
 } from "../config/prototypes";
 
-type TabType = 'experimental' | 'templates' | 'components';
-
 export default function IndexPage() {
-  const [activeTab, setActiveTab] = useState<TabType>('experimental');
-
-  // Helper component for status badges
-  const StatusBadge = ({ status }: { status?: string }) => {
-    if (!status) return null;
-    
-    const colors = {
-      wip: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      ready: 'bg-blue-100 text-blue-800 border-blue-200',
-      active: 'bg-green-100 text-green-800 border-green-200',
-    };
-    
-    const labels = {
-      wip: 'WIP',
-      ready: 'Ready for feedback',
-      active: 'Active',
-    };
-    
-    return (
-      <span className={`text-xs px-2 py-0.5 rounded border ${colors[status as keyof typeof colors]}`}>
-        {labels[status as keyof typeof labels]}
-      </span>
-    );
-  };
+  const location = useLocation();
+  
+  // Determine current section from URL path
+  const currentPath = location.pathname;
+  const isExperimental = currentPath === '/experimental';
+  const isTemplates = currentPath === '/templates';
+  const isComponents = currentPath === '/components';
+  const isDefault = currentPath === '/';
+  
+  // Get build date from environment variable (set during build)
+  const lastUpdated = process.env.REACT_APP_BUILD_DATE || new Date().toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
+  
 
   // Helper component for owner badges
   const OwnerBadge = ({ owner }: { owner: string }) => (
     <span className="text-xs bg-[#757575] text-white px-2 py-0.5 rounded">
       {owner}
-    </span>
-  );
-
-  // Helper component for surface area tags
-  const SurfaceTag = ({ surface }: { surface: string }) => (
-    <span className="text-xs px-2 py-0.5 rounded bg-[#f5f5f5] text-[#757575] border border-[#dfe0e1]">
-      {surface}
     </span>
   );
 
@@ -83,10 +66,10 @@ export default function IndexPage() {
   const PrototypeCard = ({ prototype }: { prototype: typeof prototypes[0] }) => (
     <Link
       to={prototype.path}
-      className="block border border-[#dfe0e1] rounded-lg hover:border-[#333333] hover:shadow-lg transition-all duration-300 bg-white overflow-hidden group"
+      className="block bg-white rounded-3xl p-3 shadow-sm hover:shadow-xl transition-shadow duration-300 group"
     >
       {/* Thumbnail preview */}
-      <div className="aspect-video border-b border-[#dfe0e1] relative overflow-hidden">
+      <div className="aspect-[4/3] relative overflow-hidden rounded-2xl mb-2">
         {prototype.thumbnail ? (
           <img 
             src={prototype.thumbnail} 
@@ -95,36 +78,24 @@ export default function IndexPage() {
           />
         ) : (
           <div 
-            className="w-full h-full flex items-center justify-center"
+            className="w-full h-full"
             style={{ background: getPlaceholderGradient(prototype.id) }}
-          >
-            <div className="text-center text-white">
-              <div className="mb-2 opacity-30">
-                <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <p className="text-xs font-semibold opacity-50">{prototype.name}</p>
-            </div>
-          </div>
+          ></div>
         )}
-        {/* Hover overlay */}
-        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
       </div>
       
       {/* Card content */}
-      <div className="p-5">
-        <div className="flex items-start justify-between mb-3">
+      <div className="px-2 pb-2">
+        <div className="flex items-start justify-between mb-2">
           <h3 className="text-lg font-semibold text-[#333333] flex-1">
             {prototype.name}
           </h3>
           <div className="flex items-center gap-2 ml-4 flex-shrink-0">
             <OwnerBadge owner={prototype.owner} />
-            <StatusBadge status={prototype.status} />
           </div>
         </div>
         
-        <p className="text-sm text-[#757575] mb-4 leading-relaxed" style={{
+        <p className="text-sm text-[#757575] mb-3 leading-relaxed" style={{
           display: '-webkit-box',
           WebkitLineClamp: 2,
           WebkitBoxOrient: 'vertical',
@@ -133,10 +104,7 @@ export default function IndexPage() {
           {prototype.description}
         </p>
         
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <SurfaceTag surface={prototype.surfaceArea} />
-          </div>
+        <div className="flex items-center gap-2">
           <span className="text-xs text-[#757575]">
             Updated {prototype.lastUpdated}
           </span>
@@ -168,32 +136,25 @@ export default function IndexPage() {
   const ComponentCard = ({ component, index }: { component: typeof components[0]; index: number }) => (
     <Link
       to={component.path}
-      className="block border border-[#dfe0e1] rounded-lg hover:border-[#333333] hover:shadow-lg transition-all duration-300 bg-white overflow-hidden group"
+      className="block bg-white rounded-3xl p-3 shadow-sm hover:shadow-xl transition-shadow duration-300 group"
     >
       {/* Thumbnail preview */}
       <div 
-        className="aspect-video border-b border-[#dfe0e1] relative overflow-hidden"
+        className="aspect-[4/3] relative overflow-hidden rounded-2xl mb-2"
         style={{ background: getComponentGradient(index) }}
       >
-        <div className="w-full h-full flex items-center justify-center">
-          <div className="text-center text-white">
-            <div className="mb-2 opacity-30">
-              <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-              </svg>
-            </div>
-            <p className="text-xs font-semibold opacity-50">{component.name}</p>
-          </div>
-        </div>
-        {/* Hover overlay */}
-        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
       </div>
       
       {/* Card content */}
-      <div className="p-5">
-        <h3 className="text-base font-semibold text-[#333333] mb-2">
-          {component.name}
-        </h3>
+      <div className="px-2 pb-2">
+        <div className="flex items-start justify-between mb-2">
+          <h3 className="text-lg font-semibold text-[#333333] flex-1">
+            {component.name}
+          </h3>
+          <div className="flex items-center gap-2 ml-4 flex-shrink-0">
+            <OwnerBadge owner="Ryan" />
+          </div>
+        </div>
         {component.description && (
           <p className="text-sm text-[#757575] leading-relaxed" style={{
             display: '-webkit-box',
@@ -220,10 +181,10 @@ export default function IndexPage() {
     
     return (
       <div className="mb-8">
-        <h3 className="text-xl font-semibold text-[#333333] mb-4 pb-2 border-[#dfe0e1]">
+        <h3 className="text-xl font-semibold text-[#333333] mb-6">
           {title}
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {prototypeList.map((prototype) => (
             <PrototypeCard key={prototype.id} prototype={prototype} />
           ))}
@@ -232,14 +193,61 @@ export default function IndexPage() {
     );
   };
 
+  // Tab navigation component
+  const TabNav = () => (
+    <div className="flex gap-6 pr-4">
+      <Link
+        to="/experimental"
+        className={`py-3 px-1 text-sm font-medium transition-colors relative ${
+          isExperimental
+            ? 'text-[#333333]'
+            : 'text-[#757575] hover:text-[#333333]'
+        }`}
+      >
+        Experimental
+        {isExperimental && (
+          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#333333]"></div>
+        )}
+      </Link>
+      
+      <Link
+        to="/templates"
+        className={`py-3 px-1 text-sm font-medium transition-colors relative ${
+          isTemplates
+            ? 'text-[#333333]'
+            : 'text-[#757575] hover:text-[#333333]'
+        }`}
+      >
+        Templates
+        {isTemplates && (
+          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#333333]"></div>
+        )}
+      </Link>
+      
+      <Link
+        to="/components"
+        className={`py-3 px-1 text-sm font-medium transition-colors relative ${
+          isComponents
+            ? 'text-[#333333]'
+            : 'text-[#757575] hover:text-[#333333]'
+        }`}
+      >
+        Components
+        {isComponents && (
+          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#333333]"></div>
+        )}
+      </Link>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-white">
-      {/* Simple header with logo only - NOT sticky */}
-      <header className="bg-white">
-        <div className="mx-auto" style={{ maxWidth: "1440px", paddingLeft: "48px", paddingRight: "48px" }}>
-          <div className="py-4">
-            {/* Faire logo */}
-            <a href="/" className="flex items-center">
+    <div className="min-h-screen bg-[#f5f5f5]">
+      {/* Header - Sticky with tabs in top-right */}
+      <header className="sticky top-0 bg-[#f5f5f5] z-50" style={{ borderBottom: '1px solid #dfe0e1' }}>
+        <div className="mx-auto px-12" style={{ maxWidth: "1440px", height: '64px' }}>
+          <div className="flex items-center justify-between h-full">
+            {/* Left: Faire logo */}
+            <Link to="/" className="flex items-center">
               <img 
                 alt="Faire Logo" 
                 src="https://cdn.faire.com/static/logo.svg" 
@@ -249,43 +257,65 @@ export default function IndexPage() {
                   target.src = "http://localhost:3845/assets/1e3ffc68be20eda669774f7388f9632f2f0bab67.svg";
                 }}
               />
-            </a>
+            </Link>
+            
+            {/* Right: Navigation tabs (always visible) */}
+            <TabNav />
           </div>
         </div>
       </header>
 
-      {/* Main content */}
-      <div
-        className="mx-auto"
-        style={{
-          maxWidth: "1440px",
-          paddingLeft: "48px",
-          paddingRight: "48px",
-          paddingTop: "48px",
-          paddingBottom: "48px",
-        }}
-      >
+      {/* Hero Section - Only on default page */}
+      {isDefault && (
+        <div className="relative py-32">
+          {/* Centered Hero Text */}
+          <div className="flex flex-col items-center justify-center px-12">
+            <h1 className="text-6xl md:text-7xl text-[#333333] text-center mb-8 leading-tight" style={{ fontFamily: 'Nantes, serif', maxWidth: '999px' }}>
+              A playground for rapid exploration and ideation
+            </h1>
+            <p className="text-sm text-[#757575] text-center tracking-wide">
+              Faire Design Prototype Playground · <a 
+                href="https://github.com/ryanlee-faire/faire-proto-playground" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="underline hover:text-[#333333] transition-colors"
+              >
+                Last updated {lastUpdated}
+              </a>
+            </p>
+          </div>
+        </div>
+      )}
 
-        {/* Introduction Section */}
-        <div className="mb-12 p-6 rounded-lg border border-dashed border-[#dfe0e1]">
-          <h1 className="text-4xl font-bold text-[#333333] mb-2">
-            Design Prototype Playground
-          </h1>
-          <p className="text-lg text-[#757575] mb-6 pb-6 border-b border-[#dfe0e1]">
-            A playground for rapid exploration and ideation
-          </p>
-          
-          <h2 className="font-semibold text-[#333333] mb-2">
+      {/* What is this card - only on default landing page */}
+      {isDefault && (
+        <div className="relative px-12 py-32">
+        <div 
+          className="mx-auto bg-white rounded-3xl shadow-sm hover:shadow-xl transition-shadow duration-300 p-8"
+          style={{ maxWidth: '800px' }}
+        >
+          <h2 className="text-2xl font-semibold text-[#333333] mb-3">
             What is this?
           </h2>
           <p className="text-sm text-[#757575] mb-4">
             This playground is a space for designers and collaborators to rapidly prototype using similar-ish looking UI. It's not connected to production data or live experiments, it's a standalone environment for exploration and validation.
           </p>
           
-          <div className="grid md:grid-cols-3 gap-4 mt-6">
+          <a 
+            href="https://www.notion.so/faire/Design-Prototyping-Playground-Leveraging-Slate-Community-Components-AI-Tooling-2a72efb5c25a80ad93fbd33a5f82ff82?source=copy_link"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-[#333333] text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-[#000000] transition-colors"
+          >
+            Learn more
+          </a>
+          
+          <div className="border-t border-[#dfe0e1] my-6"></div>
+          
+          <div className="grid md:grid-cols-3 gap-4">
               <div>
-                <h3 className="font-semibold text-[#333333] mb-2">✅ This Is:</h3>
-                <ul className="space-y-1 text-[#757575]">
+                <h3 className="text-sm font-semibold text-[#333333] mb-2">✅ This Is:</h3>
+                <ul className="space-y-1 text-sm text-[#757575]">
                   <li>• A local prototyping space</li>
                   <li>• For testing layouts & interactions</li>
                   <li>• Using familiar components</li>
@@ -294,8 +324,8 @@ export default function IndexPage() {
               </div>
               
               <div>
-                <h3 className="font-semibold text-[#333333] mb-2">🚫 This Is Not:</h3>
-                <ul className="space-y-1 text-[#757575]">
+                <h3 className="text-sm font-semibold text-[#333333] mb-2">🚫 This Is Not:</h3>
+                <ul className="space-y-1 text-sm text-[#757575]">
                   <li>• A source of truth for production</li>
                   <li>• Connected to live data</li>
                   <li>• A replacement for Storybook</li>
@@ -304,8 +334,8 @@ export default function IndexPage() {
               </div>
               
               <div>
-                <h3 className="font-semibold text-[#333333] mb-2">📋 Fidelity:</h3>
-                <ul className="space-y-1 text-[#757575]">
+                <h3 className="text-sm font-semibold text-[#333333] mb-2">📋 Fidelity:</h3>
+                <ul className="space-y-1 text-sm text-[#757575]">
                   <li>• Visually close to production</li>
                   <li>• Behavioral intent, not logic</li>
                   <li>• Mock data is fine</li>
@@ -313,66 +343,25 @@ export default function IndexPage() {
                 </ul>
               </div>
             </div>
-        </div>
-
-        {/* Tab Navigation - Sticky */}
-        <div className="sticky top-0 bg-white mb-8 z-40" style={{ borderBottom: '1px solid #dfe0e1' }}>
-          <div className="flex gap-8">
-            <button
-              onClick={() => setActiveTab('experimental')}
-              className={`py-3 px-1 font-medium transition-colors relative ${
-                activeTab === 'experimental'
-                  ? 'text-[#333333]'
-                  : 'text-[#757575] hover:text-[#333333]'
-              }`}
-            >
-              Experimental
-              {activeTab === 'experimental' && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#333333]"></div>
-              )}
-            </button>
-            
-            <button
-              onClick={() => setActiveTab('templates')}
-              className={`py-3 px-1 font-medium transition-colors relative ${
-                activeTab === 'templates'
-                  ? 'text-[#333333]'
-                  : 'text-[#757575] hover:text-[#333333]'
-              }`}
-            >
-              Templates
-              {activeTab === 'templates' && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#333333]"></div>
-              )}
-            </button>
-            
-            <button
-              onClick={() => setActiveTab('components')}
-              className={`py-3 px-1 font-medium transition-colors relative ${
-                activeTab === 'components'
-                  ? 'text-[#333333]'
-                  : 'text-[#757575] hover:text-[#333333]'
-              }`}
-            >
-              Components
-              {activeTab === 'components' && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#333333]"></div>
-              )}
-            </button>
           </div>
         </div>
+      )}
 
-        {/* Tab Content */}
-        <div className="min-h-[400px]">
+      {/* Tab Content - Conditional based on route */}
+      {(isExperimental || isTemplates || isComponents) && (
+        <div className="px-12 py-12">
+          <div className="mx-auto" style={{ maxWidth: "1440px" }}>
+          
           {/* Experimental Tab */}
-          {activeTab === 'experimental' && (
+          {isExperimental && (
             <div>
-              <div className="mb-6">
-                <p className="text-sm text-[#757575] mb-8">
-                  Experimental prototypes are explorations and new ideas not yet in production. 
-                  These are works in progress that demonstrate potential future directions.
-                </p>
-              </div>
+              <h1 className="text-5xl md:text-6xl text-[#333333] mb-4" style={{ fontFamily: 'Nantes, serif' }}>
+                Experimental
+              </h1>
+              <p className="text-sm text-[#757575] mb-12">
+                Experimental prototypes are explorations and new ideas not yet in production. 
+                These are works in progress that demonstrate potential future directions.
+              </p>
               
               <SurfaceSection 
                 title="Brand Surface Area" 
@@ -394,14 +383,15 @@ export default function IndexPage() {
           )}
 
           {/* Templates Tab */}
-          {activeTab === 'templates' && (
+          {isTemplates && (
             <div>
-              <div className="mb-6">
-                <p className="text-sm text-[#757575] mb-8">
-                  Templates mirror current production experiences. Use these as starting points to fork 
-                  and build new variations, or to reference how existing surfaces work.
-                </p>
-              </div>
+              <h1 className="text-5xl md:text-6xl text-[#333333] mb-4" style={{ fontFamily: 'Nantes, serif' }}>
+                Templates
+              </h1>
+              <p className="text-sm text-[#757575] mb-12">
+                Templates mirror current production experiences. Use these as starting points to fork 
+                and build new variations, or to reference how existing surfaces work.
+              </p>
               
               <SurfaceSection 
                 title="Brand Surface Area" 
@@ -416,24 +406,27 @@ export default function IndexPage() {
           )}
 
           {/* Components Tab */}
-          {activeTab === 'components' && (
+          {isComponents && (
             <div>
-              <div className="mb-6">
-                <p className="text-sm text-[#757575] mb-8">
-                  Individual UI components that serve as building blocks for templates and prototypes. 
-                  These showcase isolated component behavior and variants.
-                </p>
-              </div>
+              <h1 className="text-5xl md:text-6xl text-[#333333] mb-4" style={{ fontFamily: 'Nantes, serif' }}>
+                Components
+              </h1>
+              <p className="text-sm text-[#757575] mb-12">
+                Individual UI components that serve as building blocks for templates and prototypes. 
+                These showcase isolated component behavior and variants.
+              </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {components.map((component, index) => (
                   <ComponentCard key={component.path} component={component} index={index} />
                 ))}
               </div>
             </div>
           )}
+          
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
