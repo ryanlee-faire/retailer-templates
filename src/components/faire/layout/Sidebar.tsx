@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export function Sidebar() {
   return (
-    <aside className="w-60 border-r border-[var(--color-border-subdued)] bg-white p-6">
+    <aside className="w-60 min-w-[240px] flex-shrink-0 border-r border-[var(--color-border-subdued)] bg-white p-6 h-screen sticky top-0 overflow-y-auto">
       {/* Faire Logo and Icons */}
       <div className="mb-8 flex items-center justify-between">
         <img src="https://cdn.faire.com/static/logo-360px.svg" alt="Faire" className="h-6" />
@@ -28,18 +28,17 @@ export function Sidebar() {
         <Link to="/" className="block rounded px-3 py-2 type-paragraph text-[var(--color-text-subdued)] hover:bg-[var(--color-grey-300)]">
           Home
         </Link>
-        <a href="#" className="flex items-center justify-between rounded px-3 py-2 type-paragraph text-[var(--color-text-subdued)] hover:bg-[var(--color-grey-300)]">
-          <span>
+        <a href="#" className="flex items-center justify-between rounded px-3 py-2 type-paragraph-medium bg-[var(--color-grey-300)] text-[var(--color-text-primary)]">
+          <span className="flex items-center gap-2">
             Orders
-            <span className="ml-2 type-label text-[var(--color-text-subdued)]">5</span>
+            <span className="flex items-center justify-center min-w-[24px] h-[24px] px-2 rounded-full bg-[#333333] text-white text-xs font-medium">5</span>
           </span>
-          <svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1">
-            <path d="M3 4.5L6 7.5L9 4.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
         </a>
-        <a href="#" className="block rounded px-3 py-2 type-paragraph text-[var(--color-text-subdued)] hover:bg-[var(--color-grey-300)]">
-          Messages
-          <span className="ml-2 type-label text-[var(--color-text-subdued)]">8</span>
+        <a href="#" className="flex items-center justify-between rounded px-3 py-2 type-paragraph text-[var(--color-text-subdued)] hover:bg-[var(--color-grey-300)]">
+          <span className="flex items-center gap-2">
+            Messages
+            <span className="flex items-center justify-center min-w-[24px] h-[24px] px-2 rounded-full bg-[#333333] text-white text-xs font-medium">8</span>
+          </span>
         </a>
         <a href="#" className="flex items-center justify-between rounded px-3 py-2 type-paragraph text-[var(--color-text-subdued)] hover:bg-[var(--color-grey-300)]">
           Customers
@@ -54,32 +53,13 @@ export function Sidebar() {
           </svg>
         </a>
 
-        {/* Products Section - Expanded */}
-        <div>
-          <Link to="/products" className="flex items-center justify-between rounded px-3 py-2 type-paragraph-medium bg-[var(--color-grey-300)] text-[var(--color-text-primary)]">
-            Products
-            <svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1">
-              <path d="M3 7.5L6 4.5L9 7.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </Link>
-          <div className="ml-6 mt-1 space-y-1">
-            <a href="#" className="block rounded px-3 py-2 type-paragraph text-[var(--color-text-subdued)] hover:bg-[var(--color-grey-300)]">
-              Bulk upload
-            </a>
-            <a href="#" className="block rounded px-3 py-2 type-paragraph text-[var(--color-text-subdued)] hover:bg-[var(--color-grey-300)]">
-              Inventory
-            </a>
-            <a href="#" className="block rounded px-3 py-2 type-paragraph text-[var(--color-text-subdued)] hover:bg-[var(--color-grey-300)]">
-              Collections
-            </a>
-            <a href="#" className="block rounded px-3 py-2 type-paragraph text-[var(--color-text-subdued)] hover:bg-[var(--color-grey-300)]">
-              Pricing review
-            </a>
-            <a href="#" className="block rounded px-3 py-2 type-paragraph text-[var(--color-text-subdued)] hover:bg-[var(--color-grey-300)]">
-              Performance
-            </a>
-          </div>
-        </div>
+        {/* Products Section - Collapsed */}
+        <a href="#" className="flex items-center justify-between rounded px-3 py-2 type-paragraph text-[var(--color-text-subdued)] hover:bg-[var(--color-grey-300)]">
+          Products
+          <svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1">
+            <path d="M3 4.5L6 7.5L9 4.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </a>
 
         <a href="#" className="flex items-center justify-between rounded px-3 py-2 type-paragraph text-[var(--color-text-subdued)] hover:bg-[var(--color-grey-300)]">
           Analytics

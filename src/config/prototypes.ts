@@ -14,6 +14,17 @@ export interface Prototype {
 export const prototypes: Prototype[] = [
   // Experimental - Brand
   {
+    id: 'reactive-brand-onboarding',
+    name: 'Reactive Brand Onboarding',
+    path: '/faire/reactive-onboarding',
+    description: 'Demonstrates how non-Faire+ brands complete compliance requirements when receiving an enterprise order. Features blocking banner, two-step checklist, and modal flows for T&C signing and COI upload.',
+    owner: 'John',
+    lastUpdated: '2024-11-24',
+    surfaceArea: 'Brand',
+    category: 'experimental',
+    status: 'wip',
+  },
+  {
     id: 'bulk-editor',
     name: 'Bulk Editor Page',
     path: '/faire/bulk-editor',
@@ -245,4 +256,6 @@ export const getExperimentalBySurface = (surfaceArea: 'Brand' | 'Retailer' | 'Ot
 
 export const getTemplatesBySurface = (surfaceArea: 'Brand' | 'Retailer' | 'Other') => 
   prototypes.filter(p => p.category === 'template' && p.surfaceArea === surfaceArea);
+
+
 
