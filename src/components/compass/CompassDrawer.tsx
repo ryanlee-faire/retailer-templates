@@ -31,7 +31,7 @@ export default function CompassDrawer({ position = 'right' }: CompassDrawerProps
   const borderClass = position === 'left' ? 'border-r' : 'border-l';
 
   return (
-    <div className={`h-full bg-white flex flex-col ${borderClass} border-[#dfe0e1]`}>
+    <div className={`h-full bg-white flex flex-col ${borderClass} border-[#dfe0e1]`} style={{ height: "100vh" }}>
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-[#dfe0e1]">
         <div className="flex items-center gap-2">

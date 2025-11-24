@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { brandNameToSlug } from "../../data/products";
 
 export interface ProductTileProps {
   id: string;
@@ -197,7 +198,7 @@ export default function ProductTile({
       {/* Brand Name */}
       <div className="mt-2 flex flex-col gap-0.5">
         <Link
-          to={`/brand/${brandName.toLowerCase().replace(/\s+/g, "-")}`}
+          to={`/brand/${brandNameToSlug(brandName)}`}
           data-test-id="product-tile-brand-link"
           className="flex items-center gap-1 overflow-hidden underline"
         >

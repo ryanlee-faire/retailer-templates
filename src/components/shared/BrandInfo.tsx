@@ -1,5 +1,17 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { BrandCartCard } from "./index";
+import { brandNameToSlug } from "../../data/products";
+
+// Helper function to determine if brand should use V2 template
+function getBrandPagePath(brandName: string): string {
+  const slug = brandNameToSlug(brandName);
+  // Use V2 for Pom Pom Popcorn by Bessou
+  if (slug === "pom-pom-popcorn-by-bessou") {
+    return `/brand/${slug}/v2`;
+  }
+  return `/brand/${slug}`;
+}
 
 interface BrandInfoProps {
   brandName: string;
@@ -73,9 +85,9 @@ export default function BrandInfo({
             </div>
           )}
           <div className="flex flex-col">
-            <a href={`/brand/${brandName.toLowerCase()}`} className="text-sm font-medium text-[#333333] hover:underline transition-colors duration-500 ease-in-out">
+            <Link to={getBrandPagePath(brandName)} className="text-sm font-medium text-[#333333] hover:underline transition-colors duration-500 ease-in-out">
               {brandName}
-            </a>
+            </Link>
             {showInsider && (
               <div className="flex items-center gap-1 mt-0.5">
                 <InsiderIcon />
@@ -105,9 +117,9 @@ export default function BrandInfo({
           </div>
         )}
         <div className="flex flex-col">
-          <a href={`/brand/${brandName.toLowerCase()}`} className="text-xs font-medium text-[#333333] hover:underline transition-colors duration-500 ease-in-out">
+          <Link to={getBrandPagePath(brandName)} className="text-xs font-medium text-[#333333] hover:underline transition-colors duration-500 ease-in-out">
             {brandName}
-          </a>
+          </Link>
           <div className="flex items-center gap-1 text-xs text-[#333333]">
             {badge && (
               <>

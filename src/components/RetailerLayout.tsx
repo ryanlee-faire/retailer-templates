@@ -10,6 +10,8 @@ interface RetailerLayoutProps {
   hideFooter?: boolean;
   hideSearch?: boolean; // New prop for variant without search bar
   navSearchBar?: React.ReactNode; // Search bar to show in nav
+  stickyNav?: boolean; // Whether the nav should be sticky (default: true)
+  contentMaxWidth?: string; // Max width for content area (affects nav width too)
 }
 
 /**
@@ -25,6 +27,8 @@ export default function RetailerLayout({
   hideFooter = false,
   hideSearch = false,
   navSearchBar = null,
+  stickyNav = true,
+  contentMaxWidth = "1920px",
 }: RetailerLayoutProps) {
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -34,6 +38,8 @@ export default function RetailerLayout({
         focused={focusedNav}
         hideSearch={hideSearch}
         navSearchBar={navSearchBar}
+        sticky={stickyNav}
+        contentMaxWidth={contentMaxWidth}
       />
       <main className="flex-1" style={{ paddingBottom: hideFooter ? 0 : "200px" }}>
         {children}

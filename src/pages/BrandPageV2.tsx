@@ -4,10 +4,10 @@ import RetailerLayout from "../components/RetailerLayout";
 import { ProductTile, PillButton, IconButton } from "../components/shared";
 import { getBrandBySlug, getProductsByBrand, brands } from "../data/products";
 
-export default function BrandPage() {
+export default function BrandPageV2() {
   const { brandSlug } = useParams<{ brandSlug: string }>();
   const [activeTab, setActiveTab] = useState("All products");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [aiSearchQuery, setAiSearchQuery] = useState("");
 
   // Get brand data from repository
   const brandData = useMemo(() => {
@@ -36,18 +36,8 @@ export default function BrandPage() {
       filtered = filtered;
     }
 
-    // Filter by search query
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (p) =>
-          p.name.toLowerCase().includes(query) ||
-          p.brandName.toLowerCase().includes(query)
-      );
-    }
-
     return filtered;
-  }, [allBrandProducts, activeTab, searchQuery]);
+  }, [allBrandProducts, activeTab]);
 
   // Redirect if brand not found
   if (!brandData || !brandSlug) {
@@ -65,6 +55,7 @@ export default function BrandPage() {
     minOrder: brandData.minOrder || "$100 min",
     isTopShop: brandData.isTopShop || false,
     estimatedDelivery: "Nov 29-Dec 5", // Mock delivery date
+    description: brandData.description || `${brandData.name} is an artisanal brand known for its high-quality products and unique creative partnerships.`,
   };
 
   const products = filteredProducts;
@@ -106,8 +97,8 @@ export default function BrandPage() {
   return (
     <RetailerLayout languageSelector={false} cartCount={0}>
       <main id="main">
-        {/* Banner Image - Full Width */}
-        <div className="w-full bg-[#dfe0e1] h-[120px] md:h-[240px] lg:h-[240px]">
+        {/* Banner Image - Full Width with Action Buttons Overlay */}
+        <div className="relative w-full bg-[#dfe0e1] h-[120px] md:h-[240px] lg:h-[240px]">
           <picture className="w-full h-full brightness-95">
             <img
               className="h-full w-full object-cover object-center"
@@ -115,12 +106,49 @@ export default function BrandPage() {
               alt={brand.name}
             />
           </picture>
+          
+          {/* Action Buttons - Positioned on top of banner */}
+          <div className="absolute top-4 right-4 md:top-6 md:right-6 lg:top-8 lg:right-8 flex items-center gap-2 z-10">
+            <PillButton variant="default" ariaLabel="Follow">
+              Follow
+            </PillButton>
+            <IconButton
+              icon={
+                <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#333333"
+                  strokeWidth="1.5"
+                >
+                  <path d="M11.997.923A11.07 11.07 0 0 0 2.239 6.77a11.08 11.08 0 0 0 .541 11.365L.923 23.077l6.218-1.125a11.072 11.072 0 0 0 15.652-7.46A11.08 11.08 0 0 0 16.81 2.022 11.1 11.1 0 0 0 11.997.923Z" />
+                </svg>
+              }
+              ariaLabel="Message"
+            />
+            <IconButton
+              icon={
+                <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#333333"
+                  strokeWidth="1.5"
+                >
+                  <circle cx="12" cy="3.5" r="2.5" />
+                  <circle cx="12" cy="12" r="2.5" />
+                  <circle cx="12" cy="20.5" r="2.5" />
+                </svg>
+              }
+              ariaLabel="More actions"
+            />
+          </div>
         </div>
 
         <div className="retailer-12col-grid mx-auto" style={{ maxWidth: "1600px" }}>
           {/* Brand Header Section */}
           <div
-            style={{ gridColumn: "1 / -1", marginBottom: "24px" }}
+            style={{ gridColumn: "1 / -1", marginBottom: "48px" }}
           >
             <div className="flex w-full min-w-0 justify-center">
               <div className="w-full min-w-0">
@@ -129,9 +157,10 @@ export default function BrandPage() {
                     {/* Spacer */}
                     <div style={{ height: "24px" }} />
 
-                    {/* Brand Info Section */}
-                    <div className="w-full justify-between px-[48px] 2xl:px-[80px] flex flex-col md:flex-row">
-                      <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+                    {/* Brand Info Section with AI Summary Box */}
+                    <div className="w-full px-[48px] 2xl:px-[80px] flex flex-col lg:flex-row gap-6 items-start">
+                      {/* Left: Brand Info */}
+                      <div className="flex flex-col md:flex-row items-start md:items-center gap-4 flex-1">
                         {/* Brand Avatar */}
                         <button
                           aria-label="Go to their story"
@@ -194,41 +223,42 @@ export default function BrandPage() {
                         </div>
                       </div>
 
-                      {/* Action Buttons */}
-                      <div className="flex items-start gap-2">
-                        <PillButton variant="default" ariaLabel="Follow">
-                          Follow
-                        </PillButton>
-                        <IconButton
-                          icon={
-                            <svg
-                              className="w-5 h-5"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="#333333"
-                              strokeWidth="1.5"
-                            >
-                              <path d="M11.997.923A11.07 11.07 0 0 0 2.239 6.77a11.08 11.08 0 0 0 .541 11.365L.923 23.077l6.218-1.125a11.072 11.072 0 0 0 15.652-7.46A11.08 11.08 0 0 0 16.81 2.022 11.1 11.1 0 0 0 11.997.923Z" />
-                            </svg>
-                          }
-                          ariaLabel="Message"
-                        />
-                        <IconButton
-                          icon={
-                            <svg
-                              className="w-5 h-5"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="#333333"
-                              strokeWidth="1.5"
-                            >
-                              <circle cx="12" cy="3.5" r="2.5" />
-                              <circle cx="12" cy="12" r="2.5" />
-                              <circle cx="12" cy="20.5" r="2.5" />
-                            </svg>
-                          }
-                          ariaLabel="More actions"
-                        />
+                      {/* Right: AI Summary Box - Full right section */}
+                      <div className="w-full lg:w-auto lg:flex-1 lg:max-w-none">
+                        <div 
+                          className="bg-white rounded-lg p-6 h-full"
+                          style={{
+                            boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+                            border: "1px solid #dfe0e1",
+                          }}
+                        >
+                          {/* Brand Description */}
+                          <p 
+                            className="mb-4 leading-relaxed"
+                            style={{
+                              fontSize: "14px",
+                              lineHeight: "20px",
+                              color: "#333333",
+                              fontFamily: "system-ui, -apple-system, sans-serif",
+                            }}
+                          >
+                            {brand.description}
+                          </p>
+                          
+                          {/* AI Search Input */}
+                          <input
+                            type="text"
+                            placeholder={`Search the ${brand.name} catalog or ask about anything`}
+                            value={aiSearchQuery}
+                            onChange={(e) => setAiSearchQuery(e.target.value)}
+                            className="w-full px-4 py-3 border border-[#dfe0e1] hover:border-[#757575] rounded-full text-sm focus:outline-none focus:border-[#333333] bg-white"
+                            style={{ 
+                              transition: "border-color 0.4s ease-in-out",
+                              fontSize: "14px",
+                              lineHeight: "20px",
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -244,10 +274,10 @@ export default function BrandPage() {
           >
             <div className="w-full px-[48px] 2xl:px-[80px]">
 
-              {/* Tabs and Search */}
-              <div className="retailer-12col-grid" style={{ borderBottom: "1px solid #dfe0e1", marginBottom: "24px" }}>
-                {/* Tabs - Columns 1-8 */}
-                <div style={{ gridColumn: "1 / 9" }} className="flex items-end gap-6 pb-6">
+              {/* Tabs */}
+              <div style={{ borderBottom: "1px solid #dfe0e1", marginBottom: "24px" }}>
+                {/* Tabs - Full width */}
+                <div className="flex items-end gap-6 pb-6">
                 <button
                   data-test-id="All Products"
                   onClick={() => setActiveTab("All products")}
@@ -350,75 +380,22 @@ export default function BrandPage() {
                 </button>
               </div>
 
-              {/* Search - Columns 9-12 */}
-              <div style={{ gridColumn: "9 / 13" }} className="flex items-end pb-6">
-                <div className="w-full">
-                  <input
-                    type="text"
-                    placeholder={`Search ${brand.name}`}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full px-6 border border-[#dfe0e1] hover:border-[#757575] rounded-full text-sm focus:outline-none focus:border-[#333333]"
-                    style={{ height: "48px", transition: "border-color 0.4s ease-in-out" }}
-                    id="brand-search"
-                    data-test-id="textInputContainer"
-                  />
-                </div>
-                </div>
-              </div>
-
-              {/* Product Section Header */}
-              <h4 
-                className="mb-4 text-[#333333]"
-                style={{
-                  fontFamily: "Nantes, serif",
-                  fontSize: "28px",
-                  lineHeight: "36px",
-                  letterSpacing: "-0.3px",
-                  fontWeight: 400,
-                }}
-              >
-                All products
-              </h4>
-
-              {/* Filters */}
-              <div className="flex items-center gap-2 mb-6 flex-wrap">
-              <button className="flex items-center gap-2 px-3 py-2 border border-[#dfe0e1] rounded text-sm text-[#333333] hover:bg-gray-100 transition-colors">
-                <svg
-                  className="w-3 h-3"
-                  viewBox="0 0 12 12"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
+              {/* Product Section */}
+              <div>
+                <h4 
+                  className="mb-6 text-[#333333]"
+                  style={{
+                    fontFamily: "Nantes, serif",
+                    fontSize: "28px",
+                    lineHeight: "36px",
+                    letterSpacing: "-0.3px",
+                    fontWeight: 400,
+                  }}
                 >
-                  <path d="M9.30001 9.66659H12V10.3333H9.30001C9.14559 11.094 8.47299 11.6666 7.66667 11.6666C6.74619 11.6666 6 10.9204 6 9.99992C6 9.07944 6.74619 8.33325 7.66667 8.33325C8.47299 8.33325 9.14559 8.90584 9.30001 9.66659ZM5.30001 5.66659H12V6.33325H5.30001C5.14559 7.094 4.47299 7.66659 3.66667 7.66659C2.74619 7.66659 2 6.92039 2 5.99992C2 5.07944 2.74619 4.33325 3.66667 4.33325C4.47299 4.33325 5.14559 4.90584 5.30001 5.66659ZM10.6333 1.66659H12V2.33325H10.6333C10.4789 3.094 9.80632 3.66659 9 3.66659C8.07953 3.66659 7.33333 2.92039 7.33333 1.99992C7.33333 1.07944 8.07953 0.333252 9 0.333252C9.80632 0.333252 10.4789 0.905839 10.6333 1.66659Z" />
-                </svg>
-                <span>All filters</span>
-              </button>
-              <button className="px-3 py-2 border border-[#dfe0e1] rounded text-sm text-[#333333] hover:bg-gray-100 transition-colors">
-                Chocolate bars
-              </button>
-              <button className="px-3 py-2 border border-[#dfe0e1] rounded text-sm text-[#333333] hover:bg-gray-100 transition-colors">
-                Spreads & nut butters
-              </button>
-              <div className="ml-auto">
-                <PillButton variant="toggle" ariaLabel="Sort by Featured">
-                  Sort by Featured
-                  <svg
-                    className="w-3 h-3"
-                    viewBox="0 0 12 7"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  >
-                    <path d="M1 6.00005L6 0.994751L11 6.00005" />
-                  </svg>
-                </PillButton>
-              </div>
-            </div>
+                  All products
+                </h4>
 
-              {/* Product Grid */}
-              <div className="mb-6">
+                {/* Product Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 1440:grid-cols-6 gap-4">
                   {products.map((product) => (
                     <ProductTile
@@ -438,6 +415,7 @@ export default function BrandPage() {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </main>
     </RetailerLayout>

@@ -1,4 +1,6 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { brandNameToSlug } from "../../data/products";
 
 interface BrandTileProps {
   imageUrl: string;
@@ -157,9 +159,9 @@ export default function BrandTile({
         )}
         
         {/* Brand Name - as link */}
-        <a href="#" className="text-sm text-[#333333] underline hover:text-[#757575] transition-colors mb-1">
+        <Link to={`/brand/${brandNameToSlug(brandName)}`} className="text-sm text-[#333333] underline hover:text-[#757575] transition-colors mb-1">
           {brandName}
-        </a>
+        </Link>
         
         {/* Rating and Min Order */}
         <div className="flex items-center gap-2 text-sm text-[#333333]">

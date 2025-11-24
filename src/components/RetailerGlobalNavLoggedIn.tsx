@@ -178,6 +178,8 @@ type RetailerGlobalNavLoggedInProps = {
   focused2?: boolean;
   hideSearch?: boolean; // New prop for variant without search bar
   navSearchBar?: React.ReactNode; // Search bar to show in nav
+  sticky?: boolean; // Whether the nav should be sticky (default: true)
+  contentMaxWidth?: string; // Max width for content area (affects nav width too)
 };
 
 export default function RetailerGlobalNavLoggedIn({
@@ -188,6 +190,8 @@ export default function RetailerGlobalNavLoggedIn({
   focused2 = false,
   hideSearch = false,
   navSearchBar = null,
+  sticky = true,
+  contentMaxWidth = "1920px",
 }: RetailerGlobalNavLoggedInProps) {
   const detectedDevice = useViewport();
   const currentDevice = device || detectedDevice;
@@ -267,9 +271,15 @@ export default function RetailerGlobalNavLoggedIn({
   };
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && isCompassEnabled && isConversationalQuery(searchValue) && searchDropdownRef.current) {
+    if (e.key === 'Enter') {
       e.preventDefault();
-      searchDropdownRef.current.selectHighlighted();
+      // If it's a conversational query and Compass is enabled, use Compass dropdown
+      if (isCompassEnabled && isConversationalQuery(searchValue) && searchDropdownRef.current) {
+        searchDropdownRef.current.selectHighlighted();
+      } else if (searchValue.trim()) {
+        // Otherwise, navigate to search results page with the query
+        navigate(`/search-results?q=${encodeURIComponent(searchValue.trim())}`);
+      }
     }
   };
 
@@ -485,8 +495,8 @@ export default function RetailerGlobalNavLoggedIn({
   // Focused variant - only logo (centered, same position as full variant)
   if (focused) {
     return (
-      <header className="sticky top-0 z-[600] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
-        <div className="m-auto w-full lg:px-12 lg:pt-4 flex items-center justify-center px-4 py-4" style={{ maxWidth: "1920px", width: "100%" }}>
+      <header className={`${sticky ? 'sticky top-0' : ''} z-[600] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden`}>
+        <div className="m-auto w-full lg:px-12 lg:pt-4 flex items-center justify-center px-4 py-4" style={{ maxWidth: contentMaxWidth, width: "100%" }}>
           <button
             aria-label="Menu"
             className="lg:hidden bg-white flex items-center justify-center p-2.5 rounded-full w-10 h-10"
@@ -509,8 +519,8 @@ export default function RetailerGlobalNavLoggedIn({
   // Adjusted padding to account for search bar height in standard variant
   if (focused2) {
     return (
-      <header className="sticky top-0 z-[600] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
-        <div className="m-auto w-full lg:px-12 flex items-center px-4 pt-5 pb-5 lg:pt-5" style={{ maxWidth: "1920px", width: "100%" }}>
+      <header className={`${sticky ? 'sticky top-0' : ''} z-[600] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden`}>
+        <div className="m-auto w-full lg:px-12 flex items-center px-4 pt-5 pb-5 lg:pt-5" style={{ maxWidth: contentMaxWidth, width: "100%" }}>
           <button
             aria-label="Menu"
             className="lg:hidden bg-white flex items-center justify-center p-2.5 rounded-full w-10 h-10"
@@ -531,9 +541,9 @@ export default function RetailerGlobalNavLoggedIn({
 
   // Desktop layout
   return (
-    <header className="sticky top-0 z-[600] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
+    <header className={`${sticky ? 'sticky top-0' : ''} z-[600] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden`}>
       {/* Top Nav */}
-      <div className="m-auto w-full lg:px-12 lg:pt-4 flex items-center justify-center px-4 py-4" style={{ maxWidth: "1920px", width: "100%" }}>
+      <div className="m-auto w-full lg:px-12 lg:pt-4 flex items-center justify-center px-4 py-4" style={{ maxWidth: contentMaxWidth, width: "100%" }}>
         <button
           aria-label="Menu"
           className="lg:hidden bg-white flex items-center justify-center p-2.5 rounded-full w-10 h-10"

@@ -6,14 +6,24 @@ import TemplatePage from "./pages/TemplatePage";
 import CategoryPage from "./pages/CategoryPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import ProductDetailPageV2 from "./pages/ProductDetailPageV2";
+import ProductDetailPageV2WithAI from "./pages/ProductDetailPageV2WithAI";
+import ProductDetailPageV2WithAIInline from "./pages/ProductDetailPageV2WithAIInline";
 import ProductDetailPageWithDrawer from "./pages/ProductDetailPageWithDrawer";
+import BjornQornPDP from "./pages/snacks/BjornQornPDP";
+import FletcherLuPDP from "./pages/snacks/FletcherLuPDP";
+import SourdoughPretzelsPDP from "./pages/snacks/SourdoughPretzelsPDP";
+import MomofukuPDP from "./pages/snacks/MomofukuPDP";
+import MisoCaramelPopcornPDP from "./pages/snacks/MisoCaramelPopcornPDP";
+import VanillaBeanMarshmallowsPDP from "./pages/snacks/VanillaBeanMarshmallowsPDP";
 import ProductDetailPageWithDrawerLeft from "./pages/ProductDetailPageWithDrawerLeft";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import ComponentShowcasePage from "./pages/ComponentShowcasePage";
 import NewPage from "./pages/NewPage";
 import BrandPage from "./pages/BrandPage";
+import BrandPageV2 from "./pages/BrandPageV2";
 import CompassFullSurfacePage from "./pages/CompassFullSurfacePage";
+import CompassContainedHomePage from "./pages/CompassContainedHomePage";
 import SearchResultsPage from "./pages/SearchResultsPage";
 import ProductsPage from "./pages/faire/ProductsPage";
 import BulkEditorPage from "./pages/faire/BulkEditorPage";
@@ -55,8 +65,20 @@ function AppContent() {
   };
 
   // Determine which Compass component to show based on route
-  const showCompassDrawer = location.pathname === '/pdp-with-drawer' || location.pathname === '/pdp-with-drawer-left';
-  const showCompassSidePanel = !showCompassDrawer;
+  // Contained flow routes (isolated from existing Compass implementations)
+  const isContainedFlow = location.pathname.startsWith('/compass-contained');
+  const showCompassDrawer = location.pathname === '/pdp-with-drawer' || 
+                            location.pathname === '/pdp-with-drawer-left' ||
+                            location.pathname === '/pdp-v2-with-ai' ||
+                            location.pathname.startsWith('/pdp/snacks/');
+  // Show side panel for:
+  // - Existing Compass routes: /template, /pdp, /category/*
+  // - Contained flow routes: /compass-contained/*
+  // But NOT for: drawer routes, full surface route
+  const isExistingCompassRoute = location.pathname === '/template' || 
+                                  location.pathname === '/pdp' || 
+                                  location.pathname.startsWith('/category/');
+  const showCompassSidePanel = (isExistingCompassRoute || isContainedFlow) && !showCompassDrawer;
 
   // Don't apply margin transform for drawer routes since they're part of the grid
   const shouldApplyMargin = showCompassSidePanel && compassState.isPanelOpen;
@@ -79,12 +101,24 @@ function AppContent() {
         <Route path="/template" element={<RouteWrapper><TemplatePage /></RouteWrapper>} />
         <Route path="/category/:categoryName" element={<RouteWrapper><CategoryPage /></RouteWrapper>} />
         <Route path="/new-page" element={<RouteWrapper><NewPage /></RouteWrapper>} />
-        <Route path="/brand" element={<RouteWrapper><BrandPage /></RouteWrapper>} />
+        <Route path="/brand/:brandSlug" element={<RouteWrapper><BrandPage /></RouteWrapper>} />
+        <Route path="/brand/:brandSlug/v2" element={<RouteWrapper><BrandPageV2 /></RouteWrapper>} />
         <Route path="/search-results" element={<RouteWrapper><SearchResultsPage /></RouteWrapper>} />
         <Route path="/compass-full-surface" element={<RouteWrapper><CompassFullSurfacePage /></RouteWrapper>} />
+        {/* Contained Compass Flow - Isolated from existing implementations */}
+        <Route path="/compass-contained/home" element={<RouteWrapper><CompassContainedHomePage /></RouteWrapper>} />
         <Route path="/pdp" element={<RouteWrapper><ProductDetailPage /></RouteWrapper>} />
         <Route path="/pdp-v2" element={<RouteWrapper><ProductDetailPageV2 /></RouteWrapper>} />
+        <Route path="/pdp-v2-with-ai" element={<RouteWrapper><ProductDetailPageV2WithAI /></RouteWrapper>} />
+        <Route path="/pdp-v2-with-ai-inline" element={<RouteWrapper><ProductDetailPageV2WithAIInline /></RouteWrapper>} />
         <Route path="/pdp-with-drawer" element={<RouteWrapper><ProductDetailPageWithDrawer /></RouteWrapper>} />
+        {/* Snack Product PDPs */}
+        <Route path="/pdp/bjornqorn" element={<RouteWrapper><BjornQornPDP /></RouteWrapper>} />
+        <Route path="/pdp/fletcher-lu-seed-cracker" element={<RouteWrapper><FletcherLuPDP /></RouteWrapper>} />
+        <Route path="/pdp/sourdough-pretzels" element={<RouteWrapper><SourdoughPretzelsPDP /></RouteWrapper>} />
+        <Route path="/pdp/momofuku-chili-chocolate" element={<RouteWrapper><MomofukuPDP /></RouteWrapper>} />
+        <Route path="/pdp/miso-caramel-popcorn" element={<RouteWrapper><MisoCaramelPopcornPDP /></RouteWrapper>} />
+        <Route path="/pdp/vanilla-bean-marshmallows" element={<RouteWrapper><VanillaBeanMarshmallowsPDP /></RouteWrapper>} />
         <Route path="/pdp-with-drawer-left" element={<RouteWrapper><ProductDetailPageWithDrawerLeft /></RouteWrapper>} />
         <Route path="/checkout" element={<RouteWrapper><CheckoutPage /></RouteWrapper>} />
         <Route path="/order-confirmation" element={<RouteWrapper><OrderConfirmationPage /></RouteWrapper>} />

@@ -134,6 +134,20 @@ export default function IndexPage() {
                 <li>
                   <div className="flex items-center gap-2">
                     <Link
+                      to="/compass-contained/home"
+                      className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
+                    >
+                      🧭 Compass Ecosystem Approach
+                    </Link>
+                    <span className="text-xs bg-[#333333] text-white px-2 py-0.5 rounded">Ryan</span>
+                  </div>
+                  <p className="text-sm text-[#757575] mt-1">
+                    Isolated Compass flow starting with John's homepage prototype
+                  </p>
+                </li>
+                <li>
+                  <div className="flex items-center gap-2">
+                    <Link
                       to="/pdp-with-drawer"
                       className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
                     >
@@ -153,6 +167,34 @@ export default function IndexPage() {
                     <span className="text-xs bg-[#333333] text-white px-2 py-0.5 rounded">Ryan</span>
                   </div>
                 </li>
+                <li>
+                  <div className="flex items-center gap-2">
+                    <Link
+                      to="/pdp-v2-with-ai"
+                      className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
+                    >
+                      PDP with AI overview
+                    </Link>
+                    <span className="text-xs bg-[#333333] text-white px-2 py-0.5 rounded">Ryan</span>
+                  </div>
+                  <p className="text-sm text-[#757575] mt-1">
+                    Product detail page with AI-powered overview and search
+                  </p>
+                </li>
+                <li>
+                  <div className="flex items-center gap-2">
+                    <Link
+                      to="/pdp-v2-with-ai-inline"
+                      className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
+                    >
+                      PDP with AI overview (inline)
+                    </Link>
+                    <span className="text-xs bg-[#333333] text-white px-2 py-0.5 rounded">Ryan</span>
+                  </div>
+                  <p className="text-sm text-[#757575] mt-1">
+                    Product detail page with AI answers displayed inline in the Overview section
+                  </p>
+                </li>
               </ul>
             )}
           </div>
@@ -168,7 +210,20 @@ export default function IndexPage() {
             </button>
             {isExperimentalOpen && (
               <ul className="space-y-4 ml-6">
-                {/* Empty for now - Compass items moved to Project Compass section */}
+                <li>
+                  <div className="flex items-center gap-2">
+                    <Link
+                      to="/brand/casa-bosques/v2"
+                      className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
+                    >
+                      Brand Page V2 (with AI summary)
+                    </Link>
+                    <span className="text-xs bg-[#333333] text-white px-2 py-0.5 rounded">Ryan</span>
+                  </div>
+                  <p className="text-sm text-[#757575] mt-1">
+                    Brand page variant with AI summary box and action buttons on banner
+                  </p>
+                </li>
               </ul>
             )}
           </div>
