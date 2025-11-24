@@ -433,13 +433,13 @@ export default function ReactiveBrandOnboardingPage() {
         isOpen={termsModalOpen}
         onClose={() => setTermsModalOpen(false)}
         onAccept={handleTermsAccept}
-        variant={variant as 1 | 2 | 3}
+        variant={variant as 1 | 2 | 3 | 4}
       />
       <COIUploadModal
         isOpen={coiModalOpen}
         onClose={() => setCoiModalOpen(false)}
         onUpload={handleCOIUpload}
-        variant={variant as 1 | 2 | 3}
+        variant={variant as 1 | 2 | 3 | 4}
       />
       <ConfirmationModal
         isOpen={confirmationModalOpen}
@@ -450,7 +450,7 @@ export default function ReactiveBrandOnboardingPage() {
 
       {/* Variant Switcher - for showcasing different design options */}
       <VariantSwitcher
-        variantCount={3}
+        variantCount={4}
         activeVariant={variant}
         onVariantChange={setVariant}
       />
