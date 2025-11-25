@@ -4,7 +4,7 @@ interface COIUploadModalProps {
   isOpen: boolean;
   onClose: () => void;
   onUpload: (fileName: string) => void;
-  variant?: 1 | 2 | 3 | 4;
+  variant?: 1 | 2 | 3 | 4 | 5 | 6;
 }
 
 export function COIUploadModal({ isOpen, onClose, onUpload, variant = 1 }: COIUploadModalProps) {
@@ -504,7 +504,276 @@ export function COIUploadModal({ isOpen, onClose, onUpload, variant = 1 }: COIUp
     );
   }
 
-  // ===== VARIANT 3: FAQs as second page =====
+  // ===== VARIANT 5: FAQs as second page with prominent CTA =====
+  if (variant === 5) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="relative w-full max-w-[540px] rounded-2xl shadow-xl overflow-hidden">
+          {/* Close button */}
+          <button
+            onClick={handleClose}
+            className="absolute right-4 top-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full hover:bg-black/10 z-10"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M12 4L4 12M4 4l8 8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+
+          {showFaqPage ? (
+            <FaqPage onBack={() => setShowFaqPage(false)} />
+          ) : (
+            <div className="flex-1 bg-white flex flex-col overflow-y-auto max-h-[80vh]">
+              {/* Header */}
+              <div className="px-6 pt-6 pb-4">
+                <h2 className="text-lg font-medium text-[#333333] pr-8">
+                  Upload your Certificate of Insurance
+                </h2>
+              </div>
+
+              {/* Content */}
+              <div className="px-6 flex-1">
+                {/* File Upload Dropzone */}
+                <div
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  className={`relative mb-6 rounded-lg border border-dashed h-[200px] flex flex-col items-center justify-center transition-colors ${
+                    isDragging
+                      ? 'border-[#333333] bg-[#f7f7f7]'
+                      : 'border-[#757575] bg-[#fbfbfb]'
+                  }`}
+                >
+                  <input
+                    type="file"
+                    id="file-upload-v5"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  
+                  {!selectedFile ? (
+                    <>
+                      <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#e5e5e5]">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333333" strokeWidth="1.5">
+                          <path d="M12 16V4M12 4l-5 5M12 4l5 5" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <label htmlFor="file-upload-v5" className="cursor-pointer">
+                        <span className="text-sm text-[#333333]">
+                          Drop your file here or{' '}
+                          <span className="underline">
+                            click to browse
+                          </span>
+                        </span>
+                      </label>
+                    </>
+                  ) : (
+                    <div className="flex items-center justify-between rounded-lg border border-[#dfe0e1] bg-white p-3 mx-4 w-[calc(100%-32px)]">
+                      <div className="flex items-center gap-3">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#333333" strokeWidth="1.5">
+                          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M14 2v6h6" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span className="text-sm text-[#333333]">
+                          {selectedFile.name}
+                        </span>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedFile(null);
+                        }}
+                        className="flex h-6 w-6 items-center justify-center rounded-full hover:bg-[#e5e5e5]"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#333333" strokeWidth="1.5">
+                          <path d="M12 4L4 12M4 4l8 8" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Prominent FAQ CTA */}
+                <button
+                  onClick={() => setShowFaqPage(true)}
+                  className="w-full mb-6 py-3 px-4 rounded-lg border border-[#333333] text-[#333333] text-sm font-medium hover:bg-[#f5f5f5] transition-colors flex items-center justify-center gap-2"
+                >
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <circle cx="8" cy="8" r="6.5" />
+                    <path d="M8 11V11.5M8 5.5C7 5.5 6 6.25 6 7.25C6 8 6.5 8.5 7.25 8.75C7.75 8.9 8 9.25 8 9.75V10" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  Learn more about COI requirements
+                </button>
+
+                {/* Info Banner with Requirements */}
+                <div className="rounded-lg bg-[#f7f7f7] p-4 mb-6">
+                  <p className="text-sm text-[#333333] mb-2">
+                    Enterprise retailers require basic insurance documentation before ordering. Uploading your COI ensures you're eligible for high-value orders.
+                  </p>
+                  
+                  <p className="text-sm font-medium text-[#333333] mt-4 mb-2">
+                    COI Requirements:
+                  </p>
+                  <ul className="text-sm ml-5 list-disc text-[#666666]">
+                    <li>Minimum $2M aggregate general liability coverage</li>
+                    <li>Policy must be active and unexpired</li>
+                    <li>Must list 'Faire Wholesale, Inc.' as additional insured</li>
+                    <li>Accepted formats: PDF, JPG, PNG (≤ 25 MB)</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="bg-[#fbfbfb] px-6 py-4 flex justify-end rounded-bl-lg">
+                <button
+                  onClick={handleUpload}
+                  disabled={!selectedFile}
+                  className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    selectedFile
+                      ? 'bg-[#333333] text-white hover:bg-[#444444]'
+                      : 'bg-[#e5e5e5] text-[#999999] cursor-not-allowed'
+                  }`}
+                >
+                  Continue
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ===== VARIANT 6: Simplified modal (with FAQ second page like option 3) =====
+  if (variant === 6) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="relative w-full max-w-[480px] rounded-2xl shadow-xl overflow-hidden bg-white">
+          {/* Close button */}
+          <button
+            onClick={handleClose}
+            className="absolute right-4 top-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full hover:bg-black/10 z-10"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M12 4L4 12M4 4l8 8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+
+          {showFaqPage ? (
+            <FaqPage onBack={() => setShowFaqPage(false)} />
+          ) : (
+            <div className="flex flex-col">
+              {/* Header */}
+              <div className="px-6 pt-6 pb-4">
+                <h2 className="text-xl font-semibold text-[#333333] pr-8">
+                  Upload Certificate of Insurance
+                </h2>
+              </div>
+
+              {/* Content */}
+              <div className="px-6">
+                {/* File Upload Dropzone */}
+                <div
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  className={`relative mb-4 rounded-lg border border-dashed h-[160px] flex flex-col items-center justify-center transition-colors ${
+                    isDragging
+                      ? 'border-[#333333] bg-[#f7f7f7]'
+                      : 'border-[#757575] bg-[#fbfbfb]'
+                  }`}
+                >
+                  <input
+                    type="file"
+                    id="file-upload-v6"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  
+                  {!selectedFile ? (
+                    <>
+                      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#e5e5e5]">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#333333" strokeWidth="1.5">
+                          <path d="M12 16V4M12 4l-5 5M12 4l5 5" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <label htmlFor="file-upload-v6" className="cursor-pointer">
+                        <span className="text-sm text-[#333333]">
+                          Drop file here or{' '}
+                          <span className="underline">browse</span>
+                        </span>
+                      </label>
+                    </>
+                  ) : (
+                    <div className="flex items-center justify-between rounded-lg border border-[#dfe0e1] bg-white p-3 mx-4 w-[calc(100%-32px)]">
+                      <div className="flex items-center gap-3">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#333333" strokeWidth="1.5">
+                          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M14 2v6h6" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span className="text-sm text-[#333333]">
+                          {selectedFile.name}
+                        </span>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedFile(null);
+                        }}
+                        className="flex h-6 w-6 items-center justify-center rounded-full hover:bg-[#e5e5e5]"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#333333" strokeWidth="1.5">
+                          <path d="M12 4L4 12M4 4l8 8" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Requirements */}
+                <div className="text-xs text-[#666666] mb-4">
+                  <p className="mb-2">Requirements:</p>
+                  <ul className="ml-4 list-disc space-y-0.5">
+                    <li>$2M aggregate general liability</li>
+                    <li>List 'Faire Wholesale, Inc.' as additional insured</li>
+                    <li>PDF, JPG, or PNG (≤ 25 MB)</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="bg-[#fbfbfb] px-6 py-4 flex items-center justify-between">
+                <p className="text-xs text-[#666666]">
+                  <button 
+                    onClick={() => setShowFaqPage(true)}
+                    className="underline hover:text-[#333333]"
+                  >
+                    View FAQs
+                  </button>
+                </p>
+                <button
+                  onClick={handleUpload}
+                  disabled={!selectedFile}
+                  className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    selectedFile
+                      ? 'bg-[#333333] text-white hover:bg-[#444444]'
+                      : 'bg-[#e5e5e5] text-[#999999] cursor-not-allowed'
+                  }`}
+                >
+                  Upload
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ===== VARIANT 3: FAQs as second page (inline links) =====
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="relative w-full max-w-[720px] rounded-2xl shadow-xl overflow-hidden">

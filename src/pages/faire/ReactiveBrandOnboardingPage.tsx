@@ -4,6 +4,7 @@ import { TaskCard, TaskStatus } from "../../components/faire/ReactiveOnboarding/
 import { TermsModal } from "../../components/faire/ReactiveOnboarding/TermsModal";
 import { COIUploadModal } from "../../components/faire/ReactiveOnboarding/COIUploadModal";
 import { ConfirmationModal } from "../../components/faire/ReactiveOnboarding/ConfirmationModal";
+import { LearnMoreModal } from "../../components/faire/ReactiveOnboarding/LearnMoreModal";
 import { VariantSwitcher } from "../../components/VariantSwitcher";
 
 export default function ReactiveBrandOnboardingPage() {
@@ -15,6 +16,7 @@ export default function ReactiveBrandOnboardingPage() {
   const [termsModalOpen, setTermsModalOpen] = useState(false);
   const [coiModalOpen, setCoiModalOpen] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+  const [learnMoreModalOpen, setLearnMoreModalOpen] = useState(false);
   const [confirmationType, setConfirmationType] = useState<'coi-upload' | 'coi-confirmation'>('coi-upload');
   const [uploadedFileName, setUploadedFileName] = useState('');
 
@@ -114,12 +116,16 @@ export default function ReactiveBrandOnboardingPage() {
                   
                   <div className="text-sm text-[#333333] leading-[20px] tracking-[0.15px]">
                     <p className="mb-4">
-                      Congratulations, you have received an order from a large retailer. To accept this order, you will need to join Faire+, our program required for selling to these unique retailers. To join, simply complete the following steps:
+                      Congratulations, you have received an order from a large retailer. To accept this order, you will need to join Faire+, our program required for selling to these unique retailers. Keep in mind, no changes to your commission or fees.
+                    </p>
+                    
+                    <p className="mb-4 font-normal">
+                      Complete these steps:
                     </p>
                     
                     <div className="space-y-2 mb-4">
                       <p className="flex items-center gap-3">
-                        <span>
+                        <span className="inline-flex items-center gap-1.5">
                           1.{' '}
                           <button 
                             onClick={() => setTermsModalOpen(true)}
@@ -127,6 +133,16 @@ export default function ReactiveBrandOnboardingPage() {
                           >
                             Sign the Faire+ agreement
                           </button>
+                          <span className="relative group">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                              <circle cx="8" cy="8" r="7" stroke="#999999" strokeWidth="1.5" />
+                              <text x="8" y="12" textAnchor="middle" fontSize="10" fontWeight="500" fill="#999999">i</text>
+                            </svg>
+                            <span className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-4 py-3 bg-[#333333] text-white text-sm leading-snug rounded-lg w-[320px] text-left opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                              A standard vendor agreement required by enterprise retailers. No cost to sign—just a one-time acknowledgment.
+                              <span className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-b-[6px] border-r-[6px] border-t-transparent border-b-transparent border-r-[#333333]"></span>
+                            </span>
+                          </span>
                         </span>
                         {termsStatus === 'complete' && (
                           <span className="inline-flex items-center gap-1.5 border border-[#E5E7EB] bg-transparent text-[#333333] text-sm px-3 py-1 rounded-lg">
@@ -138,7 +154,7 @@ export default function ReactiveBrandOnboardingPage() {
                         )}
                       </p>
                       <p className="flex items-center gap-3">
-                        <span>
+                        <span className="inline-flex items-center gap-1.5">
                           2.{' '}
                           <button 
                             onClick={() => setCoiModalOpen(true)}
@@ -146,6 +162,16 @@ export default function ReactiveBrandOnboardingPage() {
                           >
                             Upload a Certificate of Insurance
                           </button>
+                          <span className="relative group">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                              <circle cx="8" cy="8" r="7" stroke="#999999" strokeWidth="1.5" />
+                              <text x="8" y="12" textAnchor="middle" fontSize="10" fontWeight="500" fill="#999999">i</text>
+                            </svg>
+                            <span className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-4 py-3 bg-[#333333] text-white text-sm leading-snug rounded-lg w-[320px] text-left opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                              Proof of $2M liability insurance with Faire listed as additional insured. Your insurance provider can issue this document.
+                              <span className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-b-[6px] border-r-[6px] border-t-transparent border-b-transparent border-r-[#333333]"></span>
+                            </span>
+                          </span>
                         </span>
                         {(coiStatus === 'complete' || coiStatus === 'pending-review') && (
                           <span className="inline-flex items-center gap-1.5 border border-[#E5E7EB] bg-transparent text-[#333333] text-sm px-3 py-1 rounded-lg">
@@ -158,9 +184,12 @@ export default function ReactiveBrandOnboardingPage() {
                       </p>
                     </div>
                     
-                    <p>
-                      Keep in mind, no changes to your commission or fees.
-                    </p>
+                    <button 
+                      onClick={variant === 6 ? () => setLearnMoreModalOpen(true) : undefined}
+                      className="mt-2 px-4 py-2 rounded-lg border border-[#333333] text-sm font-medium text-[#333333] hover:bg-[#f5f5f5] transition-colors"
+                    >
+                      Learn more
+                    </button>
                   </div>
                 </div>
               </div>
@@ -433,13 +462,13 @@ export default function ReactiveBrandOnboardingPage() {
         isOpen={termsModalOpen}
         onClose={() => setTermsModalOpen(false)}
         onAccept={handleTermsAccept}
-        variant={variant as 1 | 2 | 3 | 4}
+        variant={variant as 1 | 2 | 3 | 4 | 5 | 6}
       />
       <COIUploadModal
         isOpen={coiModalOpen}
         onClose={() => setCoiModalOpen(false)}
         onUpload={handleCOIUpload}
-        variant={variant as 1 | 2 | 3 | 4}
+        variant={variant as 1 | 2 | 3 | 4 | 5 | 6}
       />
       <ConfirmationModal
         isOpen={confirmationModalOpen}
@@ -447,10 +476,14 @@ export default function ReactiveBrandOnboardingPage() {
         fileName={uploadedFileName}
         type={confirmationType}
       />
+      <LearnMoreModal
+        isOpen={learnMoreModalOpen}
+        onClose={() => setLearnMoreModalOpen(false)}
+      />
 
       {/* Variant Switcher - for showcasing different design options */}
       <VariantSwitcher
-        variantCount={4}
+        variantCount={6}
         activeVariant={variant}
         onVariantChange={setVariant}
       />

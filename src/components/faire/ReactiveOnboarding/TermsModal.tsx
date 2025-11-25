@@ -4,7 +4,7 @@ interface TermsModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAccept: () => void;
-  variant?: 1 | 2 | 3 | 4;
+  variant?: 1 | 2 | 3 | 4 | 5 | 6;
 }
 
 export function TermsModal({ isOpen, onClose, onAccept, variant = 1 }: TermsModalProps) {
@@ -492,7 +492,197 @@ export function TermsModal({ isOpen, onClose, onAccept, variant = 1 }: TermsModa
     );
   }
 
-  // ===== VARIANT 3: FAQs as second page =====
+  // ===== VARIANT 5: FAQs as second page with prominent CTA =====
+  if (variant === 5) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="relative w-full max-w-[540px] rounded-2xl shadow-xl overflow-hidden">
+          {/* Close button */}
+          <button
+            onClick={handleClose}
+            className="absolute right-4 top-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full hover:bg-black/10 z-10"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M12 4L4 12M4 4l8 8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+
+          {showFaqPage ? (
+            <FaqPage onBack={() => setShowFaqPage(false)} />
+          ) : (
+            <div className="flex-1 bg-white p-6 overflow-y-auto max-h-[80vh]">
+              {/* Header */}
+              <h2 className="text-2xl font-semibold text-[#333333] mb-6 pr-8">
+                Join the Faire+ Enterprise Program
+              </h2>
+              
+              {/* Body copy + Terms */}
+              <div className="text-sm text-[#666666] leading-[22px] mb-6 space-y-4">
+                <p>
+                  Agree to these terms to unlock access to larger, multi-location retailers. These ensure that we can help you grow on Faire.
+                </p>
+                <p>
+                  By joining Faire+, you agree to provide products to enterprise retailers through Faire's Vendor of Record model. This enables you to access larger orders while Faire handles compliance requirements.
+                </p>
+                <div>
+                  <p className="font-medium text-[#333333] mb-2">Key Terms:</p>
+                  <ul className="ml-5 list-disc">
+                    <li>Maintain active Certificate of Insurance listing Faire as additional insured</li>
+                    <li>Provide accurate product information and pricing</li>
+                    <li>Meet enterprise retailer fulfillment standards</li>
+                    <li>Standard commission rates apply (no additional fees)</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Prominent FAQ CTA */}
+              <button
+                onClick={() => setShowFaqPage(true)}
+                className="w-full mb-6 py-3 px-4 rounded-lg border border-[#333333] text-[#333333] text-sm font-medium hover:bg-[#f5f5f5] transition-colors flex items-center justify-center gap-2"
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <circle cx="8" cy="8" r="6.5" />
+                  <path d="M8 11V11.5M8 5.5C7 5.5 6 6.25 6 7.25C6 8 6.5 8.5 7.25 8.75C7.75 8.9 8 9.25 8 9.75V10" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Learn more about the Faire+ Program
+              </button>
+
+              {/* Checkbox */}
+              <label className="flex items-start gap-3 cursor-pointer mb-4">
+                <div className="relative flex-shrink-0 mt-0.5">
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={(e) => setIsChecked(e.target.checked)}
+                    className="sr-only"
+                  />
+                  <div className={`h-5 w-5 rounded flex items-center justify-center ${isChecked ? 'bg-[#333333]' : 'border-2 border-[#333333]'}`}>
+                    {isChecked && (
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2">
+                        <path d="M2 6l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </div>
+                </div>
+                <span className="text-sm text-[#333333]">
+                  By checking this box and placing this order, I agree to the{' '}
+                  <button className="underline hover:text-[#666666]">Faire+ Terms & Conditions</button>.
+                </span>
+              </label>
+
+              {/* Accept Button */}
+              <button
+                onClick={handleAccept}
+                disabled={!isChecked}
+                className={`w-full rounded-lg py-3 text-sm font-medium transition-colors ${
+                  isChecked
+                    ? 'bg-[#333333] text-white hover:bg-[#444444]'
+                    : 'bg-[#e5e5e5] text-[#999999] cursor-not-allowed'
+                }`}
+              >
+                Accept
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ===== VARIANT 6: Simplified modal (with FAQ second page like option 3) =====
+  if (variant === 6) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="relative w-full max-w-[480px] rounded-2xl shadow-xl overflow-hidden bg-white">
+          {/* Close button */}
+          <button
+            onClick={handleClose}
+            className="absolute right-4 top-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full hover:bg-black/10 z-10"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M12 4L4 12M4 4l8 8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+
+          {showFaqPage ? (
+            <FaqPage onBack={() => setShowFaqPage(false)} />
+          ) : (
+            <div className="p-6 overflow-y-auto max-h-[80vh]">
+              {/* Header */}
+              <h2 className="text-xl font-semibold text-[#333333] mb-4 pr-8">
+                Sign the Faire+ Agreement
+              </h2>
+              
+              {/* Body copy */}
+              <div className="text-sm text-[#666666] leading-relaxed mb-6">
+                <p className="mb-4">
+                  By signing this agreement, you agree to provide products to enterprise retailers through Faire's Vendor of Record model.
+                </p>
+                <div>
+                  <p className="font-medium text-[#333333] mb-2">Key Terms:</p>
+                  <ul className="ml-5 list-disc space-y-1">
+                    <li>Maintain active Certificate of Insurance</li>
+                    <li>Provide accurate product information</li>
+                    <li>Meet enterprise fulfillment standards</li>
+                    <li>Standard commission rates apply</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Checkbox */}
+              <label className="flex items-start gap-3 cursor-pointer mb-4">
+                <div className="relative flex-shrink-0 mt-0.5">
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={(e) => setIsChecked(e.target.checked)}
+                    className="sr-only"
+                  />
+                  <div className={`h-5 w-5 rounded flex items-center justify-center ${isChecked ? 'bg-[#333333]' : 'border-2 border-[#333333]'}`}>
+                    {isChecked && (
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2">
+                        <path d="M2 6l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </div>
+                </div>
+                <span className="text-sm text-[#333333]">
+                  I agree to the{' '}
+                  <button className="underline hover:text-[#666666]">Faire+ Terms & Conditions</button>.
+                </span>
+              </label>
+
+              {/* Accept Button */}
+              <button
+                onClick={handleAccept}
+                disabled={!isChecked}
+                className={`w-full rounded-lg py-3 text-sm font-medium transition-colors ${
+                  isChecked
+                    ? 'bg-[#333333] text-white hover:bg-[#444444]'
+                    : 'bg-[#e5e5e5] text-[#999999] cursor-not-allowed'
+                }`}
+              >
+                Accept & Continue
+              </button>
+
+              {/* Subtle FAQ link */}
+              <p className="text-xs text-[#666666] mt-4 text-center">
+                Have questions?{' '}
+                <button 
+                  onClick={() => setShowFaqPage(true)}
+                  className="underline hover:text-[#333333]"
+                >
+                  View FAQs
+                </button>
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ===== VARIANT 3: FAQs as second page (inline links) =====
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="relative w-full max-w-[720px] rounded-2xl shadow-xl overflow-hidden">
